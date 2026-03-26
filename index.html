@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html id="mainHtml" lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aweza Pro - Glass Edition</title>
+    <style>
+        :root { 
+            --p: #1b5e20; --s: #ffd700; --bg: #0a2e0a; 
+            --glass: rgba(255, 255, 255, 0.15); 
+            --text: #ffffff;
+        }
+        .dark-mode { --bg: #000000; --glass: rgba(255, 255, 255, 0.05); }
+
+        * { box-sizing: border-box; transition: 0.3s; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            font-family: 'Tahoma', sans-serif; 
+            background: var(--bg);
+            background-image: radial-gradient(circle at center, #1b5e20 0%, #000000 100%);
+            color: var(--text); 
+            margin: 0; height: 100vh; width: 100vw; overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+
+        /* ─── Glassmorphism Header ─── */
+        .header { 
+            background: rgba(27, 94, 32, 0.8);
+            backdrop-filter: blur(15px);
+            color: white; padding: 25px; text-align: center; position: relative;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+        }
+
+        .settings-icon { position: absolute; left: 20px; top: 30px; cursor: pointer; font-size: 28px; }
+
+        .scoreboard { flex: 1; display: flex; justify-content: space-around; align-items: center; padding: 15px; gap: 15px; }
+        
+        /* ─── Glass Cards ─── */
+        .team-box { 
+            text-align: center; flex: 1; padding: 20px 10px; border-radius: 30px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            min-height: 300px; display: flex; flex-direction: column; justify-content: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        .score { font-size: 75px; font-weight: bold; color: var(--s); margin: 5px 0; font-family: 'Arial'; text-shadow: 0 0 15px rgba(255,215,0,0.5); }
+        
+        /* ─── مێژووی خاڵەکان لە ژێر ناو ─── */
+        .points-history { 
+            font-size: 14px; color: rgba(255,255,255,0.8); 
+            background: rgba(0,0,0,0.2); padding: 12px; border-radius: 15px; 
+            margin-top: 10px; min-height: 60px; border: 1px dashed rgba(255,255,255,0.3);
+            font-family: 'Arial'; line-height: 1.5;
+        }
+
+        .input-section { 
+            padding: 20px; display: flex; gap: 15px; 
+            background: rgba(0,0,0,0.3); backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255,255,255,0.1); 
+        }
+
+        /* ─── کێبۆردی ژمارە ─── */
+        input { 
+            width: 100%; padding: 18px; border: 1px solid rgba(255,255,255,0.3); border-radius: 18px; 
+            text-align: center; font-size: 30px; font-weight: bold; 
+            background: rgba(255,255,255,0.1); color: white;
+            font-family: 'Arial'; outline: none;
+        }
+        input:focus { border-color: var(--s); background: rgba(255,255,255,0.2); }
+
+        .btn-add { 
+            background: var(--p); color: white; border: 1px solid rgba(255,255,255,0.3); 
+            padding: 22px; width: 92%; margin: 10px 4% 30px; border-radius: 20px; 
+            font-weight: bold; cursor: pointer; font-size: 24px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+        .btn-add:active { transform: scale(0.95); }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; z-index: 100; justify-content: center; align-items: center; }
+        .settings-card { background: #1a1a1a; color: white; width: 90%; border-radius: 35px; padding: 30px; border: 1px solid var(--p); }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <span class="settings-icon" onclick="toggleSettings()">⚙️</span>
+        <h1 id="txt-title" style="margin:0; font-size: 22px;">خاڵەژمێری ئاوێزە</h1>
+        <small id="goal-info">Goal: 101</small>
+    </div>
+
+    <div class="scoreboard">
+        <div class="team-box">
+            <div id="txt-t1" style="font-size: 18px; font-weight:bold" onclick="changeName(1)">تیمی ١ 👨</div>
+            <div class="score" id="s1">0</div>
+            <div class="points-history" id="h1">---</div>
+        </div>
+        <div class="team-box">
+            <div id="txt-t2" style="font-size: 18px; font-weight:bold" onclick="changeName(2)">تیمی ٢ 👨</div>
+            <div class="score" id="s2">0</div>
+            <div class="points-history" id="h2">---</div>
+        </div>
+    </div>
+
+    <div class="input-section">
+        <input type="number" id="i1" placeholder="0" onfocus="this.value=''" inputmode="numeric" pattern="[0-9]*">
+        <input type="number" id="i2" placeholder="0" onfocus="this.value=''" inputmode="numeric" pattern="[0-9]*">
+    </div>
+
+    <button id="btn-save" class="btn-add" onclick="processPoints()">تۆمارکردن +</button>
+</div>
+
+<div class="overlay" id="overlay">
+    <div class="settings-card">
+        <h2 id="txt-set-head">ڕێکخستن</h2>
+        <label id="txt-goal-l">ئامانجی بردنەوە:</label>
+        <input type="number" id="goal-input" value="101" onchange="updateGoal(this.value)" style="margin-top:10px; width:100%">
+        <br><br>
+        <button onclick="toggleSettings()" style="width:100%; padding:15px; background:var(--p); color:white; border:none; border-radius:15px;">OK</button>
+        <button onclick="clearData()" style="margin-top:20px; color:red; background:none; border:none; width:100%">سفرکردنەوەی گشتی</button>
+    </div>
+</div>
+
+<audio id="winSound" src="https://www.myinstants.com/media/sounds/applause_yZ83v97.mp3"></audio>
+
+<script>
+    let pScores = [0, 0]; let pHistory = [[], []]; let goal = 101;
+
+    // ─── Auto-Save: بارکردن لە کاتی کردنەوە ───
+    window.onload = () => {
+        if(localStorage.getItem('az_v6_s')) {
+            pScores = JSON.parse(localStorage.getItem('az_v6_s'));
+            pHistory = JSON.parse(localStorage.getItem('az_v6_h')) || [[],[]];
+            updateUI();
+        }
+        goal = parseInt(localStorage.getItem('az_v6_g')) || 101;
+        document.getElementById('goal-info').innerText = "Goal: " + goal;
+    };
+
+    function processPoints() {
+        let v1 = parseInt(document.getElementById('i1').value) || 0;
+        let v2 = parseInt(document.getElementById('i2').value) || 0;
+
+        // ─── مەرجی خاڵی نایاسایی (١ تا ١٠٠) ───
+        if (v1 > 100 || v2 > 100) {
+            alert("⚠️ خاڵێکی نایاساییە! تکایە ژمارەیەک لە نێوان ١ بۆ ١٠٠ بنووسە.");
+            document.getElementById('i1').value = "";
+            document.getElementById('i2').value = "";
+            return;
+        }
+
+        if(v1 !== 0) { pScores[0] += v1; pHistory[0].push(v1); }
+        if(v2 !== 0) { pScores[1] += v2; pHistory[1].push(v2); }
+
+        document.getElementById('i1').value = "";
+        document.getElementById('i2').value = "";
+        
+        saveData();
+        checkWin();
+    }
+
+    function updateUI() {
+        document.getElementById('s1').innerText = pScores[0];
+        document.getElementById('s2').innerText = pScores[1];
+        // ─── مێژووی خاڵەکان (٢٠+١٠+٥) ───
+        document.getElementById('h1').innerText = pHistory[0].length > 0 ? pHistory[0].join(' + ') : "---";
+        document.getElementById('h2').innerText = pHistory[1].length > 0 ? pHistory[1].join(' + ') : "---";
+    }
+
+    function saveData() {
+        localStorage.setItem('az_v6_s', JSON.stringify(pScores));
+        localStorage.setItem('az_v6_h', JSON.stringify(pHistory));
+        updateUI();
+    }
+
+    function checkWin() {
+        for(let i=0; i<2; i++) {
+            if(pScores[i] >= goal) {
+                document.getElementById('winSound').play();
+                alert("🏆 پیرۆزە! تیمی " + (i+1) + " بردییەوە.");
+                pScores = [0,0]; pHistory = [[],[]]; saveData();
+            }
+        }
+    }
+
+    function toggleSettings() {
+        let o = document.getElementById('overlay');
+        o.style.display = o.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    function updateGoal(v) { 
+        goal = parseInt(v); 
+        localStorage.setItem('az_v6_g', goal);
+        document.getElementById('goal-info').innerText = "Goal: " + goal;
+    }
+
+    function clearData() { if(confirm("دڵنیای هەموو داتاکان بسڕێتەوە؟")) { localStorage.clear(); location.reload(); } }
+    function changeName(id) { let n = prompt("ناوی تیم:"); if(n) document.getElementById('txt-t'+id).innerText = n + " 👨"; }
+</script>
+</body>
+</html>
