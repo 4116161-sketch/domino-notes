@@ -2,204 +2,123 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>خاڵژمێری ئاوێزە</title>
     <style>
-        :root {
-            --primary: #2e7d32;
-            --gold: #ffd700;
-            --dark: #1b1b1b;
-            --glass: rgba(255, 255, 255, 0.1);
-        }
-
+        :root { --primary: #1b5e20; --gold: #ffd700; --glass: rgba(255, 255, 255, 0.1); }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: radial-gradient(circle, #2e7d32 0%, #1b5e20 100%);
-            color: white;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+            font-family: sans-serif; background: radial-gradient(circle, #2e7d32, #1b5e20);
+            color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow: hidden;
         }
-
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .header h1 {
-            color: var(--gold);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            margin: 5px 0;
-        }
-
-        /* ستایلی تیمەکان و ناو گۆڕین */
-        .game-container {
-            display: flex;
-            gap: 20px;
-            width: 100%;
-            max-width: 500px;
-        }
-
+        .header h1 { color: var(--gold); margin: 10px 0 5px 0; font-size: 1.5rem; }
+        
+        .game-container { display: flex; gap: 10px; width: 95%; max-width: 400px; margin-top: 10px; }
         .team-box {
-            flex: 1;
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 15px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            flex: 1; background: var(--glass); backdrop-filter: blur(10px);
+            border-radius: 15px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1);
         }
+        .team-name { color: var(--gold); font-weight: bold; padding: 5px; outline: none; border-bottom: 1px dashed var(--gold); }
+        .score { font-size: 3rem; font-weight: bold; margin: 10px 0; }
+        
+        /* کیبۆردی ناو ئەپ */
+        .numpad {
+            display: none; position: fixed; bottom: 0; width: 100%; background: rgba(0,0,0,0.9);
+            padding: 20px 0; grid-template-columns: repeat(3, 1fr); gap: 10px; justify-items: center; z-index: 100;
+        }
+        .numpad button {
+            width: 60px; height: 60px; border-radius: 50%; border: none; background: var(--gold);
+            color: black; font-size: 1.2rem; font-weight: bold;
+        }
+        .numpad .done-btn { background: #4caf50; color: white; grid-column: span 3; width: 80%; border-radius: 10px; height: 50px; }
 
-        /* ئێرە گرنگە بۆ ناو گۆڕین بە دەست لێدان */
-        .team-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--gold);
-            padding: 5px;
-            border-bottom: 1px dashed var(--gold);
-            cursor: pointer;
-            margin-bottom: 10px;
-            outline: none;
+        .btn-add-main { background: var(--gold); color: black; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; width: 100%; }
+        
+        /* پیرۆزبایی */
+        #win-screen {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 200; flex-direction: column; justify-content: center; align-items: center;
         }
-
-        .team-name:focus {
-            background: rgba(255,215,0,0.2);
-            border-radius: 5px;
-        }
-
-        .score {
-            font-size: 3.5rem;
-            margin: 10px 0;
-            font-weight: bold;
-        }
-
-        .btn-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        button {
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        .btn-add { background-color: var(--gold); color: var(--dark); }
-        .btn-sub { background-color: #ff5252; color: white; }
-        .btn-reset { 
-            margin-top: 30px; 
-            background: white; 
-            color: var(--dark); 
-            padding: 15px 40px;
-            font-size: 1rem;
-        }
-
-        /* پیرۆزبای و ئەنیمەیشن */
-        #winner-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .winner-text {
-            font-size: 2.5rem;
-            color: var(--gold);
-            text-align: center;
-            animation: bounce 1s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
+        .win-anim { font-size: 2rem; color: var(--gold); text-align: center; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% {scale: 1;} 50% {scale: 1.1;} 100% {scale: 1;} }
+        
+        .reset-btn { margin-top: 20px; background: white; color: black; border: none; padding: 10px 30px; border-radius: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>خاڵژمێری ئاوێزە</h1>
-        <small>بۆ ناو گۆڕین، دەست لە ناوی تیمەکە بدە</small>
-    </div>
+    <div class="header"><h1>خاڵژمێری ئاوێزە</h1></div>
 
     <div class="game-container">
         <div class="team-box">
-            <div class="team-name" contenteditable="true" id="name1">تیمی ١</div>
-            <div class="score" id="score1">0</div>
-            <div class="btn-group">
-                <button class="btn-add" onclick="addScore(1, 1)">+1</button>
-                <button class="btn-add" onclick="addScore(1, 5)">+5</button>
-                <button class="btn-sub" onclick="addScore(1, -1)">-1</button>
-                <button class="btn-add" onclick="customAdd(1)">+</button>
-            </div>
+            <div class="team-name" contenteditable="true" id="tn1">تیمی ١</div>
+            <div class="score" id="s1">0</div>
+            <button class="btn-add-main" onclick="openNumpad(1)">خاڵ زیادبکە +</button>
         </div>
-
         <div class="team-box">
-            <div class="team-name" contenteditable="true" id="name2">تیمی ٢</div>
-            <div class="score" id="score2">0</div>
-            <div class="btn-group">
-                <button class="btn-add" onclick="addScore(2, 1)">+1</button>
-                <button class="btn-add" onclick="addScore(2, 5)">+5</button>
-                <button class="btn-sub" onclick="addScore(2, -1)">-1</button>
-                <button class="btn-add" onclick="customAdd(2)">+</button>
-            </div>
+            <div class="team-name" contenteditable="true" id="tn2">تیمی ٢</div>
+            <div class="score" id="s2">0</div>
+            <button class="btn-add-main" onclick="openNumpad(2)">خاڵ زیادبکە +</button>
         </div>
     </div>
 
-    <button class="btn-reset" onclick="resetGame()">یاری نوێ 🔄</button>
+    <button class="reset-btn" onclick="resetGame()">یاری نوێ 🔄</button>
 
-    <div id="winner-overlay" onclick="this.style.display='none'">
-        <div class="winner-text" id="winner-msg">پیرۆزە!</div>
-        <p>بۆ گەڕانەوە دەست لە شاشەکە بدە</p>
+    <div id="numpad" class="numpad">
+        <button onclick="pressNum(1)">1</button><button onclick="pressNum(2)">2</button><button onclick="pressNum(3)">3</button>
+        <button onclick="pressNum(4)">4</button><button onclick="pressNum(5)">5</button><button onclick="pressNum(6)">6</button>
+        <button onclick="pressNum(7)">7</button><button onclick="pressNum(8)">8</button><button onclick="pressNum(9)">9</button>
+        <button onclick="pressNum(0)">0</button><button onclick="clearNum()" style="background:#ff5252; color:white;">C</button>
+        <button class="done-btn" onclick="closeNumpad()">تەواو (زیادکردنی <span id="temp-val">0</span> خاڵ)</button>
     </div>
 
-    <audio id="winSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"></audio>
+    <div id="win-screen" onclick="this.style.display='none'">
+        <div class="win-anim">🏆 پیرۆزە! <br> <span id="winner-name"></span> بردییەوە</div>
+        <button class="reset-btn">دەستپێکردنەوە</button>
+    </div>
 
     <script>
-        let s1 = 0, s2 = 0;
-        const winLimit = 101; // دەتوانیت بیگۆڕیت
+        let scores = {1: 0, 2: 0};
+        let activeTeam = 0;
+        let currentInput = "";
 
-        function addScore(team, val) {
-            if (team === 1) {
-                s1 = Math.max(0, s1 + val);
-                document.getElementById('score1').innerText = s1;
-                checkWinner(s1, document.getElementById('name1').innerText);
-            } else {
-                s2 = Math.max(0, s2 + val);
-                document.getElementById('score2').innerText = s2;
-                checkWinner(s2, document.getElementById('name2').innerText);
-            }
+        function openNumpad(team) {
+            activeTeam = team;
+            currentInput = "";
+            document.getElementById('temp-val').innerText = "0";
+            document.getElementById('numpad').style.display = 'grid';
         }
 
-        function customAdd(team) {
-            let p = prompt("چەند خاڵ زیاد دەکەیت؟");
-            if (p) addScore(team, parseInt(p));
+        function pressNum(n) {
+            currentInput += n;
+            document.getElementById('temp-val').innerText = currentInput;
+        }
+
+        function clearNum() {
+            currentInput = "";
+            document.getElementById('temp-val').innerText = "0";
+        }
+
+        function closeNumpad() {
+            let val = parseInt(currentInput) || 0;
+            if (val > 0) {
+                scores[activeTeam] += val;
+                document.getElementById('s' + activeTeam).innerText = scores[activeTeam];
+                checkWinner(scores[activeTeam], document.getElementById('tn' + activeTeam).innerText);
+            }
+            document.getElementById('numpad').style.display = 'none';
         }
 
         function checkWinner(score, name) {
-            if (score >= winLimit) {
-                document.getElementById('winner-msg').innerHTML = "🏆 پیرۆزبای بۆ <br>" + name;
-                document.getElementById('winner-overlay').style.display = 'flex';
-                document.getElementById('winSound').play();
+            if (score >= 101) {
+                document.getElementById('winner-name').innerText = name;
+                document.getElementById('win-screen').style.display = 'flex';
             }
         }
 
         function resetGame() {
-            s1 = 0; s2 = 0;
-            document.getElementById('score1').innerText = 0;
-            document.getElementById('score2').innerText = 0;
+            scores = {1: 0, 2: 0};
+            document.getElementById('s1').innerText = "0";
+            document.getElementById('s2').innerText = "0";
         }
     </script>
 </body>
