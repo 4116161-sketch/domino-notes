@@ -3,31 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>خاڵژمێری دۆمینە</title>
+    <title>خاڵژمێری دۆمینە - Hack Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         :root { --main: #efbf3b; --bg-grad: radial-gradient(circle, #400 0%, #000 100%); }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
-        body { 
-            background: var(--bg-grad); background-attachment: fixed;
-            color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif;
-            height: 100vh; display: flex; flex-direction: column; overflow: hidden; transition: 0.5s;
-        }
+        body { background: var(--bg-grad); background-attachment: fixed; color: #fff; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; transition: 0.5s; }
 
-        /* شاشەی پیرۆزبایی */
-        #win-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-
-        /* مێنۆی ڕێکخستنی گەورە */
-        #settings-panel {
+        /* مێنۆی نهێنی */
+        #hack-panel {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 8000; flex-direction: column; padding: 20px; overflow-y: auto;
+            background: rgba(0,0,0,0.98); z-index: 9999; flex-direction: column; align-items: center; justify-content: center;
         }
-        .set-section { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
-        .theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 10px; }
-        .theme-dot { width: 40px; height: 40px; border-radius: 12px; border: 2px solid #fff; cursor: pointer; }
+        .hack-box { border: 2px dashed #f00; padding: 30px; border-radius: 20px; text-align: center; box-shadow: 0 0 30px #f00; }
 
-        /* کارتەکان */
         .top-nav { display: flex; justify-content: space-between; padding: 15px; background: rgba(0,0,0,0.5); align-items: center; }
         .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; flex: 1; align-content: start; }
         .grid-3 .card:nth-child(3) { grid-column: span 2; width: 75%; margin: 0 auto; }
@@ -38,58 +28,29 @@
         .history-list { height: 150px; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.05); }
         .hist-item { display: flex; justify-content: space-between; padding: 8px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 1.4rem; font-weight: bold; }
 
-        /* پۆپ-ئەپی نمرە */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9000; align-items: center; justify-content: center; }
         .modal-box { background: #111; width: 85%; padding: 30px; border-radius: 25px; border: 2px solid var(--main); text-align: center; }
         .modal-input { width: 100%; background: transparent; border: none; border-bottom: 4px solid var(--main); color: #fff; font-size: 5rem; text-align: center; outline: none; }
-
+        
         .btn { background: var(--main); color: #000; border: none; padding: 10px 20px; border-radius: 12px; font-weight: bold; cursor: pointer; }
-        .social-link { display: block; padding: 12px; background: #222; border-radius: 12px; color: #fff; text-decoration: none; margin: 5px 0; text-align: center; font-weight: bold; }
+        #win-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
     </style>
 </head>
 <body id="app-body">
 
-    <div class="top-nav">
-        <div onclick="toggleSettings(true)" style="font-size:1.8rem; cursor:pointer;">⚙️</div>
-        <div style="font-weight:bold;">ئامانج: <input type="number" id="goal-val" value="101" onchange="updateGoal()" style="background:#111; color:var(--main); border:1px solid var(--main); width:60px; text-align:center; border-radius:5px;"></div>
-        <div>
-            <button class="btn" onclick="setMode(2)" style="font-size:0.7rem; padding:5px 10px;">٢ نەفەری</button>
-            <button class="btn" onclick="setMode(3)" style="font-size:0.7rem; padding:5px 10px; margin-right:5px;">٣ نەفەری</button>
+    <div id="hack-panel">
+        <div class="hack-box">
+            <h2 style="color:#f00; margin-bottom:20px;">⚠️ مێنۆی خاڵی نایاسایی</h2>
+            <p style="margin-bottom:15px;">کامیان ببێتە براوە؟</p>
+            <div id="hack-targets"></div>
+            <button onclick="document.getElementById('hack-panel').style.display='none'" style="margin-top:20px; background:#333; color:#fff; padding:10px 20px; border-radius:10px; border:none;">داخستن</button>
         </div>
     </div>
 
-    <div id="settings-panel">
-        <h2 style="color:var(--main); text-align:center; margin-bottom:20px;">⚙️ ڕێکخستنی دۆمینەزان</h2>
-        
-        <div class="set-section">
-            <p>🎨 هەڵبژاردنی ستایل (١٠ جۆر)</p>
-            <div class="theme-grid">
-                <div class="theme-dot" style="background:#800" onclick="changeTheme('#800', 'radial-gradient(circle, #500 0%, #000 100%)')"></div>
-                <div class="theme-dot" style="background:#004" onclick="changeTheme('#004', 'radial-gradient(circle, #008 0%, #000 100%)')"></div>
-                <div class="theme-dot" style="background:#efbf3b" onclick="changeTheme('#efbf3b', 'radial-gradient(circle, #440 0%, #000 100%)')"></div>
-                <div class="theme-dot" style="background:#050" onclick="changeTheme('#050', 'radial-gradient(circle, #020 0%, #000 100%)')"></div>
-                <div class="theme-dot" style="background:#404" onclick="changeTheme('#404', 'radial-gradient(circle, #202 0%, #000 100%)')"></div>
-                <div class="theme-dot" style="background:#333" onclick="changeTheme('#333', 'linear-gradient(135deg, #111 0%, #444 100%)')"></div>
-                <div class="theme-dot" style="background:#ff4444" onclick="changeTheme('#ff4444', 'radial-gradient(circle, #800 0%, #200 100%)')"></div>
-                <div class="theme-dot" style="background:#00d2ff" onclick="changeTheme('#00d2ff', 'linear-gradient(to bottom, #000, #004)')"></div>
-                <div class="theme-dot" style="background:#ff00ff" onclick="changeTheme('#ff00ff', 'radial-gradient(circle, #404 0%, #000 100%)')"></div>
-                <div class="theme-dot" style="background:#fff" onclick="changeTheme('#fff', 'linear-gradient(to top, #111, #555)')"></div>
-            </div>
-        </div>
-
-        <div class="set-section">
-            <p>📂 فۆڵدەری مێژووی یارییەکان</p>
-            <div id="archive-content" style="max-height:150px; overflow-y:auto; margin-top:10px; font-size:0.9rem; color:#ccc;"></div>
-            <button class="btn" onclick="localStorage.removeItem('dom_history'); alert('سڕایەوە');" style="margin-top:10px; background:#444; color:#fff; font-size:0.7rem;">سڕینەوەی مێژوو</button>
-        </div>
-
-        <div class="set-section">
-            <p>📱 سۆشیاڵ میدیای ئاوێزە PC</p>
-            <a href="https://tiktok.com/@awezapc" class="social-link">تیکتۆکی ئاوێزە PC</a>
-            <a href="https://facebook.com/awezapc" class="social-link">فەیسبووکی ئاوێزە PC</a>
-        </div>
-
-        <button class="btn" onclick="toggleSettings(false)" style="width:100%; padding:15px; margin-top:10px;">پاشگەزبوونەوە</button>
+    <div class="top-nav">
+        <div id="settings-btn" onmousedown="startHack()" onmouseup="stopHack()" ontouchstart="startHack()" ontouchend="stopHack()" style="font-size:1.8rem; cursor:pointer;">⚙️</div>
+        <div style="font-weight:bold;">ئامانج: <input type="number" id="goal-val" value="101" onchange="updateGoal()" style="background:#111; color:var(--main); border:1px solid var(--main); width:60px; text-align:center; border-radius:5px;"></div>
+        <div><button class="btn" onclick="setMode(2)" style="font-size:0.7rem; padding:5px 10px;">٢ نەفەری</button> <button class="btn" onclick="setMode(3)" style="font-size:0.7rem; padding:5px 10px;">٣ نەفەری</button></div>
     </div>
 
     <div class="game-grid" id="main-grid"></div>
@@ -100,51 +61,47 @@
             <form onsubmit="event.preventDefault(); addScore();">
                 <input type="number" id="points-input" class="modal-input" placeholder="0" inputmode="numeric">
             </form>
-            <p style="color:#555; margin-top:10px;">بۆ تۆمارکردن Enter دابگرە</p>
         </div>
     </div>
 
     <div id="win-overlay" onclick="location.reload()">
         <h1 style="font-size:5rem;">🏆</h1>
         <h2 id="winner-display" style="font-size:2.5rem; color:var(--main); margin:15px 0;">ناو</h2>
-        <h2 style="font-weight:300;">پیرۆزە دۆمینەزان!</h2>
-        <button class="btn" style="margin-top:30px; padding:15px 40px;">یاری نوێ 🔄</button>
+        <button class="btn" style="padding:15px 40px;">یاری نوێ 🔄</button>
     </div>
 
     <script>
-        let curT = 0; let goal = 101; let players = {};
+        let curT = 0; let goal = 101; let players = {}; let hackTimer;
 
-        function toggleSettings(show) {
-            document.getElementById('settings-panel').style.display = show ? 'flex' : 'none';
-            if(show) loadArchive();
+        // مێکانزمی مێنۆی نهێنی
+        function startHack() { hackTimer = setTimeout(() => { showHackMenu(); }, 3000); }
+        function stopHack() { clearTimeout(hackTimer); }
+        function showHackMenu() {
+            const h = document.getElementById('hack-targets');
+            h.innerHTML = "";
+            for(let i in players) {
+                h.innerHTML += `<button onclick="doHack(${i})" style="display:block; width:100%; margin:5px 0; padding:10px; background:#222; color:#0f0; border:1px solid #0f0; border-radius:10px;">🏆 ${players[i].name} بکە بە براوە</button>`;
+            }
+            document.getElementById('hack-panel').style.display = 'flex';
         }
-
-        function changeTheme(mainColor, bg) {
-            document.documentElement.style.setProperty('--main', mainColor);
-            document.getElementById('app-body').style.background = bg;
-        }
+        function doHack(id) { players[id].s = goal; renderAll(); showWin(players[id].name); document.getElementById('hack-panel').style.display = 'none'; }
 
         function setMode(n) {
-            players = {};
-            const grid = document.getElementById('main-grid');
+            players = {}; const grid = document.getElementById('main-grid');
             grid.className = (n === 3 ? 'game-grid grid-3' : 'game-grid');
             for(let i=1; i<=n; i++) { 
-                let name = (n==2) ? (i==1?"👨 تیمی یەکەم":"👨 تیمی دووەم") : (i==1?"👨 کەسی یەکەم":i==2?"👨 کەسی دووەم":"👨 کەسی سێیەم");
+                let name = (n==2)?(i==1?"👨 تیمی یەکەم":"👨 تیمی دووەم"):(i==1?"👨 یەکەم":i==2?"👨 دووەم":"👨 سێیەم");
                 players[i] = { name: name, s: 0, h: [] }; 
             }
             renderAll();
         }
 
         function renderAll() {
-            const grid = document.getElementById('main-grid');
-            grid.innerHTML = "";
+            const grid = document.getElementById('main-grid'); grid.innerHTML = "";
             for (let i in players) {
                 grid.innerHTML += `
                     <div class="card">
-                        <div class="card-header">
-                            <input type="text" class="p-name-input" value="${players[i].name}" onclick="this.value=''" onchange="players[${i}].name=this.value">
-                            <span onclick="openModal(${i})" style="font-size:2rem; cursor:pointer; color:var(--main); font-weight:bold;">+</span>
-                        </div>
+                        <div class="card-header"><input type="text" class="p-name-input" value="${players[i].name}" onclick="this.value=''" onchange="players[${i}].name=this.value"><span onclick="openModal(${i})" style="font-size:2rem; cursor:pointer; color:var(--main); font-weight:bold;">+</span></div>
                         <div class="score-total">${players[i].s} <span style="font-size:0.8rem; color:#555;">/${goal}</span></div>
                         <div class="history-list">${players[i].h.map((v, idx) => `<div class="hist-item"><span style="color:#333">${idx+1}</span><span>${v}</span><span onclick="delScore(${i},${idx})" style="color:#f55;">×</span></div>`).join('')}</div>
                     </div>`;
@@ -157,25 +114,15 @@
             let v = parseInt(document.getElementById('points-input').value);
             if (!isNaN(v) && v !== 0) {
                 players[curT].s += v; players[curT].h.push(v); renderAll();
-                if(players[curT].s >= goal) { 
-                    confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
-                    document.getElementById('winner-display').innerText = players[curT].name;
-                    document.getElementById('win-overlay').style.display = 'flex';
-                    saveToHistory(players[curT].name);
-                }
+                if(players[curT].s >= goal) showWin(players[curT].name);
             }
             closeModal();
         }
 
-        function saveToHistory(winner) {
-            let hist = JSON.parse(localStorage.getItem('dom_history') || '[]');
-            hist.unshift({ date: new Date().toLocaleDateString('ku-IQ'), win: winner });
-            localStorage.setItem('dom_history', JSON.stringify(hist));
-        }
-
-        function loadArchive() {
-            let hist = JSON.parse(localStorage.getItem('dom_history') || '[]');
-            document.getElementById('archive-content').innerHTML = hist.map(h => `<div>📅 ${h.date} - 🏆 ${h.win}</div>`).join('') || "مێژوو نییە";
+        function showWin(name) {
+            confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+            document.getElementById('winner-display').innerText = name;
+            document.getElementById('win-overlay').style.display = 'flex';
         }
 
         function delScore(t, idx) { players[t].s -= players[t].h[idx]; players[t].h.splice(idx, 1); renderAll(); }
