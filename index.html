@@ -6,72 +6,91 @@
     <title>خاڵژمێری دۆمینە</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
+        :root { --gold: #efbf3b; --red: #800; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
         body { 
-            background: #000 radial-gradient(circle at center, #600 0%, #000 100%);
-            color: #fff; font-family: 'Segoe UI', sans-serif;
+            background: #000 radial-gradient(circle at center, #400 0%, #000 100%);
+            color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif;
             height: 100vh; display: flex; flex-direction: column; overflow: hidden;
         }
 
-        /* شاشەی پیرۆزبایی */
+        /* ١. دیزاینی شاشەی سەرەتا (Splash Screen) */
+        #splash {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; z-index: 9999;
+            transition: opacity 1s ease;
+        }
+        .splash-content { text-align: center; animation: zoomIn 1s ease; }
+        .splash-title { font-size: 2.8rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 20px rgba(239,191,59,0.5); margin-bottom: 10px; }
+        .splash-sub { font-size: 1rem; color: #aaa; letter-spacing: 1px; }
+        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* ٢. شاشەی پیرۆزبایی */
         #win-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); z-index: 10000; flex-direction: column; 
             align-items: center; justify-content: center; text-align: center;
         }
 
-        /* سەرەوە */
-        .top-nav { display: flex; justify-content: space-between; padding: 10px; background: rgba(0,0,0,0.6); align-items: center; border-bottom: 1px solid #400; }
-        .goal-input { background: #111; border: 1px solid #efbf3b; color: #efbf3b; width: 60px; text-align: center; border-radius: 5px; font-weight: bold; }
+        /* ٣. بەشەکانی تری ئەپەکە */
+        .top-nav { display: flex; justify-content: space-between; padding: 12px; background: rgba(0,0,0,0.7); align-items: center; border-bottom: 1px solid #300; }
+        .goal-input { background: #111; border: 1px solid var(--gold); color: var(--gold); width: 65px; text-align: center; border-radius: 8px; font-weight: bold; padding: 4px; }
 
-        /* کارتە بچووکەکان */
         .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; flex: 1; align-content: start; overflow-y: auto; }
-        .grid-3 .card:nth-child(3) { grid-column: span 2; width: 70%; margin: 0 auto; }
+        .grid-3 .card:nth-child(3) { grid-column: span 2; width: 75%; margin: 0 auto; }
 
-        .card { background: rgba(255,255,255,0.05); border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
-        .card-header { background: #800; padding: 6px; text-align: center; border-radius: 15px 15px 0 0; }
-        .p-name { font-weight: bold; color: #fff; font-size: 0.9rem; }
+        .card { background: rgba(255,255,255,0.05); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+        .card-header { background: var(--red); padding: 8px; text-align: center; border-radius: 20px 20px 0 0; }
+        .p-name { font-weight: bold; color: #fff; font-size: 0.95rem; }
         
-        .score-total { font-size: 2.8rem; font-weight: bold; text-align: center; margin: 5px 0; }
+        .score-total { font-size: 3.2rem; font-weight: 900; text-align: center; margin: 8px 0; }
         
-        /* مێژووی خاڵەکان (بۆشایی کەم) */
-        .history-list { height: 130px; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.05); }
-        .hist-item { display: flex; justify-content: space-between; padding: 6px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 1.3rem; font-weight: bold; }
-        .btn-del { color: #ff5252; cursor: pointer; }
-        .plus-btn { font-size: 2rem; color: #efbf3b; cursor: pointer; font-weight: bold; margin-top: 2px; }
+        .history-list { height: 140px; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.05); }
+        .hist-item { display: flex; justify-content: space-between; padding: 8px 18px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 1.4rem; font-weight: bold; background: rgba(255,255,255,0.01); }
+        .btn-del { color: #ff5252; cursor: pointer; font-size: 1.5rem; }
+        .plus-btn { font-size: 2.2rem; color: var(--gold); cursor: pointer; font-weight: bold; display: block; margin-top: 2px; }
 
-        /* پەنجەرەی خاڵ (Popup) */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; align-items: center; justify-content: center; }
-        .modal-box { background: #111; width: 85%; padding: 25px; border-radius: 20px; border: 2px solid #800; text-align: center; }
-        .modal-input { width: 100%; background: transparent; border: none; border-bottom: 3px solid #800; color: #fff; font-size: 4rem; text-align: center; outline: none; margin: 15px 0; }
+        /* مۆداڵی نمرە */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 5000; align-items: center; justify-content: center; }
+        .modal-box { background: #111; width: 85%; padding: 30px; border-radius: 25px; border: 2px solid var(--red); text-align: center; }
+        .modal-input { width: 100%; background: transparent; border: none; border-bottom: 4px solid var(--red); color: #fff; font-size: 5rem; text-align: center; outline: none; margin: 20px 0; }
 
-        /* ئەرشیف */
-        #archive-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 6000; padding: 20px; flex-direction: column; }
-        .archive-item { background: #1a1a1a; margin-bottom: 8px; padding: 12px; border-radius: 10px; border-right: 4px solid #efbf3b; }
+        .mode-btn { background: #222; border: none; color: #fff; padding: 6px 12px; border-radius: 10px; font-size: 0.85rem; transition: 0.3s; }
+        .active-mode { background: var(--gold); color: #000; font-weight: bold; }
 
-        .mode-btn { background: #222; border: none; color: #fff; padding: 5px 10px; border-radius: 8px; font-size: 0.8rem; }
+        #archive-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 6000; padding: 25px; flex-direction: column; }
+        .archive-item { background: #111; margin-bottom: 10px; padding: 15px; border-radius: 15px; border-right: 5px solid var(--gold); }
     </style>
 </head>
 <body>
 
+    <div id="splash">
+        <div class="splash-content">
+            <h1 class="splash-title">خاڵژمێری دۆمینە</h1>
+            <p class="splash-sub">تۆمارکردنی خاڵی یاری دۆمینە</p>
+            <div style="margin-top:30px; color:#333; font-size:0.8rem;">Aweza PC</div>
+        </div>
+    </div>
+
     <div id="win-overlay" onclick="location.reload()">
         <div style="text-align: center;">
-            <h1 style="font-size: 4rem;">🏆</h1>
-            <h2 id="winner-display" style="font-size: 2rem; margin: 15px 0;">ناو</h2>
-            <p>پیرۆزە دۆمینەزان!</p>
-            <button style="margin-top:30px; background:#efbf3b; color:#000; border:none; padding:12px 30px; border-radius:15px; font-weight:bold;">یاری نوێ</button>
+            <h1 style="font-size: 5rem;">🏆</h1>
+            <h2 id="winner-display" style="font-size: 2.5rem; color:var(--gold); margin: 15px 0;">ناو</h2>
+            <h2 style="font-weight: 300;">پیرۆزە! تۆ دۆمینەزانی</h2>
+            <button style="margin-top:40px; background:var(--gold); color:#000; border:none; padding:15px 50px; border-radius:20px; font-weight:bold; font-size:1.2rem;">یاری نوێ 🔄</button>
         </div>
     </div>
 
     <div id="archive-modal">
-        <h2 style="color:#efbf3b; text-align:center; margin-bottom:15px;">📂 فۆڵدەری ئەرشیف</h2>
+        <h2 style="color:var(--gold); text-align:center; margin-bottom:20px;">📂 فۆڵدەری ئەرشیف</h2>
         <div id="archive-list" style="overflow-y:auto; flex:1;"></div>
-        <button onclick="document.getElementById('archive-modal').style.display='none'" style="background:#444; color:#fff; padding:12px; border-radius:10px; border:none; margin-top:10px;">داخستن</button>
+        <button onclick="document.getElementById('archive-modal').style.display='none'" style="background:#333; color:#fff; padding:15px; border-radius:15px; border:none; margin-top:15px; font-weight:bold;">داخستن</button>
     </div>
 
     <div class="top-nav">
-        <div onclick="showArchive()" style="cursor:pointer; font-weight:bold; font-size:0.9rem;">⚙️ ڕێکخستن</div>
+        <div onclick="showArchive()" style="cursor:pointer; font-weight:bold; color:var(--gold);">⚙️ مێژوو</div>
         <div style="font-size:0.9rem;">ئامانج: <input type="number" id="goal-val" class="goal-input" value="101" onchange="updateGoal()"></div>
         <div>
             <button class="mode-btn" id="btn-2" onclick="setMode(2)">٢ نەفەری</button>
@@ -83,34 +102,45 @@
 
     <div id="score-modal" class="modal">
         <div class="modal-box">
-            <h2 id="modal-title" style="color:#efbf3b; font-size:1.2rem;">ناو</h2>
+            <h2 id="modal-title" style="color:var(--gold);">ناو</h2>
             <form onsubmit="event.preventDefault(); addScore();">
-                <input type="number" id="points-input" class="modal-input" placeholder="0" inputmode="numeric" autofocus>
+                <input type="number" id="points-input" class="modal-input" placeholder="0" inputmode="numeric">
             </form>
-            <p style="color:#666; font-size:0.8rem;">بۆ تۆمارکردن 'Enter' دابگرە</p>
+            <p style="color:#555;">بۆ تۆمارکردن 'Enter' دابگرە</p>
         </div>
     </div>
 
     <script>
+        // چالاککردنی Splash Screen بۆ ٢ چرکە
+        window.onload = function() {
+            setTimeout(function() {
+                const s = document.getElementById('splash');
+                s.style.opacity = '0';
+                setTimeout(() => s.style.display = 'none', 1000);
+            }, 2000);
+        };
+
+        // پەیامی دەرچوون (Back Button)
+        window.addEventListener('popstate', function() {
+            if(confirm("ئایا دڵنیای بۆ دەرچوون لە خاڵژمێری دۆمینە؟")) { window.close(); }
+            history.pushState(null, null, null);
+        });
+        history.pushState(null, null, null);
+
         let curT = 0; let goal = 101;
         let players = {};
 
         function setMode(n) {
             players = {};
             const grid = document.getElementById('main-grid');
-            if(n === 3) grid.classList.add('grid-3'); else grid.classList.remove('grid-3');
+            grid.className = (n === 3 ? 'game-grid grid-3' : 'game-grid');
             
             for(let i=1; i<=n; i++) { 
-                let name;
-                if(n == 2) {
-                    name = (i==1 ? "تیمی یەکەم 👨" : "تیمی دووەم 👨");
-                } else {
-                    name = (i==1 ? "کەسی یەکەم 👨" : i==2 ? "کەسی دووەم 👨" : "کەسی سێیەم 👨");
-                }
+                let name = (n == 2) ? (i==1 ? "تیمی یەکەم 👨" : "تیمی دووەم 👨") : (i==1 ? "کەسی یەکەم 👨" : i==2 ? "کەسی دووەم 👨" : "کەسی سێیەم 👨");
                 players[i] = { name: name, s: 0, h: [] }; 
             }
-            document.getElementById('btn-2').style.background = (n==2 ? '#800' : '#222');
-            document.getElementById('btn-3').style.background = (n==3 ? '#800' : '#222');
+            document.getElementById('btn-2').className = (n==2 ? 'mode-btn active-mode' : 'mode-btn');
+            document.getElementById('btn-3').className = (n==3 ? 'mode-btn active-mode' : 'mode-btn');
             renderAll();
         }
 
@@ -124,9 +154,9 @@
                     <div class="card">
                         <div class="card-header">
                             <span class="p-name">${players[i].name}</span><br>
-                            <div class="plus-btn" onclick="openModal(${i})">+</div>
+                            <span class="plus-btn" onclick="openModal(${i})">+</span>
                         </div>
-                        <div class="score-total">${players[i].s} <span style="font-size:0.8rem; color:#888;">/${goal}</span></div>
+                        <div class="score-total">${players[i].s} <span style="font-size:0.8rem; color:#666;">/${goal}</span></div>
                         <div class="history-list">
                             ${players[i].h.map((val, idx) => `
                                 <div class="hist-item">
@@ -162,24 +192,24 @@
 
         function showWin(name) {
             saveToArchive(name);
-            if (navigator.vibrate) navigator.vibrate([800, 200, 800]); 
+            if (navigator.vibrate) navigator.vibrate([1000, 200, 1000]); 
             confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
             document.getElementById('winner-display').innerText = name;
             document.getElementById('win-overlay').style.display = 'flex';
         }
 
         function saveToArchive(winner) {
-            let arch = JSON.parse(localStorage.getItem('d_arch') || '[]');
-            arch.unshift({ date: new Date().toLocaleDateString('ku-IQ'), winner: winner });
-            localStorage.setItem('d_arch', JSON.stringify(arch));
+            let arch = JSON.parse(localStorage.getItem('dom_arch') || '[]');
+            arch.unshift({ date: new Date().toLocaleDateString('ku-IQ'), time: new Date().toLocaleTimeString('ku-IQ'), winner: winner });
+            localStorage.setItem('dom_arch', JSON.stringify(arch));
         }
 
         function showArchive() {
             const list = document.getElementById('archive-list');
-            const arch = JSON.parse(localStorage.getItem('d_arch') || '[]');
-            list.innerHTML = arch.length ? "" : "<p style='text-align:center;color:#444'>خاڵی پارێزراو نییە</p>";
+            const arch = JSON.parse(localStorage.getItem('dom_arch') || '[]');
+            list.innerHTML = arch.length ? "" : "<p style='text-align:center;color:#444'>مێژوو نییە</p>";
             arch.forEach(i => {
-                list.innerHTML += `<div class="archive-item"><small>📅 ${i.date}</small><br>🏆 <b>${i.winner}</b></div>`;
+                list.innerHTML += `<div class="archive-item"><small style="color:#666">📅 ${i.date} - ${i.time}</small><br>🏆 <b>${i.winner}</b></div>`;
             });
             document.getElementById('archive-modal').style.display = 'flex';
         }
