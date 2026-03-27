@@ -6,96 +6,96 @@
     <title>دۆمینەزان - ئاوێزە PC</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        :root { 
-            --gold: #efbf3b; 
-            --bg: #000000; 
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --border: rgba(239, 191, 59, 0.3);
-        }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root { --gold: #efbf3b; --bg: #000; --card: #121212; --border: rgba(239, 191, 59, 0.2); }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
         body {
-            background-color: var(--bg);
-            color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif;
-            margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+            background-color: var(--bg); color: #fff; font-family: sans-serif;
+            height: 100vh; display: flex; flex-direction: column; overflow: hidden;
         }
 
-        /* بەشی سەرەوە */
+        /* سەرەوە */
         .header {
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 20px; border-bottom: 1px solid var(--border);
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+            padding: 15px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; background: #080808;
         }
-        .logo { font-size: 1.6rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 15px rgba(239,191,59,0.5); }
-        .folder-btn { background: var(--card-bg); border: 1px solid var(--border); color: #fff; padding: 10px 15px; border-radius: 12px; font-size: 0.9rem; }
+        .logo { font-size: 1.3rem; font-weight: bold; color: var(--gold); }
 
-        /* مۆدەکان */
-        .modes { display: flex; gap: 10px; justify-content: center; margin: 15px 0; }
-        .m-btn { background: transparent; color: #666; border: 1px solid #222; padding: 8px 20px; border-radius: 20px; transition: 0.3s; }
-        .m-active { background: var(--gold); color: #000; border: none; font-weight: bold; box-shadow: 0 0 15px var(--gold); }
+        /* مۆدی ٢ و ٣ و ٤ */
+        .mode-bar { display: flex; gap: 8px; justify-content: center; padding: 10px; }
+        .m-btn { 
+            background: #1a1a1a; color: #666; border: 1px solid #333; 
+            padding: 6px 12px; border-radius: 12px; font-size: 0.8rem; 
+        }
+        .m-active { background: var(--gold); color: #000; border: none; font-weight: bold; }
 
-        /* کارتەکانی یاری */
-        .grid { display: flex; gap: 12px; flex: 1; overflow-x: auto; padding: 10px 15px; align-items: stretch; }
+        /* کارتەکان - لێرە بۆشاییەکەمان بچووک کردۆتەوە */
+        .game-grid {
+            display: flex; gap: 8px; flex: 1; overflow-x: auto; 
+            padding: 5px 10px; align-items: stretch; scroll-snap-type: x mandatory;
+        }
         .card {
-            min-width: 170px; flex: 1; background: var(--card-bg); border-radius: 30px;
+            min-width: 145px; /* بچووککردنەوەی پانی کارتەکە بۆ مۆبایل */
+            flex: 1; background: var(--card); border-radius: 20px;
             border: 1px solid var(--border); display: flex; flex-direction: column; 
-            align-items: center; padding: 25px 10px; position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 15px 5px; scroll-snap-align: start;
         }
 
         .p-name { 
-            background: transparent; border: none; color: var(--gold); font-size: 1.2rem; 
-            font-weight: bold; text-align: center; width: 90%; outline: none; border-bottom: 1px solid rgba(239,191,59,0.1);
+            background: transparent; border: none; color: var(--gold); 
+            text-align: center; font-size: 1rem; width: 100%; outline: none; margin-bottom: 10px;
         }
-        .p-score { font-size: 5rem; font-weight: 900; margin: 10px 0; color: #fff; }
+        .p-score { font-size: 3.5rem; font-weight: 900; text-align: center; margin: 5px 0; color: #fff; }
         
-        /* مێژووی ناو کارتەکە */
-        .hist-view { flex: 1; width: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; margin-bottom: 15px; }
-        .hist-num { background: rgba(255,255,255,0.03); padding: 5px; border-radius: 8px; text-align: center; color: #888; }
+        /* لیستی خاڵەکان و دوگمەی سڕینەوە */
+        .hist-container { flex: 1; overflow-y: auto; width: 100%; padding: 5px; }
+        .hist-row { 
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.03); margin-bottom: 4px; padding: 4px 8px; border-radius: 6px;
+        }
+        .del-item { color: #ff5252; font-size: 0.7rem; font-weight: bold; padding: 2px 5px; }
 
-        /* دوگمەی پڵەس */
+        /* دوگمەی + */
         .add-btn {
-            background: var(--gold); color: #000; width: 70px; height: 70px; 
-            border-radius: 22px; border: none; font-size: 2.5rem; font-weight: bold;
-            box-shadow: 0 0 20px rgba(239,191,59,0.4);
+            background: var(--gold); color: #000; width: 55px; height: 55px; 
+            border-radius: 18px; border: none; font-size: 2rem; font-weight: bold;
+            margin: 10px auto 0 auto; display: block; box-shadow: 0 4px 15px rgba(239,191,59,0.3);
         }
 
         /* کیبۆرد */
         .numpad {
             display: none; position: fixed; bottom: 0; left: 0; width: 100%; 
-            background: #0a0a0a; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 25px; 
-            z-index: 5000; border-top: 2px solid var(--gold); border-radius: 35px 35px 0 0;
+            background: #111; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 15px; 
+            z-index: 5000; border-top: 2px solid var(--gold); border-radius: 25px 25px 0 0;
         }
-        .n-key { background: #1a1a1a; color: #fff; border: none; padding: 20px; font-size: 1.6rem; border-radius: 15px; font-weight: bold; }
+        .n-key { background: #222; color: #fff; border: none; padding: 15px; font-size: 1.4rem; border-radius: 12px; }
         .n-ok { background: var(--gold) !important; color: #000 !important; grid-column: span 2; }
 
-        /* ئەرشیف */
-        #archive {
+        /* ڕێکخستنی مێژوو (فۆڵدەر) */
+        #arch-panel {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 6000; padding: 25px;
+            background: #000; z-index: 6000; padding: 20px;
         }
-        .arch-card { background: #111; border-radius: 20px; padding: 15px; margin-bottom: 15px; border-right: 5px solid var(--gold); }
     </style>
 </head>
 <body>
 
     <div class="header">
         <div class="logo">دۆمینەزان 💎</div>
-        <button class="folder-btn" onclick="toggleArch()">📁 مێژوو</button>
+        <button onclick="toggleArch()" style="background:none; border:1px solid #333; color:#888; padding:5px 10px; border-radius:8px; font-size:0.8rem;">📁 مێژوو</button>
     </div>
 
-    <div class="modes">
+    <div class="mode-bar">
         <button class="m-btn m-active" id="m2" onclick="setMode(2)">٢ نەفەری</button>
         <button class="m-btn" id="m3" onclick="setMode(3)">٣ نەفەری</button>
         <button class="m-btn" id="m4" onclick="setMode(4)">٤ نەفەری</button>
     </div>
 
-    <div class="grid" id="main-grid">
+    <div class="game-grid" id="main-grid">
         </div>
 
-    <div style="padding: 15px; text-align: center;">
-        <button onclick="location.reload()" style="background:none; border:none; color:#444; font-size:0.9rem;">🔄 دەستپێکردنەوەی یاری</button>
+    <div style="padding: 10px; text-align: center;">
+        <button onclick="location.reload()" style="color:#444; background:none; border:none; font-size:0.8rem;">🔄 دەستپێکردنەوە</button>
     </div>
 
     <div id="keypad" class="numpad">
@@ -105,10 +105,10 @@
         <button class="n-key" style="background:#333" onclick="ck()">✖</button><button class="n-key" onclick="pk(0)">0</button><button class="n-key n-ok" onclick="dk()">تەواو ✅</button>
     </div>
 
-    <div id="archive">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
-            <h2 style="color:var(--gold)">📂 ئەرشیفی یارییەکان</h2>
-            <button onclick="toggleArch()" style="background:var(--gold); border:none; padding:8px 20px; border-radius:10px; font-weight:bold;">داخستن</button>
+    <div id="arch-panel">
+        <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+            <h3 style="color:var(--gold)">📂 ئەرشیفی یارییەکان</h3>
+            <button onclick="toggleArch()" style="color:white; background:none; border:none;">داخستن ×</button>
         </div>
         <div id="arch-list" style="overflow-y:auto; max-height:80vh;"></div>
     </div>
@@ -127,10 +127,25 @@
                     <div class="card">
                         <input type="text" class="p-name" id="n${i}" value="تیمی ${i}">
                         <div class="p-score" id="s${i}">${data[i].s}</div>
-                        <div class="hist-view" id="h${i}">${data[i].h.map(x=>`<div class="hist-num">${x}</div>`).join('')}</div>
+                        <div class="hist-container" id="h${i}">${renderHist(i)}</div>
                         <button class="add-btn" onclick="openK(${i})">+</button>
                     </div>`;
             }
+        }
+
+        function renderHist(t) {
+            return data[t].h.map((val, idx) => `
+                <div class="hist-row">
+                    <span>${val}</span>
+                    <span class="del-item" onclick="deleteScore(${t}, ${idx})">سڕینەوە</span>
+                </div>`).join('');
+        }
+
+        function deleteScore(t, idx) {
+            data[t].s -= data[t].h[idx];
+            data[t].h.splice(idx, 1);
+            document.getElementById('s'+t).innerText = data[t].s;
+            document.getElementById('h'+t).innerHTML = renderHist(t);
         }
 
         function openK(t) { curT = t; curI = ""; document.getElementById('keypad').style.display = 'grid'; }
@@ -143,12 +158,11 @@
                 data[curT].s += v;
                 data[curT].h.push(v);
                 document.getElementById('s'+curT).innerText = data[curT].s;
-                document.getElementById('h'+curT).innerHTML = data[curT].h.map(x=>`<div class="hist-num">${x}</div>`).join('');
+                document.getElementById('h'+curT).innerHTML = renderHist(curT);
                 if(data[curT].s >= 101) {
                     confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-                    let name = document.getElementById('n'+curT).value;
-                    saveToLog(name);
-                    setTimeout(() => { alert("🏆 پیرۆزە! " + name + " بردییەوە"); location.reload(); }, 500);
+                    saveToLog(document.getElementById('n'+curT).value);
+                    setTimeout(() => { alert("🏆 پیرۆزە!"); location.reload(); }, 500);
                 }
             }
             ck();
@@ -161,15 +175,11 @@
         }
 
         function toggleArch() {
-            const p = document.getElementById('archive');
+            const p = document.getElementById('arch-panel');
             p.style.display = p.style.display === 'block' ? 'none' : 'block';
             if(p.style.display === 'block') {
                 let logs = JSON.parse(localStorage.getItem('dz_logs') || '[]');
-                document.getElementById('arch-list').innerHTML = logs.map(l => `
-                    <div class="arch-card">
-                        <div style="color:#666; font-size:0.8rem;">📅 ${l.date}</div>
-                        <div style="color:var(--gold); font-weight:bold; margin-top:5px;">🏆 براوە: ${l.win}</div>
-                    </div>`).join('');
+                document.getElementById('arch-list').innerHTML = logs.map(l => `<div style="background:#111; padding:10px; border-radius:10px; margin-bottom:10px; border-right:4px solid var(--gold);">📅 ${l.date}<br>🏆 ${l.win}</div>`).join('');
             }
         }
 
