@@ -3,61 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>خاڵژمێری دۆمینە - Diamond</title>
+    <title>خاڵژمێری دۆمینە</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --gold: #efbf3b; --red: #800; }
+        :root { --main: #efbf3b; --bg: radial-gradient(circle, #400 0%, #000 100%); }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
         body { 
-            background: #000 radial-gradient(circle at center, #400 0%, #000 100%);
+            background: var(--bg); background-attachment: fixed;
             color: #fff; font-family: 'Segoe UI', sans-serif;
-            height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+            height: 100vh; display: flex; flex-direction: column; overflow: hidden; transition: 0.5s;
         }
 
-        /* سەرەوەی ئەپەکە */
-        .top-nav { display: flex; justify-content: space-between; padding: 12px; background: rgba(0,0,0,0.7); align-items: center; border-bottom: 1px solid #300; }
-        
-        /* تایمەر لە شوێنێکی جوان */
-        #game-timer { font-family: monospace; color: var(--gold); background: #111; padding: 4px 10px; border-radius: 8px; border: 1px solid #333; font-weight: bold; }
+        /* مێنۆی ڕێکخستن */
+        #settings-panel {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.96); z-index: 8000; flex-direction: column; padding: 25px; overflow-y: auto;
+        }
+        .set-section { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 10px; }
+        .theme-dot { width: 35px; height: 35px; border-radius: 10px; border: 2px solid #fff; cursor: pointer; }
 
+        /* سەرەوە */
+        .top-nav { display: flex; justify-content: space-between; padding: 12px; background: rgba(0,0,0,0.6); align-items: center; border-bottom: 1px solid #300; }
+        
+        /* ستایلی تایمەر و دوگمەی ڕاگرتن */
+        #game-timer { 
+            font-family: monospace; color: var(--main); background: #111; 
+            padding: 4px 12px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; 
+            cursor: pointer; border: 1px solid #333; transition: 0.3s;
+        }
+        .timer-paused { color: #f55 !important; border-color: #f55 !important; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+
+        /* کارتەکان */
         .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; flex: 1; align-content: start; }
         .grid-3 .card:nth-child(3) { grid-column: span 2; width: 75%; margin: 0 auto; }
-
-        .card { background: rgba(255,255,255,0.06); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; backdrop-filter: blur(10px); }
-        .card-header { background: var(--red); padding: 10px; text-align: center; border-radius: 20px 20px 0 0; }
-        
+        .card { background: rgba(255,255,255,0.06); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding-bottom: 10px; }
+        .card-header { background: rgba(255,255,255,0.1); padding: 10px; text-align: center; border-radius: 20px 20px 0 0; }
         .p-name-input { background: transparent; border: none; color: #fff; font-weight: bold; text-align: center; width: 100%; outline: none; font-size: 1rem; }
         
-        .score-total { font-size: 3.2rem; font-weight: 900; text-align: center; margin: 8px 0; }
-        .history-list { height: 150px; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.05); }
+        .score-total { font-size: 3.2rem; font-weight: 900; text-align: center; margin: 5px 0; }
+        .history-list { height: 140px; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.05); }
         .hist-item { display: flex; justify-content: space-between; padding: 8px 18px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 1.5rem; font-weight: bold; }
-        
-        .plus-btn { font-size: 2.5rem; color: var(--gold); cursor: pointer; font-weight: bold; }
 
-        /* پۆپ-ئەپی نمرە */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 9000; align-items: center; justify-content: center; }
-        .modal-box { background: #111; width: 85%; padding: 30px; border-radius: 25px; border: 2px solid var(--red); text-align: center; }
-        .modal-input { width: 100%; background: transparent; border: none; border-bottom: 4px solid var(--red); color: #fff; font-size: 5rem; text-align: center; outline: none; margin: 20px 0; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9000; align-items: center; justify-content: center; }
+        .modal-box { background: #111; width: 85%; padding: 30px; border-radius: 25px; border: 2px solid var(--main); text-align: center; }
+        .modal-input { width: 100%; background: transparent; border: none; border-bottom: 4px solid var(--main); color: #fff; font-size: 5rem; text-align: center; outline: none; margin: 20px 0; }
 
-        .footer { padding: 15px; display: flex; justify-content: space-around; background: rgba(0,0,0,0.5); }
-        .btn { background: #222; border: 1px solid #444; color: #fff; padding: 6px 12px; border-radius: 10px; font-size: 0.8rem; }
-        .active-mode { background: var(--gold); color: #000; border: none; font-weight: bold; }
+        .btn { background: var(--main); color: #000; border: none; padding: 10px 20px; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        #win-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
     </style>
 </head>
-<body>
+<body id="app-body">
+
+    <div id="settings-panel">
+        <h2 style="color:var(--main); text-align:center; margin-bottom:20px;">⚙️ ڕێکخستن</h2>
+        <div class="set-section">
+            <p>🎨 گۆڕینی ستایل</p>
+            <div class="theme-grid">
+                <div class="theme-dot" style="background:#800" onclick="changeTheme('#800', 'radial-gradient(circle, #500 0%, #000 100%)')"></div>
+                <div class="theme-dot" style="background:#004" onclick="changeTheme('#004', 'radial-gradient(circle, #008 0%, #000 100%)')"></div>
+                <div class="theme-dot" style="background:#efbf3b" onclick="changeTheme('#efbf3b', 'radial-gradient(circle, #440 0%, #000 100%)')"></div>
+                <div class="theme-dot" style="background:#050" onclick="changeTheme('#050', 'radial-gradient(circle, #020 0%, #000 100%)')"></div>
+                <div class="theme-dot" style="background:#333" onclick="changeTheme('#333', 'linear-gradient(135deg, #111 0%, #444 100%)')"></div>
+            </div>
+        </div>
+        <div class="set-section">
+            <p>📂 مێژوو</p>
+            <div id="archive-list" style="max-height:150px; overflow-y:auto; margin-top:10px; font-size:0.9rem; color:#ccc;"></div>
+        </div>
+        <button class="btn" onclick="document.getElementById('settings-panel').style.display='none'" style="width:100%; padding:15px;">داخستن</button>
+    </div>
 
     <div class="top-nav">
-        <div id="game-timer">00:00</div>
-        <div style="font-weight:bold;">ئامانج: <input type="number" id="goal-val" value="101" onchange="updateGoal()" style="background:#000; color:var(--gold); border:1px solid #333; width:60px; text-align:center; border-radius:5px;"></div>
-        <div onclick="alert('☁️ پاشەکەوت کرا!')" style="cursor:pointer; font-size:1.2rem;">☁️</div>
+        <div onclick="document.getElementById('settings-panel').style.display='flex'; loadArchive();" style="font-size:1.8rem; cursor:pointer;">⚙️</div>
+        <div id="game-timer" onclick="toggleTimer()">00:00</div>
+        <div style="font-weight:bold;">ئامانج: <input type="number" id="goal-val" value="101" onchange="updateGoal()" style="background:#000; color:var(--main); border:1px solid #333; width:55px; text-align:center; border-radius:5px;"></div>
     </div>
 
     <div class="game-grid" id="main-grid"></div>
 
     <div id="score-modal" class="modal">
         <div class="modal-box">
-            <h2 id="modal-title" style="color:var(--gold);">ناو</h2>
+            <h2 id="modal-title" style="color:var(--main);">ناو</h2>
             <form onsubmit="event.preventDefault(); addScore();">
                 <input type="number" id="points-input" class="modal-input" placeholder="0" inputmode="numeric">
             </form>
@@ -65,28 +94,42 @@
         </div>
     </div>
 
-    <div id="win-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:10000; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+    <div id="win-overlay" onclick="location.reload()">
         <h1 style="font-size:5rem;">🏆</h1>
-        <h2 id="winner-display" style="font-size:2.5rem; color:var(--gold); margin:15px 0;">ناو</h2>
+        <h2 id="winner-display" style="font-size:2.5rem; color:var(--main); margin:15px 0;">ناو</h2>
         <p id="time-result" style="color:#888; margin-bottom:20px;"></p>
-        <button onclick="location.reload()" style="background:var(--gold); padding:15px 50px; border-radius:20px; font-weight:bold; border:none;">یاری نوێ 🔄</button>
-    </div>
-
-    <div class="footer">
-        <button class="btn active-mode" id="btn-2" onclick="setMode(2)">٢ نەفەری</button>
-        <button class="btn" id="btn-3" onclick="setMode(3)">٣ نەفەری</button>
-        <span style="font-weight:bold; color:var(--gold); font-size:0.8rem;">Aweza PC</span>
+        <button class="btn" style="padding:15px 50px; font-size:1.2rem;">یاری نوێ 🔄</button>
     </div>
 
     <script>
         let curT = 0, goal = 101, players = {}, seconds = 0, timerInterval;
+        let isPaused = false;
+
+        function changeTheme(mainColor, bg) {
+            document.documentElement.style.setProperty('--main', mainColor);
+            document.getElementById('app-body').style.background = bg;
+        }
+
+        // دەستپێکردن و ڕاگرتنی کات
+        function toggleTimer() {
+            isPaused = !isPaused;
+            const tDisplay = document.getElementById('game-timer');
+            if(isPaused) {
+                tDisplay.classList.add('timer-paused');
+            } else {
+                tDisplay.classList.remove('timer-paused');
+            }
+        }
 
         function startTimer() {
+            if(timerInterval) return;
             timerInterval = setInterval(() => {
-                seconds++;
-                let m = Math.floor(seconds / 60).toString().padStart(2, '0');
-                let s = (seconds % 60).toString().padStart(2, '0');
-                document.getElementById('game-timer').innerText = `${m}:${s}`;
+                if(!isPaused) {
+                    seconds++;
+                    let m = Math.floor(seconds / 60).toString().padStart(2, '0');
+                    let s = (seconds % 60).toString().padStart(2, '0');
+                    document.getElementById('game-timer').innerText = `${m}:${s}`;
+                }
             }, 1000);
         }
 
@@ -94,13 +137,11 @@
             players = {}; const grid = document.getElementById('main-grid');
             grid.className = (n === 3 ? 'game-grid grid-3' : 'game-grid');
             for(let i=1; i<=n; i++) { 
-                let name = (n==2)?(i==1?"تیمی یەکەم 👨":"تیمی دووەم 👨"):(i==1?"یەکەم 👨":i==2?"دووەم 👨":"سێیەم 👨");
+                let name = (n==2)?(i==1?"👨 تیمی یەکەم":"👨 تیمی دووەم"):(i==1?"👨 یەکەم":i==2?"👨 دووەم":"👨 سێیەم");
                 players[i] = { name: name, s: 0, h: [] }; 
             }
-            document.getElementById('btn-2').className = (n==2 ? 'btn active-mode' : 'btn');
-            document.getElementById('btn-3').className = (n==3 ? 'btn active-mode' : 'btn');
             renderAll();
-            if(!timerInterval) startTimer();
+            startTimer();
         }
 
         function renderAll() {
@@ -110,10 +151,10 @@
                     <div class="card">
                         <div class="card-header">
                             <input type="text" class="p-name-input" value="${players[i].name}" onclick="this.value=''" onchange="players[${i}].name=this.value">
-                            <span class="plus-btn" onclick="openModal(${i})">+</span>
+                            <span onclick="openModal(${i})" style="font-size:2rem; cursor:pointer; color:var(--main); font-weight:bold;">+</span>
                         </div>
                         <div class="score-total">${players[i].s} <span style="font-size:0.8rem; color:#444;">/${goal}</span></div>
-                        <div class="history-list">${players[i].h.map((v, idx) => `<div class="hist-item"><span style="color:#333">${idx+1}</span><span>${v}</span><span onclick="delScore(${i},${idx})" style="color:#f55;">×</span></div>`).join('')}</div>
+                        <div class="history-list">${players[i].h.map((v, idx) => `<div class="hist-item"><span>${idx+1}</span><span>${v}</span><span onclick="delScore(${i},${idx})" style="color:#f55;">×</span></div>`).join('')}</div>
                     </div>`;
             }
         }
@@ -131,9 +172,21 @@
                     document.getElementById('winner-display').innerText = players[curT].name;
                     document.getElementById('time-result').innerText = "کاتی خایەندراو: " + document.getElementById('game-timer').innerText;
                     document.getElementById('win-overlay').style.display = 'flex';
+                    saveToHistory(players[curT].name);
                 }
             }
             closeModal();
+        }
+
+        function saveToHistory(winner) {
+            let hist = JSON.parse(localStorage.getItem('dom_hist_v3') || '[]');
+            hist.unshift({ date: new Date().toLocaleDateString('ku-IQ'), win: winner });
+            localStorage.setItem('dom_hist_v3', JSON.stringify(hist));
+        }
+
+        function loadArchive() {
+            let hist = JSON.parse(localStorage.getItem('dom_hist_v3') || '[]');
+            document.getElementById('archive-list').innerHTML = hist.map(h => `<div>📅 ${h.date} - 🏆 ${h.win}</div>`).join('') || "مێژوو نییە";
         }
 
         function delScore(t, idx) { players[t].s -= players[t].h[idx]; players[t].h.splice(idx, 1); renderAll(); }
