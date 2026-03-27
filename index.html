@@ -15,82 +15,72 @@
             height: 100vh; display: flex; flex-direction: column; overflow: hidden;
         }
 
-        /* ١. دیزاینی شاشەی سەرەتا (Splash Screen) */
+        /* Splash Screen (٢ چرکە) */
         #splash {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; display: flex; flex-direction: column; 
             align-items: center; justify-content: center; z-index: 9999;
             transition: opacity 1s ease;
         }
-        .splash-content { text-align: center; animation: zoomIn 1s ease; }
-        .splash-title { font-size: 2.8rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 20px rgba(239,191,59,0.5); margin-bottom: 10px; }
-        .splash-sub { font-size: 1rem; color: #aaa; letter-spacing: 1px; }
-        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .splash-title { font-size: 2.8rem; font-weight: 900; color: var(--gold); }
 
-        /* ٢. شاشەی پیرۆزبایی */
+        /* Win Screen */
         #win-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); z-index: 10000; flex-direction: column; 
             align-items: center; justify-content: center; text-align: center;
         }
 
-        /* ٣. بەشەکانی تری ئەپەکە */
+        /* UI */
         .top-nav { display: flex; justify-content: space-between; padding: 12px; background: rgba(0,0,0,0.7); align-items: center; border-bottom: 1px solid #300; }
         .goal-input { background: #111; border: 1px solid var(--gold); color: var(--gold); width: 65px; text-align: center; border-radius: 8px; font-weight: bold; padding: 4px; }
 
         .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; flex: 1; align-content: start; overflow-y: auto; }
         .grid-3 .card:nth-child(3) { grid-column: span 2; width: 75%; margin: 0 auto; }
 
-        .card { background: rgba(255,255,255,0.05); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+        .card { background: rgba(255,255,255,0.05); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
         .card-header { background: var(--red); padding: 8px; text-align: center; border-radius: 20px 20px 0 0; }
-        .p-name { font-weight: bold; color: #fff; font-size: 0.95rem; }
         
-        .score-total { font-size: 3.2rem; font-weight: 900; text-align: center; margin: 8px 0; }
-        
-        .history-list { height: 140px; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.05); }
-        .hist-item { display: flex; justify-content: space-between; padding: 8px 18px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 1.4rem; font-weight: bold; background: rgba(255,255,255,0.01); }
-        .btn-del { color: #ff5252; cursor: pointer; font-size: 1.5rem; }
-        .plus-btn { font-size: 2.2rem; color: var(--gold); cursor: pointer; font-weight: bold; display: block; margin-top: 2px; }
+        /* ناوی تیمی (خۆکار سڕینەوە) */
+        .p-name-input { 
+            background: transparent; border: none; color: #fff; font-weight: bold; 
+            text-align: center; width: 100%; font-size: 1.1rem; outline: none;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
 
-        /* مۆداڵی نمرە */
+        .score-total { font-size: 3.2rem; font-weight: 900; text-align: center; margin: 8px 0; }
+        .history-list { height: 140px; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.05); }
+        .hist-item { display: flex; justify-content: space-between; padding: 8px 18px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 1.5rem; font-weight: bold; }
+        .btn-del { color: #ff5252; cursor: pointer; font-size: 1.6rem; }
+        .plus-btn { font-size: 2.2rem; color: var(--gold); cursor: pointer; font-weight: bold; display: block; }
+
+        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 5000; align-items: center; justify-content: center; }
         .modal-box { background: #111; width: 85%; padding: 30px; border-radius: 25px; border: 2px solid var(--red); text-align: center; }
         .modal-input { width: 100%; background: transparent; border: none; border-bottom: 4px solid var(--red); color: #fff; font-size: 5rem; text-align: center; outline: none; margin: 20px 0; }
 
-        .mode-btn { background: #222; border: none; color: #fff; padding: 6px 12px; border-radius: 10px; font-size: 0.85rem; transition: 0.3s; }
+        .mode-btn { background: #222; border: none; color: #fff; padding: 6px 12px; border-radius: 10px; font-size: 0.85rem; }
         .active-mode { background: var(--gold); color: #000; font-weight: bold; }
-
-        #archive-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 6000; padding: 25px; flex-direction: column; }
-        .archive-item { background: #111; margin-bottom: 10px; padding: 15px; border-radius: 15px; border-right: 5px solid var(--gold); }
     </style>
 </head>
 <body>
 
     <div id="splash">
-        <div class="splash-content">
-            <h1 class="splash-title">خاڵژمێری دۆمینە</h1>
-            <p class="splash-sub">تۆمارکردنی خاڵی یاری دۆمینە</p>
-            <div style="margin-top:30px; color:#333; font-size:0.8rem;">Aweza PC</div>
-        </div>
+        <h1 class="splash-title">خاڵژمێری دۆمینە</h1>
+        <p style="color:#aaa; margin-top:10px;">Aweza PC</p>
     </div>
 
     <div id="win-overlay" onclick="location.reload()">
         <div style="text-align: center;">
             <h1 style="font-size: 5rem;">🏆</h1>
             <h2 id="winner-display" style="font-size: 2.5rem; color:var(--gold); margin: 15px 0;">ناو</h2>
-            <h2 style="font-weight: 300;">پیرۆزە! تۆ دۆمینەزانی</h2>
-            <button style="margin-top:40px; background:var(--gold); color:#000; border:none; padding:15px 50px; border-radius:20px; font-weight:bold; font-size:1.2rem;">یاری نوێ 🔄</button>
+            <h2>پیرۆزە! تۆ دۆمینەزانی</h2>
+            <button style="margin-top:40px; background:var(--gold); color:#000; border:none; padding:15px 50px; border-radius:20px; font-weight:bold;">یاری نوێ 🔄</button>
         </div>
     </div>
 
-    <div id="archive-modal">
-        <h2 style="color:var(--gold); text-align:center; margin-bottom:20px;">📂 فۆڵدەری ئەرشیف</h2>
-        <div id="archive-list" style="overflow-y:auto; flex:1;"></div>
-        <button onclick="document.getElementById('archive-modal').style.display='none'" style="background:#333; color:#fff; padding:15px; border-radius:15px; border:none; margin-top:15px; font-weight:bold;">داخستن</button>
-    </div>
-
     <div class="top-nav">
-        <div onclick="showArchive()" style="cursor:pointer; font-weight:bold; color:var(--gold);">⚙️ مێژوو</div>
+        <div style="font-weight:bold; color:var(--gold);">⚙️ مێژوو</div>
         <div style="font-size:0.9rem;">ئامانج: <input type="number" id="goal-val" class="goal-input" value="101" onchange="updateGoal()"></div>
         <div>
             <button class="mode-btn" id="btn-2" onclick="setMode(2)">٢ نەفەری</button>
@@ -111,21 +101,7 @@
     </div>
 
     <script>
-        // چالاککردنی Splash Screen بۆ ٢ چرکە
-        window.onload = function() {
-            setTimeout(function() {
-                const s = document.getElementById('splash');
-                s.style.opacity = '0';
-                setTimeout(() => s.style.display = 'none', 1000);
-            }, 2000);
-        };
-
-        // پەیامی دەرچوون (Back Button)
-        window.addEventListener('popstate', function() {
-            if(confirm("ئایا دڵنیای بۆ دەرچوون لە خاڵژمێری دۆمینە؟")) { window.close(); }
-            history.pushState(null, null, null);
-        });
-        history.pushState(null, null, null);
+        window.onload = function() { setTimeout(() => { const s = document.getElementById('splash'); s.style.opacity = '0'; setTimeout(() => s.style.display = 'none', 1000); }, 2000); };
 
         let curT = 0; let goal = 101;
         let players = {};
@@ -134,7 +110,6 @@
             players = {};
             const grid = document.getElementById('main-grid');
             grid.className = (n === 3 ? 'game-grid grid-3' : 'game-grid');
-            
             for(let i=1; i<=n; i++) { 
                 let name = (n == 2) ? (i==1 ? "تیمی یەکەم 👨" : "تیمی دووەم 👨") : (i==1 ? "کەسی یەکەم 👨" : i==2 ? "کەسی دووەم 👨" : "کەسی سێیەم 👨");
                 players[i] = { name: name, s: 0, h: [] }; 
@@ -153,7 +128,10 @@
                 grid.innerHTML += `
                     <div class="card">
                         <div class="card-header">
-                            <span class="p-name">${players[i].name}</span><br>
+                            <input type="text" class="p-name-input" value="${players[i].name}" 
+                                   onclick="this.value=''" 
+                                   onblur="if(this.value=='') this.value=players[${i}].name"
+                                   onchange="players[${i}].name=this.value">
                             <span class="plus-btn" onclick="openModal(${i})">+</span>
                         </div>
                         <div class="score-total">${players[i].s} <span style="font-size:0.8rem; color:#666;">/${goal}</span></div>
@@ -169,51 +147,23 @@
             }
         }
 
-        function openModal(t) { 
-            curT = t; 
-            document.getElementById('modal-title').innerText = players[t].name; 
-            document.getElementById('points-input').value = ""; 
-            document.getElementById('score-modal').style.display = 'flex'; 
-            document.getElementById('points-input').focus(); 
-        }
-
+        function openModal(t) { curT = t; document.getElementById('modal-title').innerText = players[t].name; document.getElementById('points-input').value = ""; document.getElementById('score-modal').style.display = 'flex'; document.getElementById('points-input').focus(); }
         function closeModal() { document.getElementById('score-modal').style.display = 'none'; }
-
         function addScore() {
             let val = parseInt(document.getElementById('points-input').value);
             if (!isNaN(val) && val !== 0) {
                 players[curT].s += val;
                 players[curT].h.push(val);
                 renderAll();
-                if(players[curT].s >= goal) { showWin(players[curT].name); }
+                if(players[curT].s >= goal) { 
+                    if (navigator.vibrate) navigator.vibrate([1000, 200, 1000]);
+                    confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
+                    document.getElementById('winner-display').innerText = players[curT].name;
+                    document.getElementById('win-overlay').style.display = 'flex';
+                }
             }
             closeModal();
         }
-
-        function showWin(name) {
-            saveToArchive(name);
-            if (navigator.vibrate) navigator.vibrate([1000, 200, 1000]); 
-            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
-            document.getElementById('winner-display').innerText = name;
-            document.getElementById('win-overlay').style.display = 'flex';
-        }
-
-        function saveToArchive(winner) {
-            let arch = JSON.parse(localStorage.getItem('dom_arch') || '[]');
-            arch.unshift({ date: new Date().toLocaleDateString('ku-IQ'), time: new Date().toLocaleTimeString('ku-IQ'), winner: winner });
-            localStorage.setItem('dom_arch', JSON.stringify(arch));
-        }
-
-        function showArchive() {
-            const list = document.getElementById('archive-list');
-            const arch = JSON.parse(localStorage.getItem('dom_arch') || '[]');
-            list.innerHTML = arch.length ? "" : "<p style='text-align:center;color:#444'>مێژوو نییە</p>";
-            arch.forEach(i => {
-                list.innerHTML += `<div class="archive-item"><small style="color:#666">📅 ${i.date} - ${i.time}</small><br>🏆 <b>${i.winner}</b></div>`;
-            });
-            document.getElementById('archive-modal').style.display = 'flex';
-        }
-
         function delScore(t, idx) { players[t].s -= players[t].h[idx]; players[t].h.splice(idx, 1); renderAll(); }
 
         setMode(2);
