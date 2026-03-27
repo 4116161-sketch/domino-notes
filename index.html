@@ -3,161 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>خاڵژمێری ئاوێزە - Archive Edition</title>
+    <title>خاڵژمێری ئاوێزە - Ultra</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --gold: #fdd835; --bg: #0a0a0a; --card: #161616; --blue: #1877f2; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            background-color: var(--bg); color: #fff; font-family: sans-serif;
-            margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+        :root { 
+            --gold: #fdd835; --bg: #0d0d0d; --card: #1a1a1a; 
+            --blue: #1877f2; --red: #ff5252; --green: #4caf50;
         }
-
-        /* سەرەتا و مێنۆ */
-        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #111; border-bottom: 1px solid #222; }
-        .logo { color: var(--gold); font-weight: bold; font-size: 1.3rem; }
-        .settings-icon { font-size: 1.5rem; cursor: pointer; background: none; border: none; color: white; }
-
-        /* کارتەکانی یاری */
-        .game-area { display: flex; gap: 10px; flex: 1; overflow-x: auto; padding: 15px; align-items: stretch; }
-        .team-box {
-            min-width: 160px; flex: 1; background: var(--card); border-radius: 25px;
-            display: flex; flex-direction: column; align-items: center; padding: 20px 10px; border: 1px solid #222;
-        }
-        .score { font-size: 4rem; font-weight: 900; margin: 10px 0; color: #fff; }
-        .history-mini { flex: 1; width: 100%; overflow-y: auto; font-size: 0.8rem; color: #666; text-align: center; }
-
-        /* بەشی ڕێکخستنەکان و فۆڵدەری مێژوو */
-        #settings-panel {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 2000; padding: 20px; overflow-y: auto;
-        }
-        .folder-box {
-            background: #1a1a1a; border-radius: 15px; padding: 15px; margin-bottom: 15px;
-            border-right: 5px solid var(--gold); /* شێوەی فۆڵدەر */
-        }
-        .folder-title { color: var(--gold); font-weight: bold; margin-bottom: 10px; display: flex; justify-content: space-between; }
-
-        /* کیبۆرد و دوگمەکان */
-        .numpad {
-            display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: #111;
-            grid-template-columns: repeat(3, 1fr); gap: 5px; padding: 15px; border-top: 2px solid var(--gold); z-index: 3000;
-        }
-        .numpad button { background: #222; color: #fff; border: none; padding: 18px; font-size: 1.5rem; border-radius: 10px; }
         
-        .add-btn { background: var(--gold); color: #000; width: 60px; height: 60px; border-radius: 50%; border: none; font-size: 2rem; font-weight: bold; }
-        .win-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 4000; flex-direction: column; align-items: center; justify-content: center; }
+        /* ١. فوول سکرین و لابردنی تێکچوون لە مۆبایل */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+        
+        body {
+            background-color: var(--bg); color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif;
+            margin: 0; padding: env(safe-area-inset-top) 10px env(safe-area-inset-bottom) 10px;
+            display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+        }
+
+        /* ٢. دیزاینی مۆدێرنی سەرەوە */
+        .top-bar {
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 10px; background: rgba(255,255,255,0.05); border-radius: 0 0 20px 20px;
+        }
+        .logo { font-weight: 900; font-size: 1.2rem; color: var(--gold); text-shadow: 0 0 10px rgba(253,216,53,0.3); }
+        .social-icons a { text-decoration: none; font-size: 1.5rem; margin-left: 12px; transition: 0.3s; }
+        .social-icons a:active { transform: scale(1.2); }
+
+        /* ٣. مۆدی ٢، ٣، و ٤ نەفەری (تایبەتمەندی نوێ) */
+        .mode-switcher { display: flex; gap: 8px; margin: 15px 0; justify-content: center; }
+        .mode-btn { 
+            background: #252525; color: #fff; border: 1px solid #333; 
+            padding: 8px 15px; border-radius: 12px; font-size: 0.8rem; transition: 0.3s;
+        }
+        .mode-active { background: var(--gold); color: #000; border: none; font-weight: bold; transform: scale(1.05); }
+
+        /* ٤. کارتەکان بە ئەنیمەیشن و سێبەری زەخم */
+        .game-container { 
+            display: flex; gap: 10px; flex: 1; overflow-x: auto; 
+            padding: 10px 5px; align-items: stretch; scroll-behavior: smooth;
+        }
+        .team-card {
+            min-width: 160px; flex: 1; background: var(--card); border-radius: 25px;
+            display: flex; flex-direction: column; align-items: center; padding: 20px 10px;
+            border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative; animation: slideIn 0.5s ease;
+        }
+        @keyframes slideIn { from {opacity: 0; transform: translateY(20px);} to {opacity: 1; transform: translateY(0);} }
+
+        /* ٥. ناو گۆڕین و خاڵەکان */
+        .team-name { 
+            background: rgba(255,255,255,0.03); border: none; color: var(--gold); 
+            text-align: center; font-size: 1.1rem; width: 95%; border-radius: 10px;
+            padding: 5px; outline: none; font-weight: bold;
+        }
+        .score-display { font-size: 4rem; font-weight: 900; margin: 15px 0; text-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+
+        /* ٦. مێژووی خاڵەکان بە شێوازی مۆدێرن */
+        .history-list {
+            flex: 1; width: 100%; overflow-y: auto; display: flex; flex-direction: column-reverse; 
+            gap: 5px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 15px; margin-bottom: 15px;
+        }
+        .history-item { 
+            background: rgba(255,255,255,0.05); padding: 5px; border-radius: 8px;
+            text-align: center; font-size: 0.85rem; color: #aaa; border: 1px solid rgba(255,255,255,0.02);
+        }
+
+        /* ٧. دوگمەی زیادکردن (Floating Action) */
+        .add-btn {
+            background: linear-gradient(135deg, var(--gold), #fbc02d); color: #000; 
+            width: 65px; height: 65px; border-radius: 20px; border: none; 
+            font-size: 2.2rem; font-weight: bold; box-shadow: 0 5px 20px rgba(253,216,53,0.4);
+        }
+
+        /* ٨. کیبۆردی ناو ئەپ (Glassmorphism) */
+        .numpad {
+            display: none; position: fixed; bottom: 0; left: 0; width: 100%; 
+            background: rgba(20,20,20,0.95); backdrop-filter: blur(20px);
+            grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 20px; 
+            z-index: 2000; border-top: 2px solid var(--gold); border-radius: 30px 30px 0 0;
+        }
+        .numpad button { 
+            background: rgba(255,255,255,0.05); color: #fff; border: none; 
+            padding: 18px; font-size: 1.6rem; border-radius: 15px; font-weight: bold;
+        }
+        .done-btn { background: var(--gold) !important; color: #000 !important; grid-column: span 2; }
+        .back-btn { background: var(--red) !important; }
+
+        /* ٩. پیرۆزبایی شاهانە */
+        #win-overlay {
+            display: none; position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.98); z-index: 3000; flex-direction: column; 
+            align-items: center; justify-content: center; text-align: center;
+        }
+        .win-card { animation: winnerPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes winnerPop { from {transform: scale(0.5); opacity: 0;} to {transform: scale(1); opacity: 1;} }
+
+        /* ١٠. دوگمەکانی کۆنترۆڵی خوارەوە */
+        .bottom-actions { padding: 15px; display: flex; gap: 10px; justify-content: center; }
+        .action-btn { background: #222; border: none; color: #888; padding: 10px 20px; border-radius: 15px; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
     <div class="top-bar">
-        <div class="logo">ئاوێزە PC 🀄</div>
-        <button class="settings-icon" onclick="toggleSettings()">📁 مێژوو</button>
-    </div>
-
-    <div class="game-area" id="game-container">
-        <div class="team-box">
-            <input type="text" id="tn1" value="تیمی ١" style="background:none; border:none; color:var(--gold); text-align:center; font-size:1.2rem; font-weight:bold; outline:none;">
-            <div class="score" id="s1">0</div>
-            <div class="history-mini" id="h1"></div>
-            <button class="add-btn" onclick="openKeypad(1)">+</button>
-        </div>
-        <div class="team-box">
-            <input type="text" id="tn2" value="تیمی ٢" style="background:none; border:none; color:var(--gold); text-align:center; font-size:1.2rem; font-weight:bold; outline:none;">
-            <div class="score" id="s2">0</div>
-            <div class="history-mini" id="h2"></div>
-            <button class="add-btn" onclick="openKeypad(2)">+</button>
+        <div class="logo">AWEZA PC 🀄</div>
+        <div class="social-icons">
+            <a href="https://www.facebook.com/pcaweza" style="color:var(--blue)">f</a>
+            <a href="https://www.tiktok.com/@computeraweza" style="color:#fff">♪</a>
         </div>
     </div>
 
-    <div id="settings-panel">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h2 style="color:var(--gold)">📂 فۆڵدەری مێژووی یارییەکان</h2>
-            <button onclick="toggleSettings()" style="background:var(--gold); border:none; padding:5px 15px; border-radius:10px; font-weight:bold;">داخستن ×</button>
-        </div>
-        <div id="archive-list">
-            <p style="color:#666; text-align:center;">هیچ یارییەک لە فۆڵدەردا نییە</p>
-        </div>
-        <button onclick="clearArchive()" style="width:100%; margin-top:20px; background:#ff5252; color:white; border:none; padding:10px; border-radius:10px;">سڕینەوەی هەموو فۆڵدەرەکان 🗑️</button>
+    <div class="mode-switcher">
+        <button class="mode-btn mode-active" id="m2" onclick="setMode(2)">٢ یاریزان</button>
+        <button class="mode-btn" id="m3" onclick="setMode(3)">٣ یاریزان</button>
+        <button class="mode-btn" id="m4" onclick="setMode(4)">٤ یاریزان</button>
     </div>
 
-    <div id="keypad" class="numpad">
-        <button onclick="addNum(1)">1</button><button onclick="addNum(2)">2</button><button onclick="addNum(3)">3</button>
-        <button onclick="addNum(4)">4</button><button onclick="addNum(5)">5</button><button onclick="addNum(6)">6</button>
-        <button onclick="addNum(7)">7</button><button onclick="addNum(8)">8</button><button onclick="addNum(9)">9</button>
-        <button style="background:#444" onclick="closeKeypad()">داخستن</button><button onclick="addNum(0)">0</button><button style="background:var(--gold); color:black;" onclick="savePoints()">تەواو ✅</button>
+    <div class="game-container" id="game-area">
+        <div class="team-card" id="card1">
+            <input type="text" class="team-name" value="تیمی ١">
+            <div class="score-display" id="s1">0</div>
+            <div class="history-list" id="h1"></div>
+            <button class="add-btn" onclick="openNumpad(1)">+</button>
+        </div>
+        <div class="team-card" id="card2">
+            <input type="text" class="team-name" value="تیمی ٢">
+            <div class="score-display" id="s2">0</div>
+            <div class="history-list" id="h2"></div>
+            <button class="add-btn" onclick="openNumpad(2)">+</button>
+        </div>
     </div>
 
-    <div id="win-screen" class="win-overlay" onclick="saveToArchive(); location.reload();">
-        <h1 style="color:var(--gold); font-size:4rem;">🏆</h1>
-        <h2 id="win-name" style="color:white"></h2>
-        <p style="color:#888;">بۆ پاشەکەوتکردن لە فۆڵدەر دەست لێرە بدە</p>
+    <div class="bottom-actions">
+        <button class="action-btn" onclick="undoLast()">گەڕانەوە (Undo) ↩️</button>
+        <button class="action-btn" onclick="resetGame()">یاری نوێ 🔄</button>
     </div>
+
+    <div id="numpad" class="numpad">
+        <button onclick="press(1)">1</button><button onclick="press(2)">2</button><button onclick="press(3)">3</button>
+        <button onclick="press(4)">4</button><button onclick="press(5)">5</button><button onclick="press(6)">6</button>
+        <button onclick="press(7)">7</button><button onclick="press(8)">8</button><button onclick="press(9)">9</button>
+        <button class="back-btn" onclick="clearIn()">C</button><button onclick="press(0)">0</button><button class="done-btn" onclick="submit()">تەواو ✅</button>
+    </div>
+
+    <div id="win-overlay" onclick="resetGame()">
+        <div class="win-card">
+            <h1 style="color:var(--gold); font-size:4rem; margin:0;">🏆</h1>
+            <h1 style="color:var(--gold); margin:0;">پیرۆزە!</h1>
+            <h2 id="win-txt" style="font-size:2rem; margin:10px 0;"></h2>
+            <p style="color:#666;">دەست لێرە بدە بۆ دووبارە دەستپێکردنەوە</p>
+        </div>
+    </div>
+
+    <audio id="beep" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+    <audio id="winSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"></audio>
 
     <script>
-        let currentT = 0; let inputStr = "";
-        let gameData = { 1: {s:0, h:[]}, 2: {s:0, h:[]} };
+        let currentTeam = 0; let currentInput = ""; 
+        let lastAction = null;
+        let data = { 1: {score: 0, hist: []}, 2: {score: 0, hist: []}, 3: {score: 0, hist: []}, 4: {score: 0, hist: []} };
 
-        function toggleSettings() {
-            const panel = document.getElementById('settings-panel');
-            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-            loadArchive();
+        // ١١. فەنکشنی بارینی ڕەنگاوڕەنگ (Confetti)
+        function rainConfetti() {
+            confetti({
+                particleCount: 150, spread: 70, origin: { y: 0.6 },
+                colors: ['#fdd835', '#ffffff', '#4caf50', '#ff5252', '#1877f2']
+            });
         }
 
-        function openKeypad(t) { currentT = t; inputStr = ""; document.getElementById('keypad').style.display = 'grid'; }
-        function addNum(n) { inputStr += n; }
-        function closeKeypad() { document.getElementById('keypad').style.display = 'none'; }
+        // ١٢. گۆڕینی مۆدی یاری (٢، ٣، ٤)
+        function setMode(n) {
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('mode-active'));
+            document.getElementById('m'+n).classList.add('mode-active');
+            const area = document.getElementById('game-area');
+            area.innerHTML = "";
+            for(let i=1; i<=n; i++) {
+                area.innerHTML += `
+                    <div class="team-card">
+                        <input type="text" class="team-name" id="tn${i}" value="تیمی ${i}">
+                        <div class="score-display" id="s${i}">${data[i].score}</div>
+                        <div class="history-list" id="h${i}">${data[i].hist.map(x => `<div class="history-item">${x}</div>`).join('')}</div>
+                        <button class="add-btn" onclick="openNumpad(${i})">+</button>
+                    </div>`;
+            }
+        }
 
-        function savePoints() {
-            let val = parseInt(inputStr) || 0;
+        function openNumpad(t) { currentTeam = t; currentInput = ""; document.getElementById('numpad').style.display = 'grid'; }
+        
+        function press(n) { 
+            currentInput += n; 
+            document.getElementById('beep').play(); 
+            // ١٣. هێزی لەرینەوە (Vibration) بۆ هەستکردن بە دوگمەکان
+            if(navigator.vibrate) navigator.vibrate(20);
+        }
+
+        function clearIn() { currentInput = ""; }
+
+        function submit() {
+            let val = parseInt(currentInput) || 0;
             if(val > 0) {
-                gameData[currentT].s += val;
-                gameData[currentT].h.push(val);
-                document.getElementById('s'+currentT).innerText = gameData[currentT].s;
-                document.getElementById('h'+currentT).innerHTML = gameData[currentT].h.map(x => `<div>${x}</div>`).join('');
-                if(gameData[currentT].s >= 101) {
-                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-                    document.getElementById('win-name').innerText = document.getElementById('tn'+currentT).value + " بردییەوە!";
-                    document.getElementById('win-screen').style.display = 'flex';
-                }
+                lastAction = { team: currentTeam, val: val }; // ١٤. پاشەکەوت بۆ Undo
+                data[currentTeam].score += val;
+                data[currentTeam].hist.push(val);
+                updateUI(currentTeam);
             }
-            closeKeypad();
+            document.getElementById('numpad').style.display = 'none';
         }
 
-        // پاشەکەوتکردن وەک فۆڵدەر لە ناو مێژوو
-        function saveToArchive() {
-            let history = JSON.parse(localStorage.getItem('aweza_archive') || '[]');
-            let newGame = {
-                date: new Date().toLocaleString('ku-IQ'),
-                team1: document.getElementById('tn1').value + ": " + gameData[1].s,
-                team2: document.getElementById('tn2').value + ": " + gameData[2].s,
-                winner: document.getElementById('win-name').innerText
-            };
-            history.unshift(newGame);
-            localStorage.setItem('aweza_archive', JSON.stringify(history));
-        }
-
-        function loadArchive() {
-            let history = JSON.parse(localStorage.getItem('aweza_archive') || '[]');
-            const list = document.getElementById('archive-list');
-            if(history.length === 0) return;
-            list.innerHTML = history.map(g => `
-                <div class="folder-box">
-                    <div class="folder-title"><span>📅 ${g.date}</span></div>
-                    <div style="font-size:0.9rem;">${g.team1} <br> ${g.team2}</div>
-                    <div style="color:var(--gold); margin-top:5px; font-weight:bold;">🏆 ${g.winner}</div>
-                </div>
-            `).join('');
-        }
-
-        function clearArchive() {
-            if(confirm("دڵنیای هەموو فۆڵدەرەکانی مێژوو بسڕدرێتەوە؟")) {
-                localStorage.removeItem('aweza_archive');
-                loadArchive();
-                document.getElementById('archive-list').innerHTML = '<p style="color:#666; text-align:center;">فۆڵدەرەکە سڕایەوە</p>';
+        // ١٥. گەڕانەوە لە هەڵە (Undo)
+        function undoLast() {
+            if(lastAction) {
+                data[lastAction.team].score -= lastAction.val;
+                data[lastAction.team].hist.pop();
+                updateUI(lastAction.team);
+                lastAction = null;
+                alert("دوایین خاڵ سڕایەوە!");
             }
         }
+
+        function updateUI(t) {
+            document.getElementById('s'+t).innerText = data[t].score;
+            let hDiv = document.getElementById('h'+t);
+            hDiv.innerHTML = data[t].hist.map(x => `<div class="history-item">${x}</div>`).join('');
+            
+            // ١٦. پشکنینی بردنەوە لە ١٠١
+            if(data[t].score >= 101) {
+                let name = document.getElementById('tn'+t).value;
+                document.getElementById('win-txt').innerText = name;
+                document.getElementById('win-overlay').style.display = 'flex';
+                document.getElementById('winSound').play();
+                // ١٧. دەستپێکردنی بارینی ڕەنگاوڕەنگ بۆ ماوەی ٣ چرکە
+                let end = Date.now() + 3000;
+                (function frame() {
+                    rainConfetti();
+                    if (Date.now() < end) requestAnimationFrame(frame);
+                }());
+            }
+        }
+
+        // ١٨. یاری نوێ بە پاککردنەوەی هەموو داتاکان
+        function resetGame() {
+            if(confirm("دڵنیای لە دەستپێکردنەوەی یاری؟")) location.reload();
+        }
+
+        // ١٩. ڕێگری لە زووم بوون کاتێک دەست لە شاشە دەدەیت
+        document.addEventListener('touchstart', function(event) {
+            if (event.touches.length > 1) event.preventDefault();
+        }, { passive: false });
+
+        // ٢٠. پاشەکەوتکردنی ناوەکان (Auto-save Names) - ئەگەر پێویست بوو دەتوانی زیادی بکەیت
     </script>
 </body>
 </html>
