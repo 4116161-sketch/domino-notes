@@ -9,8 +9,8 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
         body { 
-            background: #000 radial-gradient(circle at center, #700 0%, #000 100%);
-            color: #fff; font-family: 'Segoe UI', Arial, sans-serif;
+            background: #000 radial-gradient(circle at center, #600 0%, #000 100%);
+            color: #fff; font-family: 'Segoe UI', sans-serif;
             height: 100vh; display: flex; flex-direction: column; overflow: hidden;
         }
 
@@ -21,63 +21,61 @@
             align-items: center; justify-content: center; text-align: center;
         }
 
-        /* مێنۆی سەرەوە */
-        .top-nav { display: flex; justify-content: space-between; padding: 15px; background: rgba(0,0,0,0.6); align-items: center; border-bottom: 2px solid #500; }
-        .goal-input { background: #111; border: 1px solid #efbf3b; color: #efbf3b; width: 70px; text-align: center; border-radius: 8px; padding: 5px; font-weight: bold; font-size: 1.1rem; }
+        /* سەرەوە */
+        .top-nav { display: flex; justify-content: space-between; padding: 10px; background: rgba(0,0,0,0.6); align-items: center; border-bottom: 1px solid #400; }
+        .goal-input { background: #111; border: 1px solid #efbf3b; color: #efbf3b; width: 60px; text-align: center; border-radius: 5px; font-weight: bold; }
 
-        /* کارتەکان */
-        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; flex: 1; align-content: start; overflow-y: auto; }
-        .grid-3 .card:nth-child(3) { grid-column: span 2; width: 75%; margin: 0 auto; }
+        /* کارتە بچووکەکان */
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; flex: 1; align-content: start; overflow-y: auto; }
+        .grid-3 .card:nth-child(3) { grid-column: span 2; width: 70%; margin: 0 auto; }
 
-        .card { background: rgba(255,255,255,0.06); border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
-        .card-header { background: #900; padding: 12px; text-align: center; border-radius: 25px 25px 0 0; }
-        .p-name-input { background: transparent; border: none; color: #fff; font-weight: bold; text-align: center; width: 100%; outline: none; font-size: 1.2rem; }
+        .card { background: rgba(255,255,255,0.05); border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
+        .card-header { background: #800; padding: 6px; text-align: center; border-radius: 15px 15px 0 0; }
+        .p-name { font-weight: bold; color: #fff; font-size: 0.9rem; }
         
-        .score-total { font-size: 3.5rem; font-weight: 900; text-align: center; margin: 10px 0; }
+        .score-total { font-size: 2.8rem; font-weight: bold; text-align: center; margin: 5px 0; }
         
-        /* مێژووی خاڵەکان (فۆنتی گەورە) */
-        .history-list { height: 180px; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.1); }
-        .hist-item { display: flex; justify-content: space-between; padding: 10px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 1.5rem; font-weight: bold; }
-        .btn-del { color: #ff5252; font-size: 1.6rem; cursor: pointer; }
-        .plus-btn { font-size: 3rem; color: #efbf3b; cursor: pointer; font-weight: bold; line-height: 1; }
+        /* مێژووی خاڵەکان (بۆشایی کەم) */
+        .history-list { height: 130px; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.05); }
+        .hist-item { display: flex; justify-content: space-between; padding: 6px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 1.3rem; font-weight: bold; }
+        .btn-del { color: #ff5252; cursor: pointer; }
+        .plus-btn { font-size: 2rem; color: #efbf3b; cursor: pointer; font-weight: bold; margin-top: 2px; }
 
-        /* مۆداڵەکان */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 5000; flex-direction: column; padding: 20px; }
-        .modal-box { background: #111; width: 90%; margin: auto; padding: 30px; border-radius: 30px; border: 2px solid #900; text-align: center; }
-        .modal-input { width: 100%; background: transparent; border: none; border-bottom: 4px solid #900; color: #fff; font-size: 5rem; text-align: center; outline: none; margin: 20px 0; }
+        /* پەنجەرەی خاڵ (Popup) */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; align-items: center; justify-content: center; }
+        .modal-box { background: #111; width: 85%; padding: 25px; border-radius: 20px; border: 2px solid #800; text-align: center; }
+        .modal-input { width: 100%; background: transparent; border: none; border-bottom: 3px solid #800; color: #fff; font-size: 4rem; text-align: center; outline: none; margin: 15px 0; }
 
-        /* سیستەمی فۆڵدەری ئەرشیف */
-        .archive-item { background: #222; margin-bottom: 10px; padding: 15px; border-radius: 15px; border-right: 5px solid #efbf3b; text-align: right; }
-        .archive-date { color: #efbf3b; font-weight: bold; margin-bottom: 5px; display: block; }
+        /* ئەرشیف */
+        #archive-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 6000; padding: 20px; flex-direction: column; }
+        .archive-item { background: #1a1a1a; margin-bottom: 8px; padding: 12px; border-radius: 10px; border-right: 4px solid #efbf3b; }
 
-        .footer-hidden { display: none; } /* لابردنی دوگمەکانی خوارەوە */
+        .mode-btn { background: #222; border: none; color: #fff; padding: 5px 10px; border-radius: 8px; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
     <div id="win-overlay" onclick="location.reload()">
         <div style="text-align: center;">
-            <h1 style="font-size: 4rem; color: #efbf3b;">🏆 پیرۆزە!</h1>
-            <h2 id="winner-display" style="font-size: 2.5rem; margin: 20px 0;">ناو</h2>
-            <p style="font-size: 1.5rem;">تۆ دۆمینەزانی یارییەکەیت!</p>
-            <button style="margin-top:40px; background:#efbf3b; color:#000; border:none; padding:15px 40px; border-radius:20px; font-weight:bold;">یاری نوێ 🔄</button>
+            <h1 style="font-size: 4rem;">🏆</h1>
+            <h2 id="winner-display" style="font-size: 2rem; margin: 15px 0;">ناو</h2>
+            <p>پیرۆزە دۆمینەزان!</p>
+            <button style="margin-top:30px; background:#efbf3b; color:#000; border:none; padding:12px 30px; border-radius:15px; font-weight:bold;">یاری نوێ</button>
         </div>
     </div>
 
-    <div id="settings-modal" class="modal">
-        <h2 style="color:#efbf3b; text-align:center; margin-bottom:20px;">📂 ئەرشیفی یارییەکان (فۆڵدەر)</h2>
-        <div id="archive-list" style="overflow-y:auto; flex:1;">
-            </div>
-        <button onclick="document.getElementById('settings-modal').style.display='none'" style="margin-top:20px; background:#444; color:#fff; padding:15px; border-radius:15px; border:none; font-weight:bold;">داخستن</button>
-        <button onclick="clearArchive()" style="margin-top:10px; background:#600; color:#fff; padding:10px; border-radius:10px; border:none; font-size:0.8rem;">سڕینەوەی هەموو ئەرشیف</button>
+    <div id="archive-modal">
+        <h2 style="color:#efbf3b; text-align:center; margin-bottom:15px;">📂 فۆڵدەری ئەرشیف</h2>
+        <div id="archive-list" style="overflow-y:auto; flex:1;"></div>
+        <button onclick="document.getElementById('archive-modal').style.display='none'" style="background:#444; color:#fff; padding:12px; border-radius:10px; border:none; margin-top:10px;">داخستن</button>
     </div>
 
     <div class="top-nav">
-        <div onclick="showArchive()" style="font-size:1.2rem; cursor:pointer; color:#efbf3b; font-weight:bold;">⚙️ ڕێکخستن و مێژوو</div>
-        <div style="font-weight:bold;">ئامانج: <input type="number" id="goal-val" class="goal-input" value="101" onchange="updateGoal()"></div>
+        <div onclick="showArchive()" style="cursor:pointer; font-weight:bold; font-size:0.9rem;">⚙️ ڕێکخستن</div>
+        <div style="font-size:0.9rem;">ئامانج: <input type="number" id="goal-val" class="goal-input" value="101" onchange="updateGoal()"></div>
         <div>
-            <button class="mode-btn" id="btn-2" onclick="setMode(2)" style="padding:5px 10px; border-radius:8px; border:none; margin-left:5px;">٢ نەفەری</button>
-            <button class="mode-btn" id="btn-3" onclick="setMode(3)" style="padding:5px 10px; border-radius:8px; border:none;">٣ نەفەری</button>
+            <button class="mode-btn" id="btn-2" onclick="setMode(2)">٢ نەفەری</button>
+            <button class="mode-btn" id="btn-3" onclick="setMode(3)">٣ نەفەری</button>
         </div>
     </div>
 
@@ -85,12 +83,11 @@
 
     <div id="score-modal" class="modal">
         <div class="modal-box">
-            <h2 id="modal-title" style="color:#efbf3b;">ناو</h2>
-            <input type="number" id="points-input" class="modal-input" placeholder="0" inputmode="numeric">
-            <div style="display:flex; gap:15px;">
-                <button onclick="closeModal()" style="flex:1; background:#444; color:#fff; padding:18px; border-radius:15px; border:none;">پاشگەزبوونەوە</button>
-                <button onclick="addScore()" style="flex:1; background:#b00; color:#fff; padding:18px; border-radius:15px; border:none; font-weight:bold;">OK</button>
-            </div>
+            <h2 id="modal-title" style="color:#efbf3b; font-size:1.2rem;">ناو</h2>
+            <form onsubmit="event.preventDefault(); addScore();">
+                <input type="number" id="points-input" class="modal-input" placeholder="0" inputmode="numeric" autofocus>
+            </form>
+            <p style="color:#666; font-size:0.8rem;">بۆ تۆمارکردن 'Enter' دابگرە</p>
         </div>
     </div>
 
@@ -102,9 +99,18 @@
             players = {};
             const grid = document.getElementById('main-grid');
             if(n === 3) grid.classList.add('grid-3'); else grid.classList.remove('grid-3');
-            for(let i=1; i<=n; i++) { players[i] = { name: (i==1?'ماڵەوە':(i==2?'میوان':'میوان ١')), s: 0, h: [] }; }
-            document.getElementById('btn-2').style.background = (n==2 ? '#efbf3b' : '#333');
-            document.getElementById('btn-3').style.background = (n==3 ? '#efbf3b' : '#333');
+            
+            for(let i=1; i<=n; i++) { 
+                let name;
+                if(n == 2) {
+                    name = (i==1 ? "تیمی یەکەم 👨" : "تیمی دووەم 👨");
+                } else {
+                    name = (i==1 ? "کەسی یەکەم 👨" : i==2 ? "کەسی دووەم 👨" : "کەسی سێیەم 👨");
+                }
+                players[i] = { name: name, s: 0, h: [] }; 
+            }
+            document.getElementById('btn-2').style.background = (n==2 ? '#800' : '#222');
+            document.getElementById('btn-3').style.background = (n==3 ? '#800' : '#222');
             renderAll();
         }
 
@@ -117,14 +123,14 @@
                 grid.innerHTML += `
                     <div class="card">
                         <div class="card-header">
-                            <input type="text" class="p-name-input" value="${players[i].name}" onclick="this.value=''" onchange="players[${i}].name=this.value">
+                            <span class="p-name">${players[i].name}</span><br>
                             <div class="plus-btn" onclick="openModal(${i})">+</div>
                         </div>
-                        <div class="score-total">${players[i].s} <span style="font-size:1rem; color:#888;">/${goal}</span></div>
+                        <div class="score-total">${players[i].s} <span style="font-size:0.8rem; color:#888;">/${goal}</span></div>
                         <div class="history-list">
                             ${players[i].h.map((val, idx) => `
                                 <div class="hist-item">
-                                    <span style="color:#555">${idx+1}</span>
+                                    <span style="color:#444">${idx+1}</span>
                                     <span>${val}</span>
                                     <span class="btn-del" onclick="delScore(${i}, ${idx})">×</span>
                                 </div>`).join('')}
@@ -133,7 +139,14 @@
             }
         }
 
-        function openModal(t) { curT = t; document.getElementById('modal-title').innerText = players[t].name; document.getElementById('points-input').value = ""; document.getElementById('score-modal').style.display = 'flex'; document.getElementById('points-input').focus(); }
+        function openModal(t) { 
+            curT = t; 
+            document.getElementById('modal-title').innerText = players[t].name; 
+            document.getElementById('points-input').value = ""; 
+            document.getElementById('score-modal').style.display = 'flex'; 
+            document.getElementById('points-input').focus(); 
+        }
+
         function closeModal() { document.getElementById('score-modal').style.display = 'none'; }
 
         function addScore() {
@@ -148,36 +161,29 @@
         }
 
         function showWin(name) {
-            saveGameToArchive(name);
-            if (navigator.vibrate) navigator.vibrate([1000, 300, 1000]); 
-            confetti({ particleCount: 250, spread: 100, origin: { y: 0.6 } });
+            saveToArchive(name);
+            if (navigator.vibrate) navigator.vibrate([800, 200, 800]); 
+            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
             document.getElementById('winner-display').innerText = name;
             document.getElementById('win-overlay').style.display = 'flex';
         }
 
-        function saveGameToArchive(winner) {
-            let archive = JSON.parse(localStorage.getItem('domino_archive') || '[]');
-            let date = new Date().toLocaleDateString('ku-IQ');
-            let time = new Date().toLocaleTimeString('ku-IQ', {hour: '2-digit', minute:'2-digit'});
-            archive.unshift({ date: date, time: time, winner: winner });
-            localStorage.setItem('domino_archive', JSON.stringify(archive));
+        function saveToArchive(winner) {
+            let arch = JSON.parse(localStorage.getItem('d_arch') || '[]');
+            arch.unshift({ date: new Date().toLocaleDateString('ku-IQ'), winner: winner });
+            localStorage.setItem('d_arch', JSON.stringify(arch));
         }
 
         function showArchive() {
             const list = document.getElementById('archive-list');
-            const archive = JSON.parse(localStorage.getItem('domino_archive') || '[]');
-            list.innerHTML = archive.length ? "" : "<p style='text-align:center; color:#666;'>هیچ یارییەک ئەرشیف نەکراوە</p>";
-            archive.forEach(item => {
-                list.innerHTML += `
-                    <div class="archive-item">
-                        <span class="archive-date">📅 ${item.date} - 🕒 ${item.time}</span>
-                        <p>🏆 براوە: <b style="color:#fff">${item.winner}</b></p>
-                    </div>`;
+            const arch = JSON.parse(localStorage.getItem('d_arch') || '[]');
+            list.innerHTML = arch.length ? "" : "<p style='text-align:center;color:#444'>خاڵی پارێزراو نییە</p>";
+            arch.forEach(i => {
+                list.innerHTML += `<div class="archive-item"><small>📅 ${i.date}</small><br>🏆 <b>${i.winner}</b></div>`;
             });
-            document.getElementById('settings-modal').style.display = 'flex';
+            document.getElementById('archive-modal').style.display = 'flex';
         }
 
-        function clearArchive() { if(confirm("دڵنیای لە سڕینەوەی هەموو ئەرشیفەکان؟")) { localStorage.removeItem('domino_archive'); showArchive(); } }
         function delScore(t, idx) { players[t].s -= players[t].h[idx]; players[t].h.splice(idx, 1); renderAll(); }
 
         setMode(2);
