@@ -3,141 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>دۆمینەزان Pro</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <title>دۆمینەزان ئاوێزە</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --gold: #efbf3b; --card-bg: rgba(255,255,255,0.1); }
+        :root { --gold: #efbf3b; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
-        /* ستایلەکان */
-        body.theme-1 { background: url('https://www.transparenttextures.com/patterns/papyrus.png'), #bca88e; } /* ستایلی کاغەزی */
-        body.theme-2 { background: radial-gradient(circle, #ff0000 0%, #000000 100%); } /* ستایلی سوور و ڕەش */
-        body.theme-3 { background: #1a1a1a; } /* ستایلی دۆمینە سپی */
-        body.theme-4 { background: #000; } /* ستایلی پەرداخ و دۆمینە */
+        /* پێناسەی ستایلەکان */
+        body.theme-1 { background: #bca88e url('https://www.transparenttextures.com/patterns/papyrus.png'); } /* کاغەزی */
+        body.theme-2 { background: radial-gradient(circle, #ff0000 0%, #000000 100%); } /* سوور و ڕەش */
+        body.theme-3 { background: #1a1a1a url('https://www.transparenttextures.com/patterns/dark-matter.png'); } /* دۆمینە سپی */
+        body.theme-4 { background: #000 url('https://www.transparenttextures.com/patterns/black-linen.png'); } /* پەرداخ و سەهۆڵ */
 
         body { color: #fff; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; transition: 0.5s; }
 
-        .top-nav { display: flex; justify-content: space-between; padding: 15px; align-items: center; background: rgba(0,0,0,0.3); }
+        /* سەرەوە */
+        .top-nav { display: flex; justify-content: space-between; padding: 15px; align-items: center; background: rgba(0,0,0,0.5); }
         .settings-btn { font-size: 1.5rem; cursor: pointer; }
 
-        /* بەشی گۆڕینی ستایل */
-        .theme-selector {
-            display: none; position: absolute; top: 60px; left: 10px; 
-            background: #222; padding: 10px; border-radius: 10px; z-index: 1000;
+        /* مێنۆی گۆڕینی ستایل */
+        .theme-menu {
+            display: none; position: fixed; top: 60px; left: 15px; 
+            background: rgba(0,0,0,0.9); padding: 10px; border-radius: 12px; z-index: 5000;
+            border: 1px solid #444;
         }
-        .theme-opt { width: 30px; height: 30px; border-radius: 50%; display: inline-block; margin: 5px; border: 2px solid #fff; }
+        .theme-dot { width: 35px; height: 35px; border-radius: 50%; display: inline-block; margin: 5px; border: 2px solid #fff; }
 
-        /* دیزاینی کارتەکان ڕێک وەک وێنەکە */
+        /* دیزاینی کارتەکان ڕێک وەک وێنەکان */
         .game-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; 
-            padding: 20px; flex: 1; align-content: center;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; 
+            padding: 15px; flex: 1; align-content: center;
         }
         .card {
-            background: rgba(255,255,255,0.15); border-radius: 15px;
-            padding: 10px; text-align: center; position: relative;
-            backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.15); border-radius: 20px;
+            padding: 15px 10px; text-align: center; backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
-        .p-name { font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; display: block; }
-        .p-score { font-size: 3rem; font-weight: 900; }
-        .limit-txt { font-size: 0.7rem; color: #ccc; vertical-align: middle; }
+        .p-name { font-weight: bold; font-size: 1.1rem; color: #fff; margin-bottom: 8px; display: block; }
+        .p-score { font-size: 3.2rem; font-weight: 900; color: #fff; }
+        .limit { font-size: 0.8rem; color: rgba(255,255,255,0.6); font-weight: normal; }
         
-        .add-area {
-            background: rgba(255,255,255,0.2); border-radius: 10px;
-            margin-top: 10px; padding: 5px; cursor: pointer;
+        /* دوگمەی پڵەس */
+        .add-section {
+            background: rgba(255,255,255,0.2); border-radius: 12px;
+            margin-top: 12px; padding: 8px; cursor: pointer; transition: 0.2s;
         }
-        .plus-icon { font-size: 1.5rem; font-weight: bold; }
+        .add-section:active { transform: scale(0.95); background: rgba(255,255,255,0.3); }
+        .plus { font-size: 1.8rem; font-weight: bold; color: #fff; }
 
-        /* کیبۆرد و دوگمەکان */
+        /* کیبۆرد */
         .numpad {
             display: none; position: fixed; bottom: 0; left: 0; width: 100%; 
-            background: #111; grid-template-columns: repeat(3, 1fr); gap: 5px; padding: 15px; 
-            z-index: 2000; border-top: 2px solid var(--gold); border-radius: 20px 20px 0 0;
+            background: #0a0a0a; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 20px; 
+            z-index: 6000; border-top: 2px solid var(--gold); border-radius: 30px 30px 0 0;
         }
-        .n-key { background: #333; color: #fff; border: none; padding: 15px; font-size: 1.4rem; border-radius: 10px; }
-        
-        .bottom-btns { display: flex; justify-content: space-around; padding: 20px; }
-        .btn-action { background: #ff0000; color: #fff; border: none; padding: 10px 25px; border-radius: 10px; font-weight: bold; }
+        .n-key { background: #222; color: #fff; border: none; padding: 18px; font-size: 1.6rem; border-radius: 15px; }
+        .n-ok { background: var(--gold) !important; color: #000 !important; grid-column: span 2; font-weight: bold; }
+
+        /* دوگمەکانی خوارەوە */
+        .footer { display: flex; justify-content: space-around; align-items: center; padding: 20px; }
+        .restart-btn { background: #ff0000; color: #fff; border: none; padding: 10px 30px; border-radius: 12px; font-weight: bold; font-size: 1rem; }
     </style>
 </head>
 <body class="theme-1" id="main-body">
 
     <div class="top-nav">
-        <div class="settings-btn" onclick="document.getElementById('theme-menu').style.display='block'">⚙️</div>
-        <div style="background:#000; padding:2px 10px; border-radius:5px;">200 ></div>
-        <div style="background:#000; padding:2px 10px; border-radius:5px;">👥 4</div>
+        <div class="settings-btn" onclick="toggleMenu()">⚙️</div>
+        <div style="background:#000; padding:4px 12px; border-radius:8px; font-weight:bold; border:1px solid #333;">200 ></div>
+        <div style="background:#000; padding:4px 12px; border-radius:8px; font-weight:bold; border:1px solid #333;">👥 4</div>
     </div>
 
-    <div class="theme-selector" id="theme-menu" onclick="this.style.display='none'">
-        <div class="theme-opt" style="background:#bca88e" onclick="changeTheme('theme-1')"></div>
-        <div class="theme-opt" style="background:red" onclick="changeTheme('theme-2')"></div>
-        <div class="theme-opt" style="background:#444" onclick="changeTheme('theme-3')"></div>
-        <div class="theme-opt" style="background:#000" onclick="changeTheme('theme-4')"></div>
+    <div class="theme-menu" id="theme-menu">
+        <div class="theme-dot" style="background:#bca88e" onclick="setTheme('theme-1')"></div>
+        <div class="theme-dot" style="background:red" onclick="setTheme('theme-2')"></div>
+        <div class="theme-dot" style="background:#444" onclick="setTheme('theme-3')"></div>
+        <div class="theme-dot" style="background:#000" onclick="setTheme('theme-4')"></div>
     </div>
 
     <div class="game-grid">
         <div class="card">
             <span class="p-name">home</span>
-            <div class="p-score" id="s1">0 <span class="limit-txt">/200</span></div>
-            <div class="add-area" onclick="openK(1)">
-                <div class="plus-icon">+</div>
-            </div>
+            <div class="p-score" id="s1">0 <span class="limit">/200</span></div>
+            <div class="add-section" onclick="openKey(1)"><div class="plus">+</div></div>
         </div>
         <div class="card">
             <span class="p-name">visitor</span>
-            <div class="p-score" id="s2">0 <span class="limit-txt">/200</span></div>
-            <div class="add-area" onclick="openK(2)">
-                <div class="plus-icon">+</div>
-            </div>
+            <div class="p-score" id="s2">0 <span class="limit">/200</span></div>
+            <div class="add-section" onclick="openKey(2)"><div class="plus">+</div></div>
         </div>
         <div class="card">
             <span class="p-name">visitor1</span>
-            <div class="p-score" id="s3">0 <span class="limit-txt">/200</span></div>
-            <div class="add-area" onclick="openK(3)">
-                <div class="plus-icon">+</div>
-            </div>
+            <div class="p-score" id="s3">0 <span class="limit">/200</span></div>
+            <div class="add-section" onclick="openKey(3)"><div class="plus">+</div></div>
         </div>
         <div class="card">
             <span class="p-name">visitor2</span>
-            <div class="p-score" id="s4">0 <span class="limit-txt">/200</span></div>
-            <div class="add-area" onclick="openK(4)">
-                <div class="plus-icon">+</div>
-            </div>
+            <div class="p-score" id="s4">0 <span class="limit">/200</span></div>
+            <div class="add-section" onclick="openKey(4)"><div class="plus">+</div></div>
         </div>
     </div>
 
-    <div class="bottom-btns">
-        <div style="font-size:1.5rem;">🕒</div>
-        <button class="btn-action" onclick="location.reload()">RESTART</button>
-        <button style="background:#fff; color:#000; border:none; padding:5px 15px; border-radius:8px; font-weight:bold;">Premium</button>
+    <div class="footer">
+        <div style="font-size:1.8rem;">🕒</div>
+        <button class="restart-btn" onclick="location.reload()">RESTART</button>
+        <button style="background:#fff; color:#000; border:none; padding:8px 15px; border-radius:10px; font-weight:bold;">Premium</button>
     </div>
 
     <div id="keypad" class="numpad">
         <button class="n-key" onclick="pk(1)">1</button><button class="n-key" onclick="pk(2)">2</button><button class="n-key" onclick="pk(3)">3</button>
         <button class="n-key" onclick="pk(4)">4</button><button class="n-key" onclick="pk(5)">5</button><button class="n-key" onclick="pk(6)">6</button>
         <button class="n-key" onclick="pk(7)">7</button><button class="n-key" onclick="pk(8)">8</button><button class="n-key" onclick="pk(9)">9</button>
-        <button class="n-key" style="background:#555" onclick="ck()">✖</button><button class="n-key" onclick="pk(0)">0</button><button class="n-key" style="background:green" onclick="dk()">✅</button>
+        <button class="n-key" style="background:#444" onclick="ck()">✖</button><button class="n-key" onclick="pk(0)">0</button><button class="n-key n-ok" onclick="dk()">✅ تەواو</button>
     </div>
 
     <script>
         let curT = 0; let curI = "";
-        let data = { 1: 0, 2: 0, 3: 0, 4: 0 };
+        let scores = { 1: 0, 2: 0, 3: 0, 4: 0 };
 
-        function changeTheme(cls) {
-            document.getElementById('main-body').className = cls;
+        function toggleMenu() {
+            let m = document.getElementById('theme-menu');
+            m.style.display = (m.style.display === 'block') ? 'none' : 'block';
         }
 
-        function openK(t) { curT = t; curI = ""; document.getElementById('keypad').style.display = 'grid'; }
+        function setTheme(cls) {
+            document.getElementById('main-body').className = cls;
+            document.getElementById('theme-menu').style.display = 'none';
+        }
+
+        function openKey(t) { curT = t; curI = ""; document.getElementById('keypad').style.display = 'grid'; }
         function pk(n) { curI += n; }
         function ck() { document.getElementById('keypad').style.display = 'none'; }
 
         function dk() {
             let v = parseInt(curI) || 0;
             if(v > 0) {
-                data[curT] += v;
-                document.getElementById('s'+curT).innerHTML = data[curT] + ' <span class="limit-txt">/200</span>';
-                if(data[curT] >= 200) {
-                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-                    alert("🏆 پیرۆزە!");
+                scores[curT] += v;
+                document.getElementById('s'+curT).innerHTML = scores[curT] + ' <span class="limit">/200</span>';
+                if(scores[curT] >= 200) {
+                    alert("🏆 پیرۆزە! یارییەکە کۆتایی هات.");
+                    location.reload();
                 }
             }
             ck();
