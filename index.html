@@ -3,174 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>خاڵژمێری ئاوێزە - Diamond</title>
+    <title>دۆمینەزان - ئاوێزە PC</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --gold: #efbf3b; --bg: #050505; --glass: rgba(255, 255, 255, 0.05); }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', sans-serif; }
+        :root { 
+            --gold: #efbf3b; 
+            --gold-gradient: linear-gradient(135deg, #efbf3b 0%, #b38b1d 100%);
+            --bg: #050505; 
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(239, 191, 59, 0.2);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
         body {
-            background: radial-gradient(circle at top, #1a1a1a 0%, #050505 100%);
+            background: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%);
             color: #fff; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden;
         }
 
-        /* بەشی سەرەوەی شاهانە */
-        .top-bar {
+        /* بەشی سەرەوە (Header) */
+        .header {
             display: flex; justify-content: space-between; align-items: center; 
-            padding: 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+            padding: 20px; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
         }
-        .logo-text { font-size: 1.4rem; font-weight: 900; letter-spacing: 1px; color: var(--gold); text-shadow: 0 0 15px rgba(239,191,59,0.4); }
-        .history-btn { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 8px 15px; border-radius: 12px; backdrop-filter: blur(10px); }
+        .logo { font-size: 1.5rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 20px rgba(239,191,59,0.5); }
+        .archive-btn { background: var(--glass); border: 1px solid var(--glass-border); color: #fff; padding: 10px 15px; border-radius: 15px; font-size: 0.9rem; }
 
-        /* مۆدەکان */
-        .mode-container { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; }
-        .mode-btn { background: transparent; color: #888; border: 1px solid #333; padding: 8px 18px; border-radius: 20px; font-size: 0.85rem; transition: 0.3s; }
-        .mode-active { background: var(--gold); color: #000; border: none; font-weight: bold; box-shadow: 0 0 20px rgba(239,191,59,0.3); }
+        /* مۆدەکان (2, 3, 4) */
+        .modes { display: flex; gap: 10px; justify-content: center; margin: 15px 0; }
+        .m-btn { background: transparent; color: #666; border: 1px solid #222; padding: 8px 20px; border-radius: 20px; transition: 0.3s; }
+        .m-active { background: var(--gold-gradient); color: #000; border: none; font-weight: bold; box-shadow: 0 5px 15px rgba(179,139,29,0.4); }
 
-        /* کارتەکانی یاری (شووشەیی) */
-        .game-grid { display: flex; gap: 12px; flex: 1; overflow-x: auto; padding: 10px 15px; align-items: stretch; }
-        .player-card {
-            min-width: 170px; flex: 1; background: var(--glass); border-radius: 30px;
-            backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1);
-            display: flex; flex-direction: column; align-items: center; padding: 25px 10px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5); position: relative;
+        /* کارتەکانی یاری (لوکس) */
+        .grid { display: flex; gap: 15px; flex: 1; overflow-x: auto; padding: 10px 20px; align-items: stretch; }
+        .card {
+            min-width: 180px; flex: 1; background: var(--glass); border-radius: 35px;
+            border: 1px solid var(--glass-border); backdrop-filter: blur(20px);
+            display: flex; flex-direction: column; align-items: center; padding: 30px 10px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6); animation: fadeIn 0.5s ease;
         }
-        .player-name { 
-            background: transparent; border: none; color: var(--gold); font-size: 1.2rem; 
-            font-weight: bold; text-align: center; width: 90%; outline: none; border-bottom: 1px solid rgba(239,191,59,0.2);
+        @keyframes fadeIn { from {opacity: 0; transform: scale(0.9);} to {opacity: 1; transform: scale(1);} }
+
+        .p-name { 
+            background: transparent; border: none; color: var(--gold); font-size: 1.3rem; 
+            font-weight: 800; text-align: center; width: 90%; outline: none; border-bottom: 1px solid rgba(239,191,59,0.1);
         }
-        .score-num { font-size: 4.5rem; font-weight: 900; margin: 15px 0; color: #fff; text-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .p-score { font-size: 5rem; font-weight: 900; margin: 20px 0; color: #fff; text-shadow: 0 10px 30px rgba(0,0,0,0.8); }
         
         /* مێژووی خاڵەکان */
-        .history-inner { flex: 1; width: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; margin-bottom: 15px; }
-        .history-val { background: rgba(255,255,255,0.03); padding: 5px; border-radius: 8px; text-align: center; font-size: 0.9rem; color: #aaa; }
+        .hist { flex: 1; width: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 10px; }
+        .h-val { background: rgba(255,255,255,0.02); padding: 8px; border-radius: 12px; text-align: center; color: #888; border: 1px solid rgba(255,255,255,0.05); }
 
-        /* دوگمەی پڕۆفیشناڵ */
-        .add-circle {
-            background: linear-gradient(135deg, #efbf3b, #b38b1d); color: #000; 
-            width: 70px; height: 70px; border-radius: 22px; border: none; 
-            font-size: 2.5rem; font-weight: bold; box-shadow: 0 10px 25px rgba(179,139,29,0.4);
+        /* دوگمەی زێڕین */
+        .add-btn {
+            background: var(--gold-gradient); color: #000; width: 75px; height: 75px; 
+            border-radius: 25px; border: none; font-size: 2.8rem; font-weight: bold;
+            box-shadow: 0 10px 30px rgba(179,139,29,0.5); transform: rotate(-5deg); transition: 0.2s;
         }
+        .add-btn:active { transform: scale(0.9) rotate(0deg); }
 
-        /* کیبۆردی شووشەیی */
-        .numpad-panel {
+        /* کیبۆردی دیجیتاڵی */
+        .numpad {
             display: none; position: fixed; bottom: 0; left: 0; width: 100%; 
-            background: rgba(10,10,10,0.95); backdrop-filter: blur(25px);
-            grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 25px; 
-            z-index: 2000; border-top: 1px solid rgba(239,191,59,0.3); border-radius: 40px 40px 0 0;
+            background: rgba(5,5,5,0.98); backdrop-filter: blur(30px);
+            grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 30px; 
+            z-index: 5000; border-top: 2px solid var(--gold); border-radius: 45px 45px 0 0;
         }
-        .num-key { background: rgba(255,255,255,0.05); color: #fff; border: none; padding: 20px; font-size: 1.7rem; border-radius: 20px; font-weight: 600; }
-        .ok-key { background: var(--gold) !important; color: #000 !important; grid-column: span 2; }
+        .n-key { background: rgba(255,255,255,0.05); color: #fff; border: none; padding: 22px; font-size: 1.8rem; border-radius: 22px; font-weight: bold; }
+        .n-ok { background: var(--gold-gradient) !important; color: #000 !important; grid-column: span 2; }
 
-        /* ئەرشیفی فۆڵدەر */
-        #archive-panel {
+        /* فۆڵدەری مێژووی گشتی */
+        #archive {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 3000; padding: 25px;
+            background: #000; z-index: 6000; padding: 30px; overflow-y: auto;
         }
-        .archive-item { background: var(--glass); border-radius: 20px; padding: 15px; margin-bottom: 15px; border-left: 4px solid var(--gold); }
+        .arch-card { background: var(--glass); border-radius: 25px; padding: 20px; margin-bottom: 20px; border-right: 5px solid var(--gold); border-bottom: 1px solid var(--glass-border); }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <div class="logo-text">AWEZA PC</div>
-        <button class="history-btn" onclick="toggleArchive()">📁 مێژووی یاری</button>
+    <div class="header">
+        <div class="logo">دۆمینەزان 💎</div>
+        <button class="archive-btn" onclick="openArch()">📂 فۆڵدەری مێژوو</button>
     </div>
 
-    <div class="mode-container">
-        <button class="mode-btn mode-active" id="btn2" onclick="changeMode(2)">٢ یاریزان</button>
-        <button class="mode-btn" id="btn3" onclick="changeMode(3)">٣ یاریزان</button>
-        <button class="mode-btn" id="btn4" onclick="changeMode(4)">٤ یاریزان</button>
+    <div class="modes">
+        <button class="m-btn m-active" id="m2" onclick="setM(2)">٢ یاریزان</button>
+        <button class="m-btn" id="m3" onclick="setM(3)">٣ یاریزان</button>
+        <button class="m-btn" id="m4" onclick="setM(4)">٤ یاریزان</button>
     </div>
 
-    <div class="game-grid" id="main-grid">
-        <div class="player-card">
-            <input type="text" class="player-name" id="name1" value="تیمی ١">
-            <div class="score-num" id="s1">0</div>
-            <div class="history-inner" id="h1"></div>
-            <button class="add-circle" onclick="openKey(1)">+</button>
+    <div class="grid" id="main-grid">
         </div>
-        <div class="player-card">
-            <input type="text" class="player-name" id="name2" value="تیمی ٢">
-            <div class="score-num" id="s2">0</div>
-            <div class="history-inner" id="h2"></div>
-            <button class="add-circle" onclick="openKey(2)">+</button>
-        </div>
+
+    <div style="padding: 20px; text-align: center;">
+        <button onclick="location.reload()" style="background:none; color:#444; border:1px solid #222; padding:10px 30px; border-radius:20px;">🔄 دەستپێکردنەوەی یاری</button>
     </div>
 
-    <div style="padding: 20px; display: flex; gap: 10px; justify-content: center;">
-        <button onclick="location.reload()" style="background:none; color:#666; border:1px solid #333; padding:10px 25px; border-radius:15px;">🔄 دەستپێکردنەوە</button>
+    <div id="keypad" class="numpad">
+        <button class="n-key" onclick="pk(1)">1</button><button class="n-key" onclick="pk(2)">2</button><button class="n-key" onclick="pk(3)">3</button>
+        <button class="n-key" onclick="pk(4)">4</button><button class="n-key" onclick="pk(5)">5</button><button class="n-key" onclick="pk(6)">6</button>
+        <button class="n-key" onclick="pk(7)">7</button><button class="n-key" onclick="pk(8)">8</button><button class="n-key" onclick="pk(9)">9</button>
+        <button class="n-key" style="background:#333" onclick="ck()">✖</button><button class="n-key" onclick="pk(0)">0</button><button class="n-key n-ok" onclick="dk()">تەواو ✅</button>
     </div>
 
-    <div id="key-panel" class="numpad-panel">
-        <button class="num-key" onclick="pressK(1)">1</button><button class="num-key" onclick="pressK(2)">2</button><button class="num-key" onclick="pressK(3)">3</button>
-        <button class="num-key" onclick="pressK(4)">4</button><button class="num-key" onclick="pressK(5)">5</button><button class="num-key" onclick="pressK(6)">6</button>
-        <button class="num-key" onclick="pressK(7)">7</button><button class="num-key" onclick="pressK(8)">8</button><button class="num-key" onclick="pressK(9)">9</button>
-        <button class="num-key" style="background:#444" onclick="closeKey()">✖</button><button class="num-key" onclick="pressK(0)">0</button><button class="num-key ok-key" onclick="doneK()">تەواو ✅</button>
-    </div>
-
-    <div id="archive-panel">
+    <div id="archive">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-            <h2 style="color:var(--gold); margin:0;">📂 ئەرشیفی یارییەکان</h2>
-            <button onclick="toggleArchive()" style="background:var(--gold); border:none; padding:10px 20px; border-radius:12px; font-weight:bold;">داخستن</button>
+            <h2 style="color:var(--gold); margin:0;">📂 ئەرشیفی دۆمینەزان</h2>
+            <button onclick="openArch()" style="background:var(--gold); border:none; padding:10px 25px; border-radius:15px; font-weight:bold;">داخستن</button>
         </div>
-        <div id="arch-list" style="overflow-y:auto; max-height:80vh;"></div>
+        <div id="arch-list"></div>
+        <button onclick="clearAll()" style="width:100%; margin-top:30px; background:none; border:1px solid #ff5252; color:#ff5252; padding:15px; border-radius:20px;">سڕینەوەی هەموو مێژووەکان 🗑️</button>
     </div>
 
     <script>
         let curT = 0; let curI = "";
-        let players = { 1: {s:0, h:[]}, 2: {s:0, h:[]}, 3: {s:0, h:[]}, 4: {s:0, h:[]} };
+        let data = { 1: {s:0, h:[]}, 2: {s:0, h:[]}, 3: {s:0, h:[]}, 4: {s:0, h:[]} };
 
-        function changeMode(n) {
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('mode-active'));
-            document.getElementById('btn'+n).classList.add('mode-active');
-            const grid = document.getElementById('main-grid');
-            grid.innerHTML = "";
+        function setM(n) {
+            document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('m-active'));
+            document.getElementById('m'+n).classList.add('m-active');
+            const g = document.getElementById('main-grid');
+            g.innerHTML = "";
             for(let i=1; i<=n; i++) {
-                grid.innerHTML += `<div class="player-card"><input type="text" class="player-name" id="name${i}" value="تیمی ${i}"><div class="score-num" id="s${i}">${players[i].s}</div><div class="history-inner" id="h${i}">${players[i].h.map(x=>`<div class="history-val">${x}</div>`).join('')}</div><button class="add-circle" onclick="openKey(${i})">+</button></div>`;
+                g.innerHTML += `
+                    <div class="card">
+                        <input type="text" class="p-name" id="n${i}" value="تیمی ${i}">
+                        <div class="p-score" id="s${i}">${data[i].s}</div>
+                        <div class="hist" id="h${i}">${data[i].h.map(x=>`<div class="h-val">${x}</div>`).join('')}</div>
+                        <button class="add-btn" onclick="ok(${i})">+</button>
+                    </div>`;
             }
         }
 
-        function openKey(t) { curT = t; curI = ""; document.getElementById('key-panel').style.display = 'grid'; }
-        function pressK(n) { curI += n; if(navigator.vibrate) navigator.vibrate(15); }
-        function closeKey() { document.getElementById('key-panel').style.display = 'none'; }
+        function ok(t) { curT = t; curI = ""; document.getElementById('keypad').style.display = 'grid'; if(navigator.vibrate) navigator.vibrate(20); }
+        function pk(n) { curI += n; if(navigator.vibrate) navigator.vibrate(15); }
+        function ck() { document.getElementById('keypad').style.display = 'none'; }
 
-        function doneK() {
+        function dk() {
             let v = parseInt(curI) || 0;
             if(v > 0) {
-                players[curT].s += v;
-                players[curT].h.push(v);
-                document.getElementById('s'+curT).innerText = players[curT].s;
-                document.getElementById('h'+curT).innerHTML = players[curT].h.map(x=>`<div class="history-val">${x}</div>`).join('');
-                if(players[curT].s >= 101) win(curT);
+                data[curT].s += v;
+                data[curT].h.push(v);
+                document.getElementById('s'+curT).innerText = data[curT].s;
+                document.getElementById('h'+curT).innerHTML = data[curT].h.map(x=>`<div class="h-val">${x}</div>`).join('');
+                if(data[curT].s >= 101) win(curT);
             }
-            closeKey();
+            ck();
         }
 
         function win(t) {
-            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 }, colors: ['#efbf3b', '#ffffff'] });
-            let n = document.getElementById('name'+t).value;
-            setTimeout(() => { 
-                alert("🏆 پیرۆزە! " + n + " بردییەوە");
-                addToArch(n);
-                location.reload();
-            }, 500);
+            confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 }, colors: ['#efbf3b', '#ffffff'] });
+            let name = document.getElementById('n'+t).value;
+            saveGame(name);
+            setTimeout(() => { alert("🏆 پیرۆزە! " + name + " بوو بە دۆمینەزان"); location.reload(); }, 600);
         }
 
-        function addToArch(w) {
-            let logs = JSON.parse(localStorage.getItem('aweza_logs') || '[]');
-            logs.unshift({ date: new Date().toLocaleString('ku-IQ'), win: w });
-            localStorage.setItem('aweza_logs', JSON.stringify(logs));
+        function saveGame(w) {
+            let logs = JSON.parse(localStorage.getItem('dz_logs') || '[]');
+            logs.unshift({ date: new Date().toLocaleString('ku-IQ'), winner: w });
+            localStorage.setItem('dz_logs', JSON.stringify(logs));
         }
 
-        function toggleArchive() {
-            const p = document.getElementById('archive-panel');
+        function openArch() {
+            const p = document.getElementById('archive');
             p.style.display = p.style.display === 'block' ? 'none' : 'block';
             if(p.style.display === 'block') {
-                let logs = JSON.parse(localStorage.getItem('aweza_logs') || '[]');
-                document.getElementById('arch-list').innerHTML = logs.map(l => `<div class="archive-item"><b>📅 ${l.date}</b><br><span style="color:var(--gold)">🏆 براوە: ${l.win}</span></div>`).join('');
+                let logs = JSON.parse(localStorage.getItem('dz_logs') || '[]');
+                document.getElementById('arch-list').innerHTML = logs.map(l => `
+                    <div class="arch-card">
+                        <div style="color:#888; font-size:0.8rem;">📅 ${l.date}</div>
+                        <div style="color:var(--gold); font-size:1.2rem; font-weight:bold; margin-top:5px;">🏆 براوە: ${l.winner}</div>
+                    </div>`).join('');
             }
         }
+
+        function clearAll() { if(confirm("هەموو فۆڵدەرەکان بسڕدرێتەوە؟")) { localStorage.removeItem('dz_logs'); openArch(); } }
+
+        setM(2); // دەستپێکردن بە ٢ یاریزان
     </script>
 </body>
 </html>
