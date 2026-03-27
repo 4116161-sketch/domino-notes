@@ -9,68 +9,70 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
         body { 
-            background: #000 radial-gradient(circle, #500 0%, #000 100%);
+            background: #000 radial-gradient(circle at center, #600 0%, #000 100%);
             color: #fff; font-family: 'Segoe UI', sans-serif;
             height: 100vh; display: flex; flex-direction: column; overflow: hidden;
         }
 
-        /* شاشەی پیرۆزبایی (وەک وێنەکە بەڵام بە کوردی) */
+        /* شاشەی پیرۆزبایی ڕێک وەک وێنەکە */
         #win-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); z-index: 10000; flex-direction: column; 
             align-items: center; justify-content: center; text-align: center;
         }
-        .win-box h1 { font-size: 5rem; color: #fff; margin-bottom: 5px; }
+        .win-box h1 { font-size: 5rem; color: #fff; margin-bottom: -10px; font-weight: bold; }
         .win-box h2 { font-size: 2.5rem; color: #fff; font-weight: 300; }
 
-        .top-nav { display: flex; justify-content: space-between; padding: 15px; background: rgba(0,0,0,0.5); align-items: center; }
-        .goal-input { background: #111; border: 1px solid #efbf3b; color: #efbf3b; width: 60px; text-align: center; border-radius: 5px; }
+        .top-nav { display: flex; justify-content: space-between; padding: 15px; background: rgba(0,0,0,0.6); align-items: center; }
+        .goal-input { background: #111; border: 1px solid #efbf3b; color: #efbf3b; width: 65px; text-align: center; border-radius: 8px; padding: 3px; font-weight: bold; }
 
-        /* دیزاینی کارتەکان (٣ نەفەری وەک وێنەکە) */
+        /* ڕێکخستنی کارتەکان وەک وێنەکە */
         .game-grid { 
             display: grid; 
             grid-template-columns: 1fr 1fr; 
-            gap: 10px; padding: 10px; flex: 1; 
+            gap: 15px; padding: 15px; flex: 1; 
             align-content: start;
+            overflow-y: auto;
         }
-        /* کارتی سێیەم دەخەینە ناوەڕاستی خوارەوە */
-        .card:nth-child(3):last-child {
+        
+        /* لە مۆدی ٣ نەفەری، کارتی سێیەم دەچێتە ناوەڕاستی خوارەوە */
+        .grid-3 .card:nth-child(3) {
             grid-column: span 2;
-            width: 60%;
+            width: 70%;
             margin: 0 auto;
         }
 
         .card { 
-            background: rgba(255,255,255,0.05); border-radius: 15px; 
-            border: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;
-            display: flex; flex-direction: column;
+            background: rgba(255,255,255,0.05); border-radius: 20px; 
+            border: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
-        .card-header { background: #800; padding: 10px; text-align: center; border-radius: 15px 15px 0 0; position: relative; }
-        .p-name-input { background: transparent; border: none; color: #fff; font-weight: bold; text-align: center; width: 100%; outline: none; }
+        .card-header { background: #800; padding: 12px; text-align: center; border-radius: 20px 20px 0 0; }
+        .p-name-input { background: transparent; border: none; color: #fff; font-weight: bold; text-align: center; width: 100%; outline: none; font-size: 1.1rem; }
         
-        .score-total { font-size: 2.5rem; font-weight: bold; text-align: center; margin: 5px 0; }
-        .history-list { height: 120px; overflow-y: auto; font-size: 0.9rem; border-top: 1px solid rgba(255,255,255,0.1); }
-        .hist-item { display: flex; justify-content: space-between; padding: 5px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .btn-del { color: #ff5252; cursor: pointer; }
+        .score-total { font-size: 3rem; font-weight: bold; text-align: center; margin: 10px 0; }
+        .history-list { height: 140px; overflow-y: auto; font-size: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+        .hist-item { display: flex; justify-content: space-between; padding: 6px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.02); }
+        .btn-del { color: #ff5252; font-weight: bold; cursor: pointer; padding: 0 5px; }
 
-        /* پەنجەرەی نمرە */
+        /* پۆپ-ئەپی نمرە */
         #score-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; align-items: center; justify-content: center; }
-        .modal-box { background: #111; width: 85%; padding: 30px; border-radius: 20px; border: 1px solid #efbf3b; }
-        .modal-input { width: 100%; background: transparent; border: none; border-bottom: 2px solid #efbf3b; color: #fff; font-size: 3rem; text-align: center; outline: none; margin: 20px 0; }
+        .modal-box { background: #111; width: 85%; padding: 30px; border-radius: 25px; border: 2px solid #800; text-align: center; }
+        .modal-input { width: 100%; background: transparent; border: none; border-bottom: 3px solid #800; color: #fff; font-size: 4rem; text-align: center; outline: none; margin: 25px 0; }
 
-        .footer { padding: 15px; display: flex; justify-content: space-around; }
-        .restart { background: #800; color: #fff; border: none; padding: 10px 30px; border-radius: 10px; font-weight: bold; }
-        .mode-btn { background: #222; border: 1px solid #444; color: #fff; padding: 5px 15px; border-radius: 10px; }
-        .active-mode { background: #800; border: none; }
+        .footer { padding: 20px; display: flex; justify-content: space-around; background: rgba(0,0,0,0.4); }
+        .restart { background: #800; color: #fff; border: none; padding: 12px 30px; border-radius: 15px; font-weight: bold; }
+        .mode-btn { background: #222; border: 1px solid #444; color: #fff; padding: 7px 18px; border-radius: 12px; }
+        .active-mode { background: #800; border: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="win-overlay" onclick="location.reload()">
         <div class="win-box">
-            <h1 id="winner-display">تیمی ١</h1>
-            <h2>بردییەوە</h2>
-            <p style="color:#666; margin-top:20px;">بۆ دەستپێکردنەوە دەست لێرە بدە</p>
+            <h1 id="winner-display">visitor</h1>
+            <h2>has won</h2>
+            <p style="color:#666; margin-top:30px; font-weight:bold;">دەست لێرە بدە بۆ یاری نوێ</p>
         </div>
     </div>
 
@@ -86,18 +88,18 @@
 
     <div id="score-modal">
         <div class="modal-box">
-            <h2 id="modal-title">ناو</h2>
+            <h2 id="modal-title" style="color:#efbf3b;">ناو</h2>
             <input type="number" id="points-input" class="modal-input" placeholder="0" inputmode="numeric">
-            <div style="display:flex; gap:10px;">
-                <button onclick="closeModal()" style="flex:1; background:#333; color:#fff; border:none; padding:15px; border-radius:10px;">پاشگەزبوونەوە</button>
-                <button onclick="addScore()" style="flex:1; background:#800; color:#fff; border:none; padding:15px; border-radius:10px;">تەواو OK</button>
+            <div style="display:flex; gap:15px;">
+                <button onclick="closeModal()" style="flex:1; background:#333; color:#fff; border:none; padding:15px; border-radius:12px;">پاشگەزبوونەوە</button>
+                <button onclick="addScore()" style="flex:1; background:#800; color:#fff; border:none; padding:15px; border-radius:12px; font-weight:bold;">OK</button>
             </div>
         </div>
     </div>
 
     <div class="footer">
-        <button class="restart" onclick="location.reload()">RESTART</button>
-        <button style="background:#fff; color:#000; border:none; padding:5px 15px; border-radius:8px; font-weight:bold;">ئاوێزە PC</button>
+        <button class="restart" onclick="if(confirm('دڵنیای؟')) location.reload()">دەستپێکردنەوە</button>
+        <button style="background:#fff; color:#000; border:none; padding:10px 20px; border-radius:12px; font-weight:bold;">Aweza PC</button>
     </div>
 
     <script>
@@ -106,9 +108,15 @@
 
         function setMode(n) {
             players = {};
-            for(let i=1; i<=n; i++) { players[i] = { name: (i==1?'home':(i==2?'visitor':'visitor1')), s: 0, h: [] }; }
-            document.getElementById('btn-2').classList.toggle('active-mode', n==2);
-            document.getElementById('btn-3').classList.toggle('active-mode', n==3);
+            const grid = document.getElementById('main-grid');
+            if(n === 3) grid.classList.add('grid-3'); else grid.classList.remove('grid-3');
+            
+            for(let i=1; i<=n; i++) { 
+                let defaultName = (i==1?'home':(i==2?'visitor':'visitor1'));
+                players[i] = { name: defaultName, s: 0, h: [] }; 
+            }
+            document.getElementById('btn-2').className = (n==2 ? 'mode-btn active-mode' : 'mode-btn');
+            document.getElementById('btn-3').className = (n==3 ? 'mode-btn active-mode' : 'mode-btn');
             renderAll();
         }
 
@@ -122,14 +130,14 @@
                     <div class="card">
                         <div class="card-header">
                             <input type="text" class="p-name-input" value="${players[i].name}" onclick="this.value=''" onchange="players[${i}].name=this.value">
-                            <div style="font-size:1.5rem; cursor:pointer;" onclick="openModal(${i})">+</div>
+                            <div style="font-size:1.8rem; cursor:pointer; margin-top:5px;" onclick="openModal(${i})">+</div>
                         </div>
-                        <div class="score-total">${players[i].s} <span style="font-size:0.8rem; color:#888;">/${goal}</span></div>
+                        <div class="score-total">${players[i].s} <span style="font-size:0.9rem; color:#888;">/${goal}</span></div>
                         <div class="history-list">
                             ${players[i].h.map((val, idx) => `
                                 <div class="hist-item">
-                                    <span style="color:#555">${idx+1}</span>
-                                    <span>${val}</span>
+                                    <span style="color:#555; font-weight:bold;">${idx+1}</span>
+                                    <span style="font-weight:bold;">${val}</span>
                                     <span class="btn-del" onclick="delScore(${i}, ${idx})">×</span>
                                 </div>`).join('')}
                         </div>
@@ -152,10 +160,7 @@
         }
 
         function showWin(name) {
-            // لێرە مۆبایلەکە بە توندی دەلەرزێتەوە (Vibrate)
-            if (navigator.vibrate) {
-                navigator.vibrate([500, 200, 500, 200, 500]); 
-            }
+            if (navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 500]); 
             confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
             document.getElementById('winner-display').innerText = name;
             document.getElementById('win-overlay').style.display = 'flex';
