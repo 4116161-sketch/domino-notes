@@ -17,6 +17,7 @@
             height: 100vh; display: flex; flex-direction: column; overflow: hidden;
         }
 
+        /* سەرپەڕە */
         .header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(0, 0, 0, 0.9); border-bottom: 2px solid var(--neon); z-index: 100; }
         .logo-text { color: var(--neon); font-size: 1.3rem; font-weight: 900; text-shadow: 0 0 10px var(--neon); }
 
@@ -25,17 +26,19 @@
         .paused .timer-wrapper { animation: pulse 1s infinite; border-color: var(--red); box-shadow: 0 0 15px var(--red); }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
+        /* کارتەکان */
         .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; flex: 1; align-content: start; overflow-y: auto; }
         .grid-3 .card:last-child { grid-column: 1 / span 2; width: 85%; margin: 0 auto; }
         .card { background: rgba(0, 0, 0, 0.85); border-radius: 25px; border: 2.5px solid var(--neon); padding: 15px; text-align: center; backdrop-filter: blur(10px); box-shadow: 0 0 20px rgba(57, 255, 20, 0.2); }
         
         .player-input { background: none; border: none; color: var(--neon); text-align: center; width: 100%; font-weight: 900; font-size: 1.2rem; outline: none; }
-        .score-total { font-size: 4rem; font-weight: 900; color: var(--neon); cursor: pointer; line-height: 1; text-shadow: 0 0 15px var(--neon); }
-        .rem-pts { color: #fff; font-size: 0.8rem; margin-bottom: 8px; opacity: 0.7; font-weight: bold; }
+        .score-total { font-size: 4rem; font-weight: 900; color: var(--neon); cursor: pointer; line-height: 1; text-shadow: 0 0 15px var(--neon); margin: 5px 0; }
+        .rem-pts { color: #fff; font-size: 0.8rem; margin-bottom: 8px; opacity: 0.8; font-weight: bold; }
 
         .history-list { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; border-top: 1px solid rgba(57,255,20,0.3); padding-top: 8px; margin-top: 5px; }
         .history-item { background: var(--neon); color: #000; padding: 3px 8px; border-radius: 8px; font-size: 0.85rem; font-weight: 900; display: flex; align-items: center; gap: 5px; }
 
+        /* مۆداڵەکان */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
         .modal-box { background: #000; width: 100%; max-width: 400px; padding: 30px; border-radius: 35px; border: 2px solid var(--neon); text-align: center; }
 
@@ -91,7 +94,7 @@
         <div class="modal-box" style="border-color: var(--red); animation: shake 0.4s ease-in-out;">
             <h1 style="font-size: 5rem;">⛔</h1>
             <h2 style="color:var(--red); font-size: 2.2rem;">نایاساییە!</h2>
-            <p style="margin-top:10px;">تۆمارکردنی ١٠١ و سەرووتر قەدەغەیە.</p>
+            <p style="margin-top:10px;">تۆمارکردنی ١٠١ و سەرووتر قەدەغەیە لە ئاوێزە PC.</p>
             <button class="btn btn-red" onclick="document.getElementById('illegal-modal').style.display='none'">تێگەیشتم</button>
         </div>
     </div>
@@ -99,7 +102,7 @@
     <div id="settings-panel" class="modal" style="justify-content: flex-start;">
         <div class="modal-box">
             <h2 style="color:var(--neon); margin-bottom:15px;">ڕێکخستنی ئاوێزە</h2>
-            <p style="text-align:right; font-size:0.9rem;">🎨 باکگراوندەکان:</p>
+            <p style="text-align:right; font-size:0.9rem;">🎨 گۆڕینی باکگراوند:</p>
             <div class="theme-grid">
                 <div class="theme-item" style="background-image:url('https://blog.tmlirp.org/hs-fs/hubfs/abstract%20dominoes%20background.jpeg?width=900')" onclick="changeTheme(this.style.backgroundImage)"></div>
                 <div class="theme-item" style="background-image:url('https://images.unsplash.com/photo-1769029174092-d26bc1a51efc?fm=jpg&q=60&w=3000')" onclick="changeTheme(this.style.backgroundImage)"></div>
@@ -107,8 +110,8 @@
                 <div class="theme-item" style="background-image:url('https://w0.peakpx.com/wallpaper/744/807/HD-wallpaper-dominos-reflection-dominos.jpg')" onclick="changeTheme(this.style.backgroundImage)"></div>
             </div>
             <div style="margin-top:20px;">
-                <a href="https://www.facebook.com/4116161-sketch" target="_blank" style="color:var(--neon); display:block; margin-bottom:10px; text-decoration:none;">🔵 Facebook</a>
-                <a href="https://www.tiktok.com/@4116161-sketch" target="_blank" style="color:var(--neon); display:block; text-decoration:none;">⚫ TikTok</a>
+                <a href="https://www.facebook.com/4116161-sketch" target="_blank" style="color:var(--neon); display:block; margin-bottom:10px; text-decoration:none; font-weight:bold;">🔵 Facebook: Aweza PC</a>
+                <a href="https://www.tiktok.com/@4116161-sketch" target="_blank" style="color:var(--neon); display:block; text-decoration:none; font-weight:bold;">⚫ TikTok: @Aweza_PC</a>
             </div>
             <button class="btn btn-red" onclick="closeSettings()">گەڕانەوە</button>
         </div>
@@ -123,4 +126,69 @@
                 if (!isPaused) {
                     seconds++;
                     let m = Math.floor(seconds / 60); let s = seconds % 60;
-                    document.getElementById('game-timer').innerText = (m<10?"0"+m:m)+":"+(s<10?"0"+
+                    document.getElementById('game-timer').innerText = (m<10?"0"+m:m)+":"+(s<10?"0"+s:s);
+                }
+            }, 1000);
+        }
+
+        function toggleTimer() {
+            isPaused = !isPaused;
+            document.getElementById('timer-container').parentElement.classList.toggle('paused', isPaused);
+            document.getElementById('timer-icon').innerText = isPaused ? "▶️" : "⏸️";
+        }
+
+        function setMode(n) {
+            players = {}; seconds = 0; isPaused = false; startTimer();
+            const grid = document.getElementById('main-grid');
+            grid.className = (n === 3 ? 'game-grid grid-3' : 'game-grid');
+            for(let i=1; i<=n; i++) players[i] = { name: "یاریزان " + i, score: 0, history: [] };
+            render();
+        }
+
+        function render() {
+            const grid = document.getElementById('main-grid'); grid.innerHTML = "";
+            for (let i in players) {
+                let rem = 101 - players[i].score;
+                let hHtml = players[i].history.map((pt, idx) => `<div class="history-item">${pt} <span style="color:red; cursor:pointer;" onclick="deletePoint(${i}, ${idx})">×</span></div>`).join("");
+                grid.innerHTML += `
+                    <div class="card">
+                        <input type="text" class="player-input" value="${players[i].name}" onfocus="this.value=''" onchange="players[${i}].name=this.value">
+                        <div class="score-total" onclick="openModal(${i})">${players[i].score}</div>
+                        <div class="rem-pts">${rem} خاڵ ماوە</div>
+                        <div class="history-list">${hHtml}</div>
+                    </div>`;
+            }
+        }
+
+        function validateScore() {
+            let v = parseInt(document.getElementById('points-input').value);
+            if (isNaN(v)) return;
+            if (v >= 101) { document.getElementById('illegal-modal').style.display = 'flex'; return; }
+            if (v >= 40 && v <= 100) {
+                document.getElementById('confirm-box').style.display = 'block';
+                document.getElementById('normal-btns').style.display = 'none';
+            } else { saveScore(); }
+        }
+
+        function saveScore() {
+            let v = parseInt(document.getElementById('points-input').value);
+            players[curT].score += v; players[curT].history.push(v);
+            render(); closeModal();
+            if(players[curT].score >= 101) {
+                confetti({ particleCount: 300, spread: 100, origin: { y: 0.6 } });
+                alert("🏆 پیرۆزە " + players[curT].name + " بردییەوە!");
+                setMode(Object.keys(players).length);
+            }
+        }
+
+        function deletePoint(p, h) { event.stopPropagation(); players[p].score -= players[p].history[h]; players[p].history.splice(h, 1); render(); }
+        function openModal(t) { curT = t; document.getElementById('score-modal').style.display = 'flex'; document.getElementById('points-input').value=""; document.getElementById('confirm-box').style.display='none'; document.getElementById('normal-btns').style.display='flex'; document.getElementById('points-input').focus(); }
+        function closeModal() { document.getElementById('score-modal').style.display = 'none'; }
+        function openSettings() { document.getElementById('settings-panel').style.display = 'flex'; }
+        function closeSettings() { document.getElementById('settings-panel').style.display = 'none'; }
+        function changeTheme(img) { document.body.style.backgroundImage = img; localStorage.setItem('aweza_bg', img); }
+
+        window.onload = () => { setMode(2); let bg = localStorage.getItem('aweza_bg'); if(bg) document.body.style.backgroundImage = bg; };
+    </script>
+</body>
+</html>
