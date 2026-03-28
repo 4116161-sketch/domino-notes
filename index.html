@@ -6,54 +6,59 @@
     <title>خاڵژمێری ئاوێزە PC</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --main: #efbf3b; --bg: #0a0a0a; --card: rgba(255,255,255,0.1); }
+        :root { --main: #efbf3b; --bg-color: #000; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
         body { 
-            background: var(--bg);
-            background-size: cover; background-position: center; background-attachment: fixed;
+            background-color: var(--bg-color);
+            background-image: url('https://img.freepik.com/premium-photo/white-domino-tiles-falling-row-isolated-white_771335-38965.jpg?w=740');
+            background-size: cover; 
+            background-position: center; 
+            background-attachment: fixed;
             color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; 
             height: 100vh; display: flex; flex-direction: column; overflow: hidden; transition: 0.5s;
         }
 
-        /* ستایلی گشتی */
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(239,191,59,0.3); }
+        /* Overlay بۆ ئەوەی نووسینەکان دیار بن */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: -1; }
+
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); border-bottom: 2px solid var(--main); }
         .logo-text { color: var(--main); font-size: 1.5rem; font-weight: 900; }
 
         .mode-selector { display: flex; justify-content: center; gap: 10px; padding: 15px; }
-        .mode-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--main); color: #fff; padding: 8px 18px; border-radius: 12px; font-weight: bold; }
+        .mode-btn { background: rgba(0,0,0,0.6); border: 1px solid var(--main); color: #fff; padding: 10px 20px; border-radius: 12px; font-weight: bold; }
         .mode-btn.active { background: var(--main); color: #000; }
 
-        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; flex: 1; align-content: start; }
-        .grid-3 .card:nth-child(3) { grid-column: span 2; width: 85%; margin: 0 auto; }
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; flex: 1; align-content: start; }
+        .grid-3 .card:nth-child(3) { grid-column: span 2; width: 80%; margin: 0 auto; }
         
-        .card { background: var(--card); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); padding: 20px; text-align: center; backdrop-filter: blur(15px); }
-        .score-total { font-size: 3.5rem; font-weight: 900; color: var(--main); }
+        .card { background: rgba(0,0,0,0.7); border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); padding: 20px; text-align: center; backdrop-filter: blur(10px); }
+        .score-total { font-size: 4rem; font-weight: 900; color: var(--main); }
 
-        /* مۆداڵی ڕێکخستنەکان - تەنها ٢ باکگراوندەکە */
-        #settings-panel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; flex-direction: column; padding: 20px; }
-        .folder { background: rgba(255,255,255,0.05); border-radius: 15px; margin-bottom: 15px; border: 1px solid var(--main); overflow: hidden; }
+        /* ڕێکخستنەکان */
+        #settings-panel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; flex-direction: column; padding: 20px; overflow-y: auto; }
+        .folder { background: #111; border-radius: 15px; margin-bottom: 15px; border: 1px solid var(--main); overflow: hidden; }
         .folder-head { padding: 15px; background: var(--main); color: #000; font-weight: bold; display: flex; justify-content: space-between; cursor: pointer; }
         .folder-body { display: none; padding: 15px; }
 
         .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .theme-item { height: 120px; border-radius: 15px; border: 2px solid rgba(255,255,255,0.2); background-size: cover; background-position: center; cursor: pointer; }
+        .theme-item { height: 150px; border-radius: 15px; border: 2px solid #333; background-size: cover; background-position: center; cursor: pointer; transition: 0.3s; }
+        .theme-item:active { transform: scale(0.95); }
 
-        /* دوگمەکان */
-        .btn { padding: 12px; border-radius: 12px; border: none; font-weight: bold; width: 100%; cursor: pointer; }
-        .btn-red { background: #ff4444; color: #fff; margin-top: auto; }
+        .btn { padding: 15px; border-radius: 15px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.1rem; }
+        .btn-red { background: #ff4444; color: #fff; margin-top: 20px; }
 
-        /* مۆداڵەکان */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; align-items: center; justify-content: center; }
-        .modal-box { background: #111; width: 90%; max-width: 350px; padding: 25px; border-radius: 25px; border: 2px solid var(--main); text-align: center; }
-        .num-input { width: 100%; font-size: 4rem; background: none; border: none; border-bottom: 3px solid var(--main); color: var(--main); text-align: center; outline: none; margin-bottom: 20px; }
+        .modal-box { background: #111; width: 90%; max-width: 350px; padding: 30px; border-radius: 30px; border: 2px solid var(--main); text-align: center; }
+        .num-input { width: 100%; font-size: 4.5rem; background: none; border: none; border-bottom: 3px solid var(--main); color: var(--main); text-align: center; outline: none; margin-bottom: 25px; }
     </style>
 </head>
 <body>
+    <div class="overlay"></div>
 
     <div class="header">
         <div class="logo-text">AWEZA PC</div>
-        <div onclick="document.getElementById('settings-panel').style.display='flex'" style="font-size:1.8rem; cursor:pointer;">⚙️</div>
+        <div onclick="document.getElementById('settings-panel').style.display='flex'" style="font-size:2rem; cursor:pointer;">⚙️</div>
     </div>
 
     <div class="mode-selector">
@@ -64,24 +69,23 @@
     <div id="main-grid" class="game-grid"></div>
 
     <div id="settings-panel">
-        <h2 style="color:var(--main); text-align:center; margin-bottom:20px;">ڕێکخستنی ئاوێزە</h2>
+        <h2 style="color:var(--main); text-align:center; margin:20px 0;">ڕێکخستنی ئاوێزە</h2>
         
         <div class="folder">
-            <div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندە نوێیەکان</span><span>▼</span></div>
-            <div class="folder-body theme-grid">
-                <div class="theme-item" style="background-image:url('https://img.freepik.com/premium-photo/white-domino-tiles-falling-row-isolated-white_771335-38965.jpg?w=740')" onclick="changeTheme(this.style.backgroundImage)"></div>
-                <div class="theme-item" style="background-image:url('https://i5.walmartimages.com/seo/India-Curated-Hand-Finished-Domino-Game-Set-of-28-Chips-with-Intricate-Design-Resin-Tiles_218d2d00-c693-4ae8-810a-10dee4a64fab.5132fdbd66dbcb494fa71f676090810a.jpeg')" onclick="changeTheme(this.style.backgroundImage)"></div>
+            <div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندە تایبەتەکان</span><span>▼</span></div>
+            <div class="folder-body theme-grid" style="display: block;">
+                <div class="theme-item" 
+                     style="background-image:url('https://img.freepik.com/premium-photo/white-domino-tiles-falling-row-isolated-white_771335-38965.jpg?w=740')" 
+                     onclick="changeTheme('https://img.freepik.com/premium-photo/white-domino-tiles-falling-row-isolated-white_771335-38965.jpg?w=740')">
+                </div>
+                <div class="theme-item" 
+                     style="background-image:url('https://i5.walmartimages.com/seo/India-Curated-Hand-Finished-Domino-Game-Set-of-28-Chips-with-Intricate-Design-Resin-Tiles_218d2d00-c693-4ae8-810a-10dee4a64fab.5132fdbd66dbcb494fa71f676090810a.jpeg')" 
+                     onclick="changeTheme('https://i5.walmartimages.com/seo/India-Curated-Hand-Finished-Domino-Game-Set-of-28-Chips-with-Intricate-Design-Resin-Tiles_218d2d00-c693-4ae8-810a-10dee4a64fab.5132fdbd66dbcb494fa71f676090810a.jpeg')">
+                </div>
             </div>
         </div>
 
-        <div class="folder">
-            <div class="folder-head" onclick="toggleF(this)"><span>❓ زانیاری</span><span>▼</span></div>
-            <div class="folder-body">
-                دەست بنێ بە ژمارەکە بۆ زیادکردنی خاڵ. بۆ گۆڕینی ناو دەست بنێ بە ناوی "یاریزان".
-            </div>
-        </div>
-
-        <button class="btn btn-red" onclick="document.getElementById('settings-panel').style.display='none'">گەڕانەوە</button>
+        <button class="btn btn-red" onclick="document.getElementById('settings-panel').style.display='none'">گەڕانەوە بۆ یاری</button>
     </div>
 
     <div id="score-modal" class="modal">
@@ -89,8 +93,8 @@
             <h2 id="modal-title" style="color:var(--main);">تۆمارکردن</h2>
             <input type="number" id="points-input" class="num-input" placeholder="0" inputmode="numeric">
             <div id="confirm-box" style="display:none; margin-bottom:15px;">
-                <p style="color:var(--main);">⚠️ ئەم خاڵە زۆرە، دڵنیایت؟</p>
-                <button class="btn" style="background:#00ff88; margin-top:10px;" onclick="saveScore(true)">بەڵێ</button>
+                <p style="color:var(--main); font-weight:bold;">⚠️ ئایا دڵنیایت؟</p>
+                <button class="btn" style="background:#00ff88; margin-top:10px;" onclick="saveScore()">بەڵێ</button>
             </div>
             <div id="normal-btns" style="display:flex; gap:10px;">
                 <button class="btn btn-red" onclick="closeModal()">لابردن</button>
@@ -116,7 +120,7 @@
             for (let i in players) {
                 grid.innerHTML += `
                     <div class="card">
-                        <input type="text" value="${players[i].name}" onfocus="this.value=''" onchange="players[${i}].name=this.value" style="background:none; border:none; color:#ddd; text-align:center; width:100%; font-weight:bold;">
+                        <input type="text" value="${players[i].name}" onfocus="this.value=''" onchange="players[${i}].name=this.value" style="background:none; border:none; color:#ddd; text-align:center; width:100%; font-weight:bold; font-size:1.1rem;">
                         <div class="score-total" onclick="openModal(${i})">${players[i].score}</div>
                     </div>`;
             }
@@ -124,27 +128,45 @@
 
         function openModal(t) {
             curT = t; document.getElementById('score-modal').style.display = 'flex';
-            document.getElementById('points-input').value = ""; document.getElementById('confirm-box').style.display = 'none';
+            document.getElementById('points-input').value = ""; 
+            document.getElementById('confirm-box').style.display = 'none';
+            document.getElementById('normal-btns').style.display = 'flex';
+            document.getElementById('points-input').focus();
         }
 
         function validateScore() {
             let v = parseInt(document.getElementById('points-input').value);
-            if (v >= 101) { alert("⛔ خاڵێکی نایاساییە!"); return; }
-            if (v >= 40) { document.getElementById('confirm-box').style.display = 'block'; }
-            else { saveScore(); }
+            if (isNaN(v)) return;
+            if (v >= 101) { alert("⛔ خاڵێکی نایاساییە (١٠١ و سەرووتر)!"); return; }
+            if (v >= 40) { 
+                document.getElementById('confirm-box').style.display = 'block'; 
+                document.getElementById('normal-btns').style.display = 'none';
+            } else { saveScore(); }
         }
 
         function saveScore() {
             players[curT].score += parseInt(document.getElementById('points-input').value);
             render(); closeModal();
-            if(players[curT].score >= 101) { confetti(); alert("پیرۆزە! " + players[curT].name + " بردییەوە! 👑"); }
+            if(players[curT].score >= 101) { confetti(); alert("🏆 پیرۆزە " + players[curT].name + " بردییەوە!"); }
         }
 
         function closeModal() { document.getElementById('score-modal').style.display = 'none'; }
-        function toggleF(h) { let b = h.nextElementSibling; b.style.display = (b.style.display==='block'?'none':'block'); }
-        function changeTheme(img) { document.body.style.backgroundImage = img; }
         
-        window.onload = () => setMode(2);
+        function toggleF(h) { 
+            let b = h.nextElementSibling; 
+            b.style.display = (b.style.display === 'block' ? 'none' : 'block'); 
+        }
+
+        function changeTheme(url) {
+            document.body.style.backgroundImage = "url('" + url + "')";
+            localStorage.setItem('saved_bg', url);
+        }
+
+        window.onload = () => {
+            setMode(2);
+            const bg = localStorage.getItem('saved_bg');
+            if(bg) changeTheme(bg);
+        };
     </script>
 </body>
 </html>
