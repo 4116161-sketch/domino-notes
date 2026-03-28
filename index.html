@@ -6,135 +6,139 @@
     <title>خاڵژمێری ئاوێزە PC</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --main: #efbf3b; --red: #ff4444; --green: #00ff88; --dark: #000000; }
+        :root { --main: #efbf3b; --red: #ff4444; --neon: #39ff14; --dark: #000000; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
         body { 
             background-color: #000;
             background-image: url('https://w0.peakpx.com/wallpaper/744/807/HD-wallpaper-dominos-reflection-dominos.jpg');
             background-size: cover; background-position: center; background-attachment: fixed;
-            color: var(--dark); font-family: 'Segoe UI', Tahoma, sans-serif; 
+            color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; 
             height: 100vh; display: flex; flex-direction: column; overflow: hidden;
         }
 
+        /* سەرپەڕە */
         .header { 
             display: flex; justify-content: space-between; align-items: center; 
-            padding: 12px 20px; background: rgba(239, 191, 59, 0.95); 
-            border-bottom: 3px solid var(--dark); z-index: 100;
+            padding: 12px 20px; background: rgba(0, 0, 0, 0.85); 
+            border-bottom: 2px solid var(--neon); z-index: 100;
+            box-shadow: 0 4px 15px rgba(57, 255, 20, 0.2);
+        }
+        .logo-text { color: var(--neon); font-size: 1.3rem; font-weight: 900; text-shadow: 0 0 10px var(--neon); }
+
+        /* کاتژمێری فسفۆڕی */
+        .timer-wrapper {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(57, 255, 20, 0.1); padding: 5px 18px; border-radius: 50px;
+            cursor: pointer; border: 1.5px solid var(--neon);
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.4);
+        }
+        #game-timer { 
+            font-family: 'Courier New', Courier, monospace; 
+            font-size: 1.5rem; font-weight: 900; 
+            color: var(--neon); text-shadow: 0 0 8px var(--neon);
         }
 
-        .timer-wrapper { display: flex; align-items: center; gap: 8px; background: var(--dark); padding: 5px 15px; border-radius: 50px; cursor: pointer; }
-        #game-timer { font-family: monospace; font-size: 1.4rem; font-weight: 900; color: var(--green); }
-        .paused .timer-wrapper { animation: pulse 1.5s infinite; border: 1px solid var(--red); }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .paused .timer-wrapper { animation: pulse-red 1s infinite; border-color: var(--red); box-shadow: 0 0 15px var(--red); }
+        @keyframes pulse-red { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; flex: 1; align-content: start; overflow-y: auto; }
-        .card { background: rgba(255, 255, 255, 0.25); border-radius: 25px; border: 2.5px solid var(--dark); padding: 15px; text-align: center; backdrop-filter: blur(15px); }
-        .player-input { background: none; border: none; color: var(--dark); text-align: center; width: 100%; font-weight: 900; font-size: 1.2rem; outline: none; }
-        .score-total { font-size: 4rem; font-weight: 900; color: var(--dark); cursor: pointer; line-height: 1; }
-        .rem-pts { font-size: 0.9rem; color: var(--dark); font-weight: bold; margin-bottom: 8px; }
+        /* کارتە فسفۆڕییەکان */
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; flex: 1; align-content: start; overflow-y: auto; }
+        .grid-3 .card:last-child { grid-column: 1 / span 2; width: 85%; margin: 0 auto; }
 
-        .history-list { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; border-top: 1.5px solid var(--dark); padding-top: 10px; margin-top: 5px; }
-        .history-item { background: var(--dark); color: #fff; padding: 4px 10px; border-radius: 10px; font-size: 0.85rem; font-weight: bold; display: flex; align-items: center; gap: 6px; }
+        .card { 
+            background: rgba(0, 0, 0, 0.75); border-radius: 25px; 
+            border: 2px solid var(--neon); 
+            padding: 20px; text-align: center; backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.15), inset 0 0 10px rgba(57, 255, 20, 0.1);
+            transition: 0.3s;
+        }
 
-        /* فۆڵدەرەکانی مێژوو و ڕێکخستن */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; flex-direction: column; padding: 20px; overflow-y: auto; }
-        .modal-box { background: #111; width: 100%; max-width: 450px; padding: 25px; border-radius: 30px; border: 2px solid var(--main); text-align: center; color: #fff; margin: auto; }
+        /* نوسینی ناو و نمرەی فسفۆڕی */
+        .player-input { 
+            background: none; border: none; 
+            color: var(--neon); text-align: center; width: 100%; 
+            font-weight: 900; font-size: 1.3rem; outline: none;
+            text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+        }
+        .score-total { 
+            font-size: 4.5rem; font-weight: 900; 
+            color: var(--neon); cursor: pointer; line-height: 1;
+            text-shadow: 0 0 15px var(--neon), 0 0 30px rgba(57, 255, 20, 0.3);
+            margin: 10px 0;
+        }
+        .rem-pts { color: #fff; font-size: 0.85rem; font-weight: bold; opacity: 0.8; margin-bottom: 10px; }
+
+        /* مێژووی نمرەکان */
+        .history-list { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; border-top: 1px solid rgba(57, 255, 20, 0.3); padding-top: 12px; }
+        .history-item { 
+            background: rgba(57, 255, 20, 0.15); color: var(--neon); 
+            padding: 4px 10px; border-radius: 10px; font-size: 0.9rem; font-weight: 900; 
+            display: flex; align-items: center; gap: 6px; border: 1px solid var(--neon);
+        }
+
+        /* پیرۆزبایی و ئاگاداری */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); z-index: 10000; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+        .modal-box { background: #000; width: 100%; max-width: 400px; padding: 30px; border-radius: 35px; border: 2px solid var(--neon); text-align: center; box-shadow: 0 0 30px rgba(57, 255, 20, 0.2); }
         
-        .folder { background: #1a1a1a; border-radius: 15px; margin-bottom: 12px; border: 1px solid rgba(239,191,59,0.3); overflow: hidden; }
-        .folder-head { padding: 15px; background: var(--main); color: #000; font-weight: 900; display: flex; justify-content: space-between; cursor: pointer; }
-        .folder-body { display: none; padding: 15px; text-align: right; max-height: 300px; overflow-y: auto; }
-
-        .history-record { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; margin-bottom: 8px; border-right: 4px solid var(--main); display: flex; justify-content: space-between; align-items: center; }
-        
-        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .theme-item { height: 80px; border-radius: 10px; background-size: cover; background-position: center; border: 1px solid #444; cursor: pointer; }
-
-        .social-btn { display: flex; align-items: center; justify-content: center; gap: 10px; background: var(--dark); color: var(--main); padding: 12px; border-radius: 12px; text-decoration: none; margin-bottom: 10px; font-weight: bold; border: 1px solid var(--main); }
-
-        /* شاشەی بردنەوە */
-        #win-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 50000; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
-        .win-card { background: #111; border: 3px solid var(--main); padding: 40px 20px; border-radius: 40px; text-align: center; width: 85%; animation: zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes zoomIn { from { transform: scale(0); } to { transform: scale(1); } }
-
         .btn { padding: 15px; border-radius: 15px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.1rem; }
+        .btn-neon { background: var(--neon); color: #000; box-shadow: 0 0 15px var(--neon); }
+        .btn-red { background: var(--red); color: #fff; box-shadow: 0 0 15px var(--red); }
+
+        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px 0; }
+        .theme-item { height: 90px; border-radius: 12px; border: 1px solid #333; background-size: cover; background-position: center; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div onclick="openSettings()" style="font-size:1.8rem; cursor:pointer; color:var(--dark);">⚙️</div>
+        <div onclick="openSettings()" style="font-size:1.8rem; cursor:pointer; color:var(--neon);">⚙️</div>
         <div class="timer-wrapper" id="timer-container" onclick="toggleTimer()">
-            <span id="timer-icon" style="color:white">⏸️</span>
+            <span id="timer-icon" style="color:white; font-size: 1.1rem;">⏸️</span>
             <span id="game-timer">00:00</span>
         </div>
-        <div class="logo-text" style="font-weight: 900;">AWEZA PC</div>
+        <div class="logo-text">AWEZA PC</div>
     </div>
 
     <div style="display:flex; justify-content:center; gap:12px; padding:15px;">
-        <button onclick="setMode(2)" style="background:var(--dark); color:var(--main); border:none; padding:8px 20px; border-radius:12px; font-weight:900;">٢ نەفەری</button>
-        <button onclick="setMode(3)" style="background:var(--dark); color:var(--main); border:none; padding:8px 20px; border-radius:12px; font-weight:900;">٣ نەفەری</button>
+        <button onclick="setMode(2)" style="background:var(--neon); color:#000; border:none; padding:8px 25px; border-radius:12px; font-weight:900; box-shadow: 0 0 10px var(--neon);">٢ نەفەری</button>
+        <button onclick="setMode(3)" style="background:rgba(57, 255, 20, 0.1); color:var(--neon); border:1px solid var(--neon); padding:8px 25px; border-radius:12px; font-weight:900;">٣ نەفەری</button>
     </div>
 
     <div id="main-grid" class="game-grid"></div>
 
-    <div id="settings-panel" class="modal">
+    <div id="score-modal" class="modal">
         <div class="modal-box">
-            <h2 style="color:var(--main); margin-bottom:20px;">ڕێکخستنی ئاوێزە</h2>
-            
-            <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>📜 مێژووی بردنەوەکان</span><span>▼</span></div>
-                <div id="game-history-list" class="folder-body">
-                    </div>
-            </div>
-
-            <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>🎨 گۆڕینی باکگراوند</span><span>▼</span></div>
-                <div class="folder-body theme-grid">
-                    <div class="theme-item" style="background-image:url('https://blog.tmlirp.org/hs-fs/hubfs/abstract%20dominoes%20background.jpeg?width=900')" onclick="changeTheme(this.style.backgroundImage)"></div>
-                    <div class="theme-item" style="background-image:url('https://images.unsplash.com/photo-1769029174092-d26bc1a51efc?fm=jpg&q=60&w=3000')" onclick="changeTheme(this.style.backgroundImage)"></div>
-                    <div class="theme-item" style="background-image:url('https://img.goodfon.com/wallpaper/big/6/2c/domino-makro-igra.webp')" onclick="changeTheme(this.style.backgroundImage)"></div>
-                    <div class="theme-item" style="background-image:url('https://w0.peakpx.com/wallpaper/744/807/HD-wallpaper-dominos-reflection-dominos.jpg')" onclick="changeTheme(this.style.backgroundImage)"></div>
-                </div>
-            </div>
-
-            <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>📱 سۆشیال میدیا</span><span>▼</span></div>
-                <div class="folder-body">
-                    <a href="https://www.facebook.com/4116161-sketch" target="_blank" class="social-btn">🔵 Facebook: Aweza PC</a>
-                    <a href="https://www.tiktok.com/@4116161-sketch" target="_blank" class="social-btn">⚫ TikTok: @Aweza_PC</a>
-                </div>
-            </div>
-
-            <button class="btn" style="background:var(--red); color:#fff; margin-top:20px;" onclick="closeSettings()">گەڕانەوە</button>
-        </div>
-    </div>
-
-    <div id="win-modal">
-        <div class="win-card">
-            <h1 style="font-size:5rem;">🏆</h1>
-            <h1 style="color:var(--main); font-size:2.5rem;">پیرۆزە!</h1>
-            <h2 id="winner-name" style="color:#fff; font-size:1.8rem; margin:10px 0;"></h2>
-            <p id="winner-stats" style="color:#aaa; margin-bottom:20px;"></p>
-            <button class="btn" style="background:var(--main); color:#000;" onclick="location.reload()">یاری نوێ 🔄</button>
-        </div>
-    </div>
-
-    <div id="score-modal" class="modal" style="justify-content:center;">
-        <div class="modal-box" style="max-width:350px;">
-            <h2 id="modal-title" style="color:var(--main);">تۆمارکردن</h2>
-            <input type="number" id="points-input" style="width:100%; font-size:4.5rem; background:none; border:none; border-bottom:4px solid var(--main); color:var(--main); text-align:center; outline:none; margin:20px 0;" placeholder="0" inputmode="numeric">
+            <h2 id="modal-title" style="color:var(--neon);">تۆمارکردن</h2>
+            <input type="number" id="points-input" style="width:100%; font-size:5rem; background:none; border:none; border-bottom:4px solid var(--neon); color:var(--neon); text-align:center; outline:none; margin:20px 0; text-shadow: 0 0 15px var(--neon);" placeholder="0" inputmode="numeric">
             <div id="confirm-box" style="display:none; margin-bottom:20px;">
-                <p style="color:var(--red); font-weight:bold;">⚠️ ئەم خاڵە زۆرە، دڵنیایت؟</p>
+                <p style="color:var(--red); font-weight:bold; font-size:1.2rem;">⚠️ ئەم خاڵە زۆرە، دڵنیایت؟</p>
                 <div style="display:flex; gap:12px; margin-top:20px;">
-                    <button class="btn" style="background:var(--green);" onclick="saveScore()">بەڵێ</button>
-                    <button class="btn" style="background:var(--red); color:#fff;" onclick="closeModal()">نەخێر</button>
+                    <button class="btn btn-neon" onclick="saveScore()">بەڵێ</button>
+                    <button class="btn btn-red" onclick="closeModal()">نەخێر</button>
                 </div>
             </div>
             <div id="normal-btns" style="display:flex; gap:12px;">
-                <button class="btn" style="background:var(--red); color:#fff;" onclick="closeModal()">لابردن</button>
-                <button class="btn" style="background:var(--main); color:#000;" onclick="validateScore()">تۆمارکردن</button>
+                <button class="btn btn-red" onclick="closeModal()">لابردن</button>
+                <button class="btn btn-neon" onclick="validateScore()">تۆمارکردن</button>
             </div>
+        </div>
+    </div>
+
+    <div id="settings-panel" class="modal" style="justify-content: flex-start;">
+        <div class="modal-box">
+            <h2 style="color:var(--neon); margin-bottom:20px;">ڕێکخستنی ئاوێزە</h2>
+            <div class="theme-grid">
+                <div class="theme-item" style="background-image:url('https://blog.tmlirp.org/hs-fs/hubfs/abstract%20dominoes%20background.jpeg?width=900')" onclick="changeTheme(this.style.backgroundImage)"></div>
+                <div class="theme-item" style="background-image:url('https://images.unsplash.com/photo-1769029174092-d26bc1a51efc?fm=jpg&q=60&w=3000')" onclick="changeTheme(this.style.backgroundImage)"></div>
+                <div class="theme-item" style="background-image:url('https://img.goodfon.com/wallpaper/big/6/2c/domino-makro-igra.webp')" onclick="changeTheme(this.style.backgroundImage)"></div>
+                <div class="theme-item" style="background-image:url('https://w0.peakpx.com/wallpaper/744/807/HD-wallpaper-dominos-reflection-dominos.jpg')" onclick="changeTheme(this.style.backgroundImage)"></div>
+            </div>
+            <div style="margin-top: 20px;">
+                <a href="https://www.facebook.com/4116161-sketch" target="_blank" style="color:var(--neon); display:block; margin-bottom:10px; text-decoration:none; font-weight:bold;">🔵 Facebook: Aweza PC</a>
+                <a href="https://www.tiktok.com/@4116161-sketch" target="_blank" style="color:var(--neon); display:block; text-decoration:none; font-weight:bold;">⚫ TikTok: @Aweza_PC</a>
+            </div>
+            <button class="btn btn-red" style="margin-top:25px;" onclick="closeSettings()">گەڕانەوە</button>
         </div>
     </div>
 
@@ -192,46 +196,14 @@
             let v = parseInt(document.getElementById('points-input').value);
             players[curT].score += v; players[curT].history.push(v);
             render(); closeModal();
-            if(players[curT].score >= 101) {
-                confetti({ particleCount: 300, spread: 100, origin: { y: 0.6 } });
-                finishGame(players[curT]);
-            }
-        }
-
-        function finishGame(winner) {
-            clearInterval(timerInterval);
-            let time = document.getElementById('game-timer').innerText;
-            let date = new Date().toLocaleDateString('ku-IQ');
-            
-            // پاشەکەوتکردن لە مێژوو
-            let history = JSON.parse(localStorage.getItem('aweza_history') || '[]');
-            history.unshift({ name: winner.name, score: winner.score, time: time, date: date });
-            localStorage.setItem('aweza_history', JSON.stringify(history));
-
-            document.getElementById('winner-name').innerText = winner.name;
-            document.getElementById('winner-stats').innerText = `نمرە: ${winner.score} | کات: ${time}`;
-            document.getElementById('win-modal').style.display = 'flex';
-        }
-
-        function loadHistory() {
-            let history = JSON.parse(localStorage.getItem('aweza_history') || '[]');
-            let list = document.getElementById('game-history-list');
-            list.innerHTML = history.length ? "" : "<p style='text-align:center; opacity:0.5;'>هیچ یارییەک نەکراوە</p>";
-            history.forEach(item => {
-                list.innerHTML += `
-                    <div class="history-record">
-                        <div><b>${item.name}</b><br><small style="opacity:0.6">${item.date}</small></div>
-                        <div style="text-align:left"><b style="color:var(--main)">${item.score}</b><br><small>${item.time}</small></div>
-                    </div>`;
-            });
+            if(players[curT].score >= 101) { confetti(); alert("🏆 پیرۆزە " + players[curT].name + " بردییەوە!"); setMode(Object.keys(players).length); }
         }
 
         function deletePoint(p, h) { event.stopPropagation(); players[p].score -= players[p].history[h]; players[p].history.splice(h, 1); render(); }
-        function openModal(t) { curT = t; document.getElementById('score-modal').style.display = 'flex'; document.getElementById('points-input').value = ""; document.getElementById('confirm-box').style.display='none'; document.getElementById('normal-btns').style.display='flex'; }
+        function openModal(t) { curT = t; document.getElementById('score-modal').style.display = 'flex'; document.getElementById('points-input').value=""; document.getElementById('confirm-box').style.display='none'; document.getElementById('normal-btns').style.display='flex'; }
         function closeModal() { document.getElementById('score-modal').style.display = 'none'; }
-        function openSettings() { loadHistory(); document.getElementById('settings-panel').style.display = 'flex'; }
+        function openSettings() { document.getElementById('settings-panel').style.display = 'flex'; }
         function closeSettings() { document.getElementById('settings-panel').style.display = 'none'; }
-        function toggleF(h) { let b = h.nextElementSibling; b.style.display = (b.style.display==='block'?'none':'block'); }
         function changeTheme(img) { document.body.style.backgroundImage = img; localStorage.setItem('aweza_bg', img); }
 
         window.onload = () => { setMode(2); let bg = localStorage.getItem('aweza_bg'); if(bg) document.body.style.backgroundImage = bg; };
