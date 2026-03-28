@@ -6,62 +6,54 @@
     <title>خاڵژمێری ئاوێزە PC</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --main: #efbf3b; --bg: #0a0a0a; --card: rgba(255,255,255,0.08); }
-        
+        :root { --main: #efbf3b; --bg: #0a0a0a; --card: rgba(255,255,255,0.1); }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
         body { 
-            background: var(--bg); color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; 
-            height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+            background: var(--bg);
+            background-size: cover; background-position: center; background-attachment: fixed;
+            color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; 
+            height: 100vh; display: flex; flex-direction: column; overflow: hidden; transition: 0.5s;
         }
 
-        /* سەرپەڕە */
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(239,191,59,0.2); }
-        .logo-text { color: var(--main); font-size: 1.5rem; font-weight: 900; letter-spacing: 1px; }
+        /* ستایلی گشتی */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(239,191,59,0.3); }
+        .logo-text { color: var(--main); font-size: 1.5rem; font-weight: 900; }
 
-        /* بەشی یاری */
-        .mode-selector { display: flex; justify-content: center; gap: 8px; padding: 12px; }
-        .mode-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--main); color: #fff; padding: 8px 15px; border-radius: 12px; font-weight: bold; font-size: 0.9rem; }
+        .mode-selector { display: flex; justify-content: center; gap: 10px; padding: 15px; }
+        .mode-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--main); color: #fff; padding: 8px 18px; border-radius: 12px; font-weight: bold; }
         .mode-btn.active { background: var(--main); color: #000; }
 
-        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; flex: 1; align-content: start; overflow-y: auto; }
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; flex: 1; align-content: start; }
         .grid-3 .card:nth-child(3) { grid-column: span 2; width: 85%; margin: 0 auto; }
         
-        .card { background: var(--card); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); padding: 15px; text-align: center; backdrop-filter: blur(10px); }
-        .player-name { background: none; border: none; color: #ddd; text-align: center; width: 100%; font-size: 1rem; font-weight: bold; margin-bottom: 5px; }
-        .score-total { font-size: 3.5rem; font-weight: 900; color: var(--main); line-height: 1; }
+        .card { background: var(--card); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); padding: 20px; text-align: center; backdrop-filter: blur(15px); }
+        .score-total { font-size: 3.5rem; font-weight: 900; color: var(--main); }
 
-        /* پنێڵی ڕێکخستنەکان - چاککراو بۆ مۆبایل */
-        #settings-panel { 
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #000; z-index: 9999; flex-direction: column; padding: 20px; overflow-y: auto;
-        }
+        /* مۆداڵی ڕێکخستنەکان - تەنها ٢ باکگراوندەکە */
+        #settings-panel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; flex-direction: column; padding: 20px; }
+        .folder { background: rgba(255,255,255,0.05); border-radius: 15px; margin-bottom: 15px; border: 1px solid var(--main); overflow: hidden; }
+        .folder-head { padding: 15px; background: var(--main); color: #000; font-weight: bold; display: flex; justify-content: space-between; cursor: pointer; }
+        .folder-body { display: none; padding: 15px; }
 
-        .folder { background: rgba(255,255,255,0.05); border-radius: 15px; margin-bottom: 12px; border: 1px solid rgba(239,191,59,0.3); overflow: hidden; }
-        .folder-head { padding: 15px; background: var(--main); color: #000; font-weight: bold; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .folder-body { display: none; padding: 15px; text-align: right; font-size: 0.95rem; line-height: 1.6; color: #eee; }
+        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .theme-item { height: 120px; border-radius: 15px; border: 2px solid rgba(255,255,255,0.2); background-size: cover; background-position: center; cursor: pointer; }
 
-        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .theme-item { height: 65px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background-size: cover; cursor: pointer; }
+        /* دوگمەکان */
+        .btn { padding: 12px; border-radius: 12px; border: none; font-weight: bold; width: 100%; cursor: pointer; }
+        .btn-red { background: #ff4444; color: #fff; margin-top: auto; }
 
-        /* مۆداڵی نمرە */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; align-items: center; justify-content: center; }
+        /* مۆداڵەکان */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; align-items: center; justify-content: center; }
         .modal-box { background: #111; width: 90%; max-width: 350px; padding: 25px; border-radius: 25px; border: 2px solid var(--main); text-align: center; }
         .num-input { width: 100%; font-size: 4rem; background: none; border: none; border-bottom: 3px solid var(--main); color: var(--main); text-align: center; outline: none; margin-bottom: 20px; }
-        
-        .btn { padding: 12px; border-radius: 12px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1rem; }
-        .btn-main { background: var(--main); color: #000; }
-        .btn-red { background: #ff4444; color: #fff; margin-top: 10px; }
-
-        /* پیرۆزبایی */
-        #win-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 20000; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <div class="logo-text">AWEZA PC</div>
-        <div onclick="openSettings()" style="font-size:1.6rem; cursor:pointer;">⚙️</div>
+        <div onclick="document.getElementById('settings-panel').style.display='flex'" style="font-size:1.8rem; cursor:pointer;">⚙️</div>
     </div>
 
     <div class="mode-selector">
@@ -75,59 +67,35 @@
         <h2 style="color:var(--main); text-align:center; margin-bottom:20px;">ڕێکخستنی ئاوێزە</h2>
         
         <div class="folder">
-            <div class="folder-head" onclick="toggleFolder(this)"><span>🎨 گۆڕینی باکگراوند</span><span>▼</span></div>
+            <div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندە نوێیەکان</span><span>▼</span></div>
             <div class="folder-body theme-grid">
-                <div class="theme-item" style="background-image:url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200')" onclick="changeTheme(this.style.backgroundImage, '#efbf3b')"></div>
-                <div class="theme-item" style="background-image:url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=200')" onclick="changeTheme(this.style.backgroundImage, '#ff4444')"></div>
-                <div class="theme-item" style="background-image:url('https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=200')" onclick="changeTheme(this.style.backgroundImage, '#00d2ff')"></div>
-                <div class="theme-item" style="background-image:url('https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=200')" onclick="changeTheme(this.style.backgroundImage, '#00ff88')"></div>
+                <div class="theme-item" style="background-image:url('https://img.freepik.com/premium-photo/white-domino-tiles-falling-row-isolated-white_771335-38965.jpg?w=740')" onclick="changeTheme(this.style.backgroundImage)"></div>
+                <div class="theme-item" style="background-image:url('https://i5.walmartimages.com/seo/India-Curated-Hand-Finished-Domino-Game-Set-of-28-Chips-with-Intricate-Design-Resin-Tiles_218d2d00-c693-4ae8-810a-10dee4a64fab.5132fdbd66dbcb494fa71f676090810a.jpeg')" onclick="changeTheme(this.style.backgroundImage)"></div>
             </div>
         </div>
 
         <div class="folder">
-            <div class="folder-head" onclick="toggleFolder(this)"><span>❓ پرسیارە باوەکان</span><span>▼</span></div>
+            <div class="folder-head" onclick="toggleF(this)"><span>❓ زانیاری</span><span>▼</span></div>
             <div class="folder-body">
-                <b>چۆن خاڵ زیاد بکەم؟</b><br>دەست بنێ بەو ژمارەیەی ژێر ناوی یاریزانەکە.<br><br>
-                <b>چۆن ناو بگۆڕم؟</b><br>دەست بنێ بە ناوی "یاریزان"ەکە، خۆکارانە دەسڕێتەوە و ناوی نوێ بنووسە.
+                دەست بنێ بە ژمارەکە بۆ زیادکردنی خاڵ. بۆ گۆڕینی ناو دەست بنێ بە ناوی "یاریزان".
             </div>
         </div>
 
-        <div class="folder">
-            <div class="folder-head" onclick="toggleFolder(this)"><span>📱 سۆشیال میدیا</span><span>▼</span></div>
-            <div class="folder-body">
-                Facebook: Aweza PC<br>Instagram: @Aweza_PC<br>Snapchat: Aweza.Computers
-            </div>
-        </div>
-
-        <button class="btn btn-red" onclick="closeSettings()">گەڕانەوە</button>
+        <button class="btn btn-red" onclick="document.getElementById('settings-panel').style.display='none'">گەڕانەوە</button>
     </div>
 
     <div id="score-modal" class="modal">
         <div class="modal-box">
             <h2 id="modal-title" style="color:var(--main);">تۆمارکردن</h2>
             <input type="number" id="points-input" class="num-input" placeholder="0" inputmode="numeric">
-            
-            <div id="confirm-box" style="display:none; margin-bottom:15px; border-top:1px solid #333; padding-top:10px;">
-                <p style="color:var(--main); margin-bottom:10px;">⚠️ ئەم خاڵە زۆرە، ئایا دڵنیایت؟</p>
-                <div style="display:flex; gap:10px;">
-                    <button class="btn btn-main" style="background:#00ff88;" onclick="saveScore(true)">بەڵێ</button>
-                    <button class="btn btn-red" onclick="closeModal()">نەخێر</button>
-                </div>
+            <div id="confirm-box" style="display:none; margin-bottom:15px;">
+                <p style="color:var(--main);">⚠️ ئەم خاڵە زۆرە، دڵنیایت؟</p>
+                <button class="btn" style="background:#00ff88; margin-top:10px;" onclick="saveScore(true)">بەڵێ</button>
             </div>
-
             <div id="normal-btns" style="display:flex; gap:10px;">
                 <button class="btn btn-red" onclick="closeModal()">لابردن</button>
-                <button class="btn btn-main" onclick="validateScore()">تۆمارکردن</button>
+                <button class="btn" style="background:var(--main);" onclick="validateScore()">تۆمارکردن</button>
             </div>
-        </div>
-    </div>
-
-    <div id="win-overlay" onclick="location.reload()">
-        <div style="background:rgba(255,255,255,0.05); border:2px solid var(--main); padding:30px; border-radius:30px; backdrop-filter:blur(20px); width:90%;">
-            <div style="font-size:4rem;">👑</div>
-            <h1 id="win-name" style="color:var(--main); margin:10px 0;"></h1>
-            <p style="line-height:1.6; color:#ccc;">بە لێهاتوویی خۆت توانیت ببیتە پادشای ئەم یارییە. ئاوێزە PC هیوای کاتێکی خۆشت بۆ دەخوازێت!</p>
-            <button class="btn btn-main" style="margin-top:20px;">یاری نوێ 🔄</button>
         </div>
     </div>
 
@@ -137,8 +105,7 @@
         function setMode(n) {
             document.getElementById('btn2').classList.toggle('active', n===2);
             document.getElementById('btn3').classList.toggle('active', n===3);
-            players = {};
-            const grid = document.getElementById('main-grid');
+            players = {}; const grid = document.getElementById('main-grid');
             grid.className = (n === 3 ? 'game-grid grid-3' : 'game-grid');
             for(let i=1; i<=n; i++) players[i] = { name: "یاریزان " + i, score: 0 };
             render();
@@ -149,49 +116,33 @@
             for (let i in players) {
                 grid.innerHTML += `
                     <div class="card">
-                        <input type="text" class="player-name" value="${players[i].name}" onfocus="this.value=''" onchange="players[${i}].name=this.value">
+                        <input type="text" value="${players[i].name}" onfocus="this.value=''" onchange="players[${i}].name=this.value" style="background:none; border:none; color:#ddd; text-align:center; width:100%; font-weight:bold;">
                         <div class="score-total" onclick="openModal(${i})">${players[i].score}</div>
                     </div>`;
             }
         }
 
         function openModal(t) {
-            curT = t; document.getElementById('modal-title').innerText = players[t].name;
-            document.getElementById('score-modal').style.display = 'flex';
-            document.getElementById('points-input').value = ""; document.getElementById('points-input').focus();
-            document.getElementById('confirm-box').style.display = 'none';
-            document.getElementById('normal-btns').style.display = 'flex';
+            curT = t; document.getElementById('score-modal').style.display = 'flex';
+            document.getElementById('points-input').value = ""; document.getElementById('confirm-box').style.display = 'none';
         }
 
         function validateScore() {
             let v = parseInt(document.getElementById('points-input').value);
-            if (isNaN(v)) return;
-            if (v >= 101) {
-                if (navigator.vibrate) navigator.vibrate(500);
-                alert("خاڵژمێری دۆمینە\n\n⛔ ئاگاداری: ئەم خاڵە نایاساییە (١٠١ و سەرووتر)!");
-                return;
-            }
-            if (v >= 40 && v <= 100) {
-                document.getElementById('confirm-box').style.display = 'block';
-                document.getElementById('normal-btns').style.display = 'none';
-            } else { saveScore(); }
+            if (v >= 101) { alert("⛔ خاڵێکی نایاساییە!"); return; }
+            if (v >= 40) { document.getElementById('confirm-box').style.display = 'block'; }
+            else { saveScore(); }
         }
 
         function saveScore() {
-            let v = parseInt(document.getElementById('points-input').value);
-            players[curT].score += v; render(); closeModal();
-            if (players[curT].score >= 101) {
-                confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
-                document.getElementById('win-name').innerText = players[curT].name;
-                document.getElementById('win-overlay').style.display = 'flex';
-            }
+            players[curT].score += parseInt(document.getElementById('points-input').value);
+            render(); closeModal();
+            if(players[curT].score >= 101) { confetti(); alert("پیرۆزە! " + players[curT].name + " بردییەوە! 👑"); }
         }
 
         function closeModal() { document.getElementById('score-modal').style.display = 'none'; }
-        function openSettings() { document.getElementById('settings-panel').style.display = 'flex'; }
-        function closeSettings() { document.getElementById('settings-panel').style.display = 'none'; }
-        function toggleFolder(h) { let b = h.nextElementSibling; b.style.display = (b.style.display === 'block' ? 'none' : 'block'); }
-        function changeTheme(img, color) { document.body.style.backgroundImage = img; document.documentElement.style.setProperty('--main', color); }
+        function toggleF(h) { let b = h.nextElementSibling; b.style.display = (b.style.display==='block'?'none':'block'); }
+        function changeTheme(img) { document.body.style.backgroundImage = img; }
         
         window.onload = () => setMode(2);
     </script>
