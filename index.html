@@ -2,65 +2,80 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>خاڵژمێری ئاوێزە PC</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --main: #efbf3b; --bg-img: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200'); }
+        :root { --main: #efbf3b; --bg: #0a0a0a; --card: rgba(255,255,255,0.08); }
+        
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        
         body { 
-            background-image: var(--bg-img); background-size: cover; background-position: center; background-attachment: fixed;
-            color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; transition: 0.8s;
+            background: var(--bg); color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; 
+            height: 100vh; display: flex; flex-direction: column; overflow: hidden;
         }
-        .overlay-glass { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(12px); z-index: -1; }
 
-        /* Header */
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(0,0,0,0.3); }
-        .mode-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--main); color: #fff; padding: 8px 18px; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        /* سەرپەڕە */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(239,191,59,0.2); }
+        .logo-text { color: var(--main); font-size: 1.5rem; font-weight: 900; letter-spacing: 1px; }
+
+        /* بەشی یاری */
+        .mode-selector { display: flex; justify-content: center; gap: 8px; padding: 12px; }
+        .mode-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--main); color: #fff; padding: 8px 15px; border-radius: 12px; font-weight: bold; font-size: 0.9rem; }
         .mode-btn.active { background: var(--main); color: #000; }
 
-        /* Grid */
-        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; flex: 1; align-content: start; }
-        .grid-3 .card:nth-child(3) { grid-column: span 2; width: 80%; margin: 0 auto; }
-        .card { background: rgba(255,255,255,0.1); border-radius: 25px; border: 1px solid rgba(255,255,255,0.2); padding: 15px; text-align: center; }
-        .score-total { font-size: 3.8rem; font-weight: 900; color: var(--main); margin: 5px 0; }
-
-        /* Modals */
-        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #111; width: 88%; padding: 25px; border-radius: 30px; border: 2px solid var(--main); z-index: 10000; text-align: center; }
-        .btn { background: var(--main); color: #000; border: none; padding: 12px; border-radius: 12px; font-weight: bold; width: 100%; margin-top: 10px; }
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; flex: 1; align-content: start; overflow-y: auto; }
+        .grid-3 .card:nth-child(3) { grid-column: span 2; width: 85%; margin: 0 auto; }
         
-        /* Theme & FAQ Folders */
-        .folder { background: rgba(255,255,255,0.05); border: 1px solid var(--main); border-radius: 15px; margin-bottom: 10px; overflow: hidden; }
-        .folder-head { padding: 12px; background: var(--main); color: #000; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; }
-        .folder-body { display: none; padding: 15px; text-align: right; line-height: 1.8; }
+        .card { background: var(--card); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); padding: 15px; text-align: center; backdrop-filter: blur(10px); }
+        .player-name { background: none; border: none; color: #ddd; text-align: center; width: 100%; font-size: 1rem; font-weight: bold; margin-bottom: 5px; }
+        .score-total { font-size: 3.5rem; font-weight: 900; color: var(--main); line-height: 1; }
 
-        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-        .theme-item { height: 60px; border-radius: 10px; background-size: cover; cursor: pointer; }
+        /* پنێڵی ڕێکخستنەکان - چاککراو بۆ مۆبایل */
+        #settings-panel { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #000; z-index: 9999; flex-direction: column; padding: 20px; overflow-y: auto;
+        }
 
-        /* Winner Overlay */
-        #win-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 20000; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .folder { background: rgba(255,255,255,0.05); border-radius: 15px; margin-bottom: 12px; border: 1px solid rgba(239,191,59,0.3); overflow: hidden; }
+        .folder-head { padding: 15px; background: var(--main); color: #000; font-weight: bold; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .folder-body { display: none; padding: 15px; text-align: right; font-size: 0.95rem; line-height: 1.6; color: #eee; }
+
+        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .theme-item { height: 65px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background-size: cover; cursor: pointer; }
+
+        /* مۆداڵی نمرە */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; align-items: center; justify-content: center; }
+        .modal-box { background: #111; width: 90%; max-width: 350px; padding: 25px; border-radius: 25px; border: 2px solid var(--main); text-align: center; }
+        .num-input { width: 100%; font-size: 4rem; background: none; border: none; border-bottom: 3px solid var(--main); color: var(--main); text-align: center; outline: none; margin-bottom: 20px; }
+        
+        .btn { padding: 12px; border-radius: 12px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1rem; }
+        .btn-main { background: var(--main); color: #000; }
+        .btn-red { background: #ff4444; color: #fff; margin-top: 10px; }
+
+        /* پیرۆزبایی */
+        #win-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 20000; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
     </style>
 </head>
 <body>
-    <div class="overlay-glass"></div>
 
     <div class="header">
-        <h1 style="color: var(--main);">AWEZA PC</h1>
-        <div onclick="document.getElementById('settings-panel').style.display='flex'" style="font-size:1.8rem;">⚙️</div>
+        <div class="logo-text">AWEZA PC</div>
+        <div onclick="openSettings()" style="font-size:1.6rem; cursor:pointer;">⚙️</div>
     </div>
 
-    <div style="display:flex; justify-content:center; gap:10px; padding:10px;">
-        <button class="mode-btn active" onclick="setMode(2, this)">٢ نەفەری</button>
-        <button class="mode-btn" onclick="setMode(3, this)">٣ نەفەری</button>
+    <div class="mode-selector">
+        <button id="btn2" class="mode-btn active" onclick="setMode(2)">٢ نەفەری</button>
+        <button id="btn3" class="mode-btn" onclick="setMode(3)">٣ نەفەری</button>
     </div>
 
     <div id="main-grid" class="game-grid"></div>
 
-    <div id="settings-panel" class="modal" style="width:100%; height:100%; border-radius:0; overflow-y:auto;">
-        <h2 style="color:var(--main);">ڕێکخستنی ئاوێزە</h2>
+    <div id="settings-panel">
+        <h2 style="color:var(--main); text-align:center; margin-bottom:20px;">ڕێکخستنی ئاوێزە</h2>
         
         <div class="folder">
-            <div class="folder-head" onclick="toggleF(this)"><span>🎨 گۆڕینی باکگراوند</span><span>▼</span></div>
+            <div class="folder-head" onclick="toggleFolder(this)"><span>🎨 گۆڕینی باکگراوند</span><span>▼</span></div>
             <div class="folder-body theme-grid">
                 <div class="theme-item" style="background-image:url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200')" onclick="changeTheme(this.style.backgroundImage, '#efbf3b')"></div>
                 <div class="theme-item" style="background-image:url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=200')" onclick="changeTheme(this.style.backgroundImage, '#ff4444')"></div>
@@ -70,56 +85,59 @@
         </div>
 
         <div class="folder">
-            <div class="folder-head" onclick="toggleF(this)"><span>❓ پرسیارە باوەکان</span><span>▼</span></div>
+            <div class="folder-head" onclick="toggleFolder(this)"><span>❓ پرسیارە باوەکان</span><span>▼</span></div>
             <div class="folder-body">
-                <b>چۆن خاڵ زیاد بکەم؟</b><br>تەنها دەست بنێ بەو ژمارە گەورەیەی ژێر ناوی یاریزانەکە.<br><br>
+                <b>چۆن خاڵ زیاد بکەم؟</b><br>دەست بنێ بەو ژمارەیەی ژێر ناوی یاریزانەکە.<br><br>
                 <b>چۆن ناو بگۆڕم؟</b><br>دەست بنێ بە ناوی "یاریزان"ەکە، خۆکارانە دەسڕێتەوە و ناوی نوێ بنووسە.
             </div>
         </div>
 
         <div class="folder">
-            <div class="folder-head" onclick="toggleF(this)"><span>📱 سۆشیال میدیا</span><span>▼</span></div>
+            <div class="folder-head" onclick="toggleFolder(this)"><span>📱 سۆشیال میدیا</span><span>▼</span></div>
             <div class="folder-body">
                 Facebook: Aweza PC<br>Instagram: @Aweza_PC<br>Snapchat: Aweza.Computers
             </div>
         </div>
 
-        <button class="btn" onclick="document.getElementById('settings-panel').style.display='none'">گەڕانەوە</button>
+        <button class="btn btn-red" onclick="closeSettings()">گەڕانەوە</button>
     </div>
 
     <div id="score-modal" class="modal">
-        <h2 id="modal-title" style="color:var(--main);">تۆمارکردن</h2>
-        <input type="number" id="points-input" style="width:80%; font-size:4rem; background:none; border:none; border-bottom:3px solid var(--main); color:var(--main); text-align:center; outline:none; margin:20px 0;" inputmode="numeric">
-        
-        <div id="confirm-box" style="display:none; margin-bottom:15px;">
-            <p style="color:var(--main);">⚠️ ئەم خاڵە زۆرە، ئایا دڵنیایت؟</p>
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <button class="btn" style="background:#00ff88;" onclick="addScore(true)">بەڵێ</button>
-                <button class="btn" style="background:#ff4444; color:#fff;" onclick="closeModal()">نەخێر</button>
+        <div class="modal-box">
+            <h2 id="modal-title" style="color:var(--main);">تۆمارکردن</h2>
+            <input type="number" id="points-input" class="num-input" placeholder="0" inputmode="numeric">
+            
+            <div id="confirm-box" style="display:none; margin-bottom:15px; border-top:1px solid #333; padding-top:10px;">
+                <p style="color:var(--main); margin-bottom:10px;">⚠️ ئەم خاڵە زۆرە، ئایا دڵنیایت؟</p>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-main" style="background:#00ff88;" onclick="saveScore(true)">بەڵێ</button>
+                    <button class="btn btn-red" onclick="closeModal()">نەخێر</button>
+                </div>
             </div>
-        </div>
 
-        <div id="normal-btns" style="display:flex; gap:10px;">
-            <button class="btn" style="background:#ff4444; color:#fff;" onclick="closeModal()">لابردن</button>
-            <button class="btn" onclick="validateScore()">تۆمارکردن</button>
+            <div id="normal-btns" style="display:flex; gap:10px;">
+                <button class="btn btn-red" onclick="closeModal()">لابردن</button>
+                <button class="btn btn-main" onclick="validateScore()">تۆمارکردن</button>
+            </div>
         </div>
     </div>
 
     <div id="win-overlay" onclick="location.reload()">
-        <div style="background:rgba(255,255,255,0.05); border:2px solid var(--main); padding:40px; border-radius:40px; backdrop-filter:blur(20px); width:85%;">
-            <div style="font-size:5rem;">👑</div>
-            <h1 id="win-name" style="color:var(--main); font-size:2.5rem; margin:15px 0;"></h1>
-            <p id="win-desc" style="line-height:1.6; font-size:1.1rem; color:#ddd;"></p>
-            <button class="btn" style="margin-top:20px;">یاری نوێ 🔄</button>
+        <div style="background:rgba(255,255,255,0.05); border:2px solid var(--main); padding:30px; border-radius:30px; backdrop-filter:blur(20px); width:90%;">
+            <div style="font-size:4rem;">👑</div>
+            <h1 id="win-name" style="color:var(--main); margin:10px 0;"></h1>
+            <p style="line-height:1.6; color:#ccc;">بە لێهاتوویی خۆت توانیت ببیتە پادشای ئەم یارییە. ئاوێزە PC هیوای کاتێکی خۆشت بۆ دەخوازێت!</p>
+            <button class="btn btn-main" style="margin-top:20px;">یاری نوێ 🔄</button>
         </div>
     </div>
 
     <script>
         let players = {}; let curT = 1;
 
-        function setMode(n, btn) {
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active'); players = {};
+        function setMode(n) {
+            document.getElementById('btn2').classList.toggle('active', n===2);
+            document.getElementById('btn3').classList.toggle('active', n===3);
+            players = {};
             const grid = document.getElementById('main-grid');
             grid.className = (n === 3 ? 'game-grid grid-3' : 'game-grid');
             for(let i=1; i<=n; i++) players[i] = { name: "یاریزان " + i, score: 0 };
@@ -131,7 +149,7 @@
             for (let i in players) {
                 grid.innerHTML += `
                     <div class="card">
-                        <input type="text" value="${players[i].name}" onfocus="this.value=''" onchange="players[${i}].name=this.value" style="background:none; border:none; color:#ddd; text-align:center; width:100%; font-weight:bold;">
+                        <input type="text" class="player-name" value="${players[i].name}" onfocus="this.value=''" onchange="players[${i}].name=this.value">
                         <div class="score-total" onclick="openModal(${i})">${players[i].score}</div>
                     </div>`;
             }
@@ -139,7 +157,7 @@
 
         function openModal(t) {
             curT = t; document.getElementById('modal-title').innerText = players[t].name;
-            document.getElementById('score-modal').style.display = 'block';
+            document.getElementById('score-modal').style.display = 'flex';
             document.getElementById('points-input').value = ""; document.getElementById('points-input').focus();
             document.getElementById('confirm-box').style.display = 'none';
             document.getElementById('normal-btns').style.display = 'flex';
@@ -156,26 +174,26 @@
             if (v >= 40 && v <= 100) {
                 document.getElementById('confirm-box').style.display = 'block';
                 document.getElementById('normal-btns').style.display = 'none';
-            } else { addScore(); }
+            } else { saveScore(); }
         }
 
-        function addScore(forced = false) {
+        function saveScore() {
             let v = parseInt(document.getElementById('points-input').value);
             players[curT].score += v; render(); closeModal();
-            if (players[curT].score >= 101) showWinner();
-        }
-
-        function showWinner() {
-            confetti({ particleCount: 250, spread: 100, origin: { y: 0.6 } });
-            document.getElementById('win-name').innerText = players[curT].name;
-            document.getElementById('win-desc').innerText = "بە لێهاتوویی خۆت توانیت لووتکەی یارییەکە داگیر بکەیت و ببیتە پادشای ئەم دانیشتنە. ئاوێزە PC هیوای کاتێکی خۆشت بۆ دەخوازێت!";
-            document.getElementById('win-overlay').style.display = 'flex';
+            if (players[curT].score >= 101) {
+                confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+                document.getElementById('win-name').innerText = players[curT].name;
+                document.getElementById('win-overlay').style.display = 'flex';
+            }
         }
 
         function closeModal() { document.getElementById('score-modal').style.display = 'none'; }
-        function toggleF(h) { let b = h.nextElementSibling; b.style.display = (b.style.display === 'block' ? 'none' : 'block'); }
-        function changeTheme(img, color) { document.documentElement.style.setProperty('--bg-img', img); document.documentElement.style.setProperty('--main', color); }
-        window.onload = () => setMode(2, document.querySelector('.mode-btn'));
+        function openSettings() { document.getElementById('settings-panel').style.display = 'flex'; }
+        function closeSettings() { document.getElementById('settings-panel').style.display = 'none'; }
+        function toggleFolder(h) { let b = h.nextElementSibling; b.style.display = (b.style.display === 'block' ? 'none' : 'block'); }
+        function changeTheme(img, color) { document.body.style.backgroundImage = img; document.documentElement.style.setProperty('--main', color); }
+        
+        window.onload = () => setMode(2);
     </script>
 </body>
 </html>
