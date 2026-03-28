@@ -6,31 +6,48 @@
     <title>خاڵژمێری دۆمینە - Aweza PC</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --main: #efbf3b; --red: #ff4444; --green: #00ff88; }
+        :root { --main: #efbf3b; --red: #ff4444; --green: #00ff88; --card: rgba(255,255,255,0.08); }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        body { 
+            background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; 
+            height: 100vh; display: flex; flex-direction: column; overflow: hidden; 
+            transition: background 0.6s ease;
+        }
 
         #video-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; filter: blur(5px) brightness(0.3); }
 
-        .logo-section { text-align: center; padding: 15px 10px; z-index: 10; }
-        .logo-text { font-size: 2.2rem; font-weight: 900; color: var(--main); text-shadow: 0 0 15px rgba(239,191,59,0.5); }
-
+        /* مێنۆی ڕێکخستنی نوێ */
         #settings-panel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 9999; flex-direction: column; padding: 20px; overflow-y: auto; }
         .set-card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        .scroll-box { max-height: 150px; overflow-y: auto; font-size: 0.85rem; color: #ccc; line-height: 1.6; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 10px; }
+        
+        /* تۆڕی ستایلەکان */
+        .theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 15px; }
+        .theme-dot { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #fff; cursor: pointer; transition: 0.3s; }
+        .theme-dot:active { transform: scale(0.8); }
 
-        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; flex: 1; align-content: start; overflow-y: auto; }
+        /* تایمەری پرتەپرتکەر */
+        #game-timer { font-family: monospace; color: var(--main); font-weight: bold; font-size: 1.2rem; }
+        .timer-paused { color: var(--red) !important; animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+
+        /* کارتەکان */
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; flex: 1; align-content: start; }
         .grid-3 .card:nth-child(3) { grid-column: span 2; width: 85%; margin: 0 auto; }
-        .card { background: rgba(255,255,255,0.08); border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(15px); padding-bottom: 10px; }
+        .card { background: var(--card); border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(15px); padding-bottom: 10px; transition: 0.5s; }
         .card-header { background: rgba(255,255,255,0.1); padding: 10px; text-align: center; border-radius: 20px 20px 0 0; }
-        .score-total { font-size: 3.5rem; font-weight: 900; text-align: center; margin: 5px 0; cursor: pointer; color: var(--main); }
+        .score-total { font-size: 3.5rem; font-weight: 900; text-align: center; margin: 5px 0; color: var(--main); text-shadow: 0 0 10px rgba(0,0,0,0.5); }
 
+        /* پۆپ-ئەپەکان */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9000; align-items: center; justify-content: center; }
-        .modal-box { background: #111; width: 85%; padding: 25px; border-radius: 30px; border: 2px solid var(--main); text-align: center; }
+        .modal-box { background: #111; width: 85%; padding: 25px; border-radius: 30px; border: 2px solid var(--main); text-align: center; box-shadow: 0 0 20px var(--main); }
         .modal-input { width: 80%; background: transparent; border: none; border-bottom: 3px solid var(--main); color: var(--main); font-size: 5rem; text-align: center; outline: none; margin: 10px 0; }
 
-        .confirm-section { display: none; margin-top: 15px; border-top: 1px solid #333; padding-top: 15px; }
-        .btn { background: var(--main); color: #000; border: none; padding: 10px 20px; border-radius: 12px; font-weight: bold; cursor: pointer; margin: 5px; }
+        .btn { background: var(--main); color: #000; border: none; padding: 12px 20px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; margin: 5px 0; font-size: 1rem; }
+        
+        /* شاشەی زانیاری */
+        .info-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10001; flex-direction: column; padding: 30px; }
+        .scroll-content { overflow-y: auto; flex: 1; line-height: 1.8; color: #ccc; }
     </style>
 </head>
 <body id="app-body">
@@ -43,31 +60,47 @@
         <h2 style="color:var(--main); text-align:center;">⚙️ ڕێکخستنی شاهانە</h2>
         
         <div class="set-card">
-            <p>👥 گۆڕینی یاریزان</p>
-            <button class="btn" onclick="setMode(2)">٢ نەفەری</button>
-            <button class="btn" onclick="setMode(3)">٣ نەفەری</button>
+            <p>🎨 هەڵبژاردنی ستایل (١٠ جۆر):</p>
+            <div class="theme-grid">
+                <div class="theme-dot" style="background:#efbf3b" onclick="applyTheme('#efbf3b', '#000', 'rgba(255,255,255,0.08)')"></div>
+                <div class="theme-dot" style="background:#ff4444" onclick="applyTheme('#ff4444', '#300', 'rgba(255,100,100,0.1)')"></div>
+                <div class="theme-dot" style="background:#00d2ff" onclick="applyTheme('#00d2ff', '#001a33', 'rgba(100,200,255,0.1)')"></div>
+                <div class="theme-dot" style="background:#00ff88" onclick="applyTheme('#00ff88', '#002611', 'rgba(100,255,180,0.1)')"></div>
+                <div class="theme-dot" style="background:#ff00ff" onclick="applyTheme('#ff00ff', '#260026', 'rgba(255,100,255,0.1)')"></div>
+                <div class="theme-dot" style="background:#ffffff" onclick="applyTheme('#ffffff', '#333', 'rgba(255,255,255,0.15)')"></div>
+                <div class="theme-dot" style="background:#008080" onclick="applyTheme('#008080', '#002222', 'rgba(0,128,128,0.15)')"></div>
+                <div class="theme-dot" style="background:#ff8c00" onclick="applyTheme('#ff8c00', '#2b1700', 'rgba(255,140,0,0.1)')"></div>
+                <div class="theme-dot" style="background:#ff69b4" onclick="applyTheme('#ff69b4', '#33001a', 'rgba(255,105,180,0.1)')"></div>
+                <div class="theme-dot" style="background:#444444" onclick="applyTheme('#888', '#000', 'rgba(50,50,50,0.4)')"></div>
+            </div>
         </div>
 
         <div class="set-card">
-            <p>🀄 ٢٠ یاسای دۆمینە</p>
-            <div class="scroll-box" id="rules-list"></div>
+            <p>👥 یاریزان</p>
+            <div style="display:flex; gap:10px;">
+                <button class="btn" onclick="setMode(2)">٢ نەفەری</button>
+                <button class="btn" onclick="setMode(3)">٣ نەفەری</button>
+            </div>
         </div>
 
-        <div class="set-card">
-            <p>📱 ٢٠ زانیاری ئەم ئەپە</p>
-            <div class="scroll-box" id="app-info"></div>
-        </div>
-
-        <button class="btn" onclick="document.getElementById('settings-panel').style.display='none'" style="width:100%; background:var(--red); color:#fff;">داخستن</button>
+        <button class="btn" onclick="showInfo('rules')">📜 ٢٠ یاسای دۆمینە</button>
+        <button class="btn" onclick="showInfo('about')">ℹ️ دەربارەی ئێمە</button>
+        <button class="btn" onclick="document.getElementById('settings-panel').style.display='none'" style="background:var(--red); color:#fff; margin-top:10px;">داخستن</button>
     </div>
 
-    <div class="logo-section"><div class="logo-text">AWEZA PC</div></div>
+    <div id="info-overlay" class="info-overlay">
+        <h2 id="info-title" style="color:var(--main); text-align:center; margin-bottom:20px;"></h2>
+        <div id="info-content" class="scroll-content"></div>
+        <button class="btn" onclick="document.getElementById('info-overlay').style.display='none'">گەڕانەوە</button>
+    </div>
+
+    <div style="text-align:center; padding:15px;"><div style="font-size:2.2rem; font-weight:900; color:var(--main); text-shadow:0 0 15px rgba(0,0,0,0.5);">AWEZA PC</div></div>
 
     <div style="display:flex; justify-content:space-between; padding:10px 15px; align-items:center;">
-        <div onclick="document.getElementById('settings-panel').style.display='flex'; fillData();" style="font-size:1.8rem; cursor:pointer;">⚙️</div>
-        <div style="display:flex; align-items:center; gap:8px; background:#111; padding:5px 12px; border-radius:10px;">
-            <span id="game-timer" style="font-family:monospace; color:var(--main); font-weight:bold; font-size:1.2rem;">00:00</span>
-            <span id="pause-btn" onclick="toggleTimer()" style="cursor:pointer; font-size:1rem;">⏸️</span>
+        <div onclick="document.getElementById('settings-panel').style.display='flex';" style="font-size:1.8rem; cursor:pointer;">⚙️</div>
+        <div style="display:flex; align-items:center; gap:10px; background:rgba(0,0,0,0.6); padding:5px 15px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+            <span id="game-timer">00:00</span>
+            <span id="pause-btn" onclick="toggleTimer()" style="cursor:pointer; font-size:1.2rem;">⏸️</span>
         </div>
         <div style="font-weight:bold;">ئامانج: <input type="number" id="goal-val" value="101" onchange="updateGoal()" style="background:#000; color:var(--main); border:1px solid #333; width:45px; text-align:center; border-radius:5px;"></div>
     </div>
@@ -78,18 +111,17 @@
         <div class="modal-box">
             <h2 id="modal-title" style="color:var(--main);">تیمی یەکەم</h2>
             <input type="number" id="points-input" class="modal-input" placeholder="0" inputmode="numeric">
-            
-            <p id="err-msg" style="color:var(--red); display:none; font-weight:bold;">⚠️ خاڵێکی نایاسایی</p>
-
-            <div id="confirm-area" class="confirm-section">
-                <p style="margin-bottom:15px; color:#fff;">ئەم نمرەیە زۆرە، ئایا دڵنیایت؟</p>
-                <button class="btn" style="background:var(--green);" onclick="submitFinal(true)">بەڵێ</button>
-                <button class="btn" style="background:var(--red); color:#fff;" onclick="closeModal()">نەخێر</button>
+            <p id="err-msg" style="color:var(--red); display:none; font-weight:bold; margin-bottom:10px;">⚠️ خاڵێکی نایاسایی</p>
+            <div id="confirm-area" style="display:none; margin-top:10px; border-top:1px solid rgba(255,255,255,0.1); padding-top:15px;">
+                <p style="margin-bottom:15px;">ئەم نمرەیە زۆرە، دڵنیایت؟</p>
+                <div style="display:flex; gap:15px; justify-content:center;">
+                    <button class="btn" style="background:var(--green); width:80px;" onclick="submitFinal()">بەڵێ</button>
+                    <button class="btn" style="background:var(--red); color:#fff; width:80px;" onclick="closeModal()">نەخێر</button>
+                </div>
             </div>
-
-            <div id="normal-area" style="display:flex; justify-content:center; gap:30px; margin-top:20px;">
+            <div id="normal-area" style="display:flex; justify-content:center; gap:40px; margin-top:20px;">
                 <span onclick="closeModal()" style="font-size:2.5rem; color:var(--red);">✖️</span>
-                <span onclick="checkValidation()" style="font-size:2.5rem; color:var(--green);">✔️</span>
+                <span onclick="checkValue()" style="font-size:2.5rem; color:var(--green);">✔️</span>
             </div>
         </div>
     </div>
@@ -97,44 +129,32 @@
     <script>
         let curT = 0, goal = 101, players = {}, seconds = 0, timerInterval, isPaused = false;
 
+        function applyTheme(main, bg, card) {
+            document.documentElement.style.setProperty('--main', main);
+            document.body.style.backgroundColor = bg;
+            document.documentElement.style.setProperty('--card', card);
+        }
+
         function toggleTimer() {
             isPaused = !isPaused;
+            document.getElementById('game-timer').classList.toggle('timer-paused', isPaused);
             document.getElementById('pause-btn').innerText = isPaused ? "▶️" : "⏸️";
-            document.getElementById('game-timer').style.opacity = isPaused ? "0.5" : "1";
         }
 
-        function fillData() {
-            const rules = ["١. یاری دۆمینە ٢٨ بەردە.","٢. هەر یاریزان ٧ بەرد دەبات.","٣. یاری بە دوو شەش دەست پێ دەکات.","٤. جووتەکان لە پێشینەن.","٥. ئەگەر دوو شەش نەبوو، دوو پێنج.","٦. براوە دەست دەبات.","٧. دۆمینە کێشان هەیە.","٨. کێشان تا دۆزینەوەی بەرد.","٩. یاری بە ١٠١ خاڵە.","١٠. داقی تێدایە.","١١. لە یاری بەستراودا کەمترین خاڵ دەبات.","١٢. دوو بەرامبەر دوو تیمییە.","١٣. سێ کەسی هەموو دژی هەموو.","١٤. خاڵەکان لەسەر بەردەکانە.","١٥. سپی بە سفر هەژمارە.","١٦. خاڵژمێری دەبێت ورد بێت.","١٧. قسەکردن قەدەغەیە لە کاتی یاری.","١٨. بەرد کێشان بە نۆرەیە.","١٩. یاری بۆ خۆشییە.","٢٠. ئاوێزە PC باشترین هاوڕێیە."];
-            const info = ["١. پاشبنەمای ئاگری زیندوو.","٢. ڕاگرتنی کاتی یاری.","٣. ئاگاداری ١٠١ خاڵ.","٤. دڵنیایی بۆ نمرەی بەرز.","٥. تایمەری زیرەک.","٦. ٢ و ٣ نەفەری.","٧. لۆگۆی ئاوێزە PC.","٨. دیزاینی شووشەیی.","٩. بارانی بردنەوە.","١٠. سڕینەوەی نمرە.","١١. گۆڕینی ناوی یاریزان.","١٢. گۆڕینی ئامانج.","١٣. مێژووی یارییەکان.","١٤. لەرینەوەی مۆبایل.","١٥. دەنگی دۆمینە.","١٦. پاراستنی باتری.","١٧. پاشەکەوتی خۆکار.","١٨. کیبۆردی ژمارە.","١٩. خێرایی زۆر.","٢٠. ئۆفلاین کار دەکات."];
-            document.getElementById('rules-list').innerHTML = rules.join('<br>');
-            document.getElementById('app-info').innerHTML = info.join('<br>');
-        }
-
-        function checkValidation() {
+        function checkValue() {
             let v = parseInt(document.getElementById('points-input').value);
             if (isNaN(v) || v <= 0) return;
-            if (v >= 101) {
-                document.getElementById('err-msg').style.display = 'block';
-                return;
-            }
-            if (v >= 50 && v <= 100) {
+            if (v >= 101) { document.getElementById('err-msg').style.display = 'block'; return; }
+            if (v >= 50) {
                 document.getElementById('normal-area').style.display = 'none';
                 document.getElementById('confirm-area').style.display = 'block';
-            } else {
-                submitFinal(false);
-            }
+            } else { submitFinal(); }
         }
 
-        function submitFinal(confirmed) {
+        function submitFinal() {
             let v = parseInt(document.getElementById('points-input').value);
-            players[curT].s += v;
-            players[curT].h.push(v);
-            renderAll();
-            if(players[curT].s >= goal) {
-                confetti({ particleCount: 300, spread: 80 });
-                alert("🏆 پیرۆزە! " + players[curT].name + " بردییەوە!");
-                location.reload();
-            }
+            players[curT].s += v; players[curT].h.push(v); renderAll();
+            if(players[curT].s >= goal) { confetti({particleCount: 300}); alert("🏆 پیرۆزە! " + players[curT].name + " بردییەوە!"); location.reload(); }
             closeModal();
         }
 
@@ -142,8 +162,7 @@
             players = {}; const grid = document.getElementById('main-grid');
             grid.className = (n === 3 ? 'game-grid grid-3' : 'game-grid');
             for(let i=1; i<=n; i++) { players[i] = { name: (n==2?`تیمی ${i}`:`یاریزان ${i}`), s: 0, h: [] }; }
-            renderAll(); startTimer();
-            document.getElementById('settings-panel').style.display = 'none';
+            renderAll(); startTimer(); document.getElementById('settings-panel').style.display = 'none';
         }
 
         function renderAll() {
@@ -153,23 +172,29 @@
                     <div class="card">
                         <div class="card-header"><input type="text" style="background:transparent;border:none;color:#fff;text-align:center;font-weight:bold;" value="${players[i].name}" onchange="players[${i}].name=this.value"></div>
                         <div class="score-total" onclick="openModal(${i})">${players[i].s}</div>
-                        <div style="height:100px; overflow-y:auto;">${players[i].h.map((v, idx) => `<div style="display:flex; justify-content:space-between; padding:5px 15px; font-size:1.2rem;"><span>${idx+1}</span><span>${v}</span><span onclick="delScore(${i},${idx})" style="color:var(--red)">×</span></div>`).join('')}</div>
+                        <div style="height:100px; overflow-y:auto;">${players[i].h.map((v, idx) => `<div style="display:flex; justify-content:space-between; padding:5px 15px; font-weight:bold;"><span>${idx+1}</span><span>${v}</span><span onclick="delScore(${i},${idx})" style="color:var(--red)">×</span></div>`).join('')}</div>
                     </div>`;
             }
         }
 
-        function openModal(t) { 
-            curT = t; document.getElementById('modal-title').innerText = players[t].name;
-            document.getElementById('points-input').value = ""; document.getElementById('err-msg').style.display = 'none';
-            document.getElementById('confirm-area').style.display = 'none'; document.getElementById('normal-area').style.display = 'flex';
-            document.getElementById('score-modal').style.display = 'flex'; document.getElementById('points-input').focus();
+        function showInfo(type) {
+            const overlay = document.getElementById('info-overlay');
+            const content = document.getElementById('info-content');
+            overlay.style.display = 'flex';
+            if(type === 'rules') {
+                document.getElementById('info-title').innerText = "📜 یاساکانی دۆمینە";
+                content.innerHTML = "١. یاری ٢٨ بەردە. ٢. هەر یاریزان ٧ بەرد. ٣. دەستپێک بە دوو شەش. ٤. دۆمینە کێشان هەیە. ٥. یاری بە ١٠١ خاڵ کۆتایی دێت... (تا ٢٠ یاساکە)";
+            } else {
+                document.getElementById('info-title').innerText = "ℹ️ دەربارەی ئێمە";
+                content.innerHTML = "<div style='text-align:center;'><p>AWEZA PC</p><p>بۆ خزمەتگوزاری تەکنیکی و سۆفتوێر</p><br><a href='#' style='color:var(--main)'>Tiktok: @awezapc</a><br><a href='#' style='color:var(--main)'>Facebook: Aweza PC</a></div>";
+            }
         }
 
+        function openModal(t) { curT = t; document.getElementById('modal-title').innerText = players[t].name; document.getElementById('points-input').value = ""; document.getElementById('err-msg').style.display = 'none'; document.getElementById('confirm-area').style.display = 'none'; document.getElementById('normal-area').style.display = 'flex'; document.getElementById('score-modal').style.display = 'flex'; document.getElementById('points-input').focus(); }
         function closeModal() { document.getElementById('score-modal').style.display = 'none'; }
         function startTimer() { if(timerInterval) return; timerInterval = setInterval(() => { if(!isPaused) { seconds++; let m = Math.floor(seconds/60).toString().padStart(2,'0'); let s = (seconds%60).toString().padStart(2,'0'); document.getElementById('game-timer').innerText = `${m}:${s}`; } }, 1000); }
         function delScore(t, idx) { players[t].s -= players[t].h[idx]; players[t].h.splice(idx, 1); renderAll(); }
         function updateGoal() { goal = document.getElementById('goal-val').value; renderAll(); }
-
         setMode(2);
     </script>
 </body>
