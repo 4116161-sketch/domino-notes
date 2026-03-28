@@ -6,7 +6,7 @@
     <title>خاڵژمێری ئاوێزە PC</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --main: #efbf3b; }
+        :root { --main: #efbf3b; --red: #ff4444; --green: #00ff88; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
         body { 
@@ -14,183 +14,163 @@
             background-image: url('https://w0.peakpx.com/wallpaper/744/807/HD-wallpaper-dominos-reflection-dominos.jpg');
             background-size: cover; background-position: center; background-attachment: fixed;
             color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; 
-            height: 100vh; display: flex; flex-direction: column; overflow: hidden; transition: 0.5s;
+            height: 100vh; display: flex; flex-direction: column; overflow: hidden;
         }
 
         .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(0,0,0,0.8); border-bottom: 2px solid var(--main); z-index: 10; }
         .logo-text { color: var(--main); font-size: 1.5rem; font-weight: 900; }
 
-        .mode-selector { display: flex; justify-content: center; gap: 10px; padding: 15px; z-index: 10; }
-        .mode-btn { background: rgba(0,0,0,0.6); border: 1px solid var(--main); color: #fff; padding: 10px 20px; border-radius: 12px; font-weight: bold; }
-        .mode-btn.active { background: var(--main); color: #000; }
-
-        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; flex: 1; align-content: start; overflow-y: auto; z-index: 5; }
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; flex: 1; align-content: start; overflow-y: auto; }
         .grid-3 .card:nth-child(3) { grid-column: span 2; width: 85%; margin: 0 auto; }
         
         .card { 
-            background: rgba(255, 255, 255, 0.15); 
-            border-radius: 25px; 
-            border: 1px solid rgba(255, 255, 255, 0.2); 
-            padding: 25px 15px; 
-            text-align: center; 
-            backdrop-filter: blur(15px); 
-            -webkit-backdrop-filter: blur(15px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            background: rgba(255, 255, 255, 0.12); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.2); 
+            padding: 15px; text-align: center; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            display: flex; flex-direction: column;
         }
 
-        .player-input { background: none; border: none; color: #fff; text-align: center; width: 100%; font-weight: bold; font-size: 1.2rem; margin-bottom: 10px; text-shadow: 0 2px 4px #000; outline: none; }
-        .score-total { font-size: 4rem; font-weight: 900; color: var(--main); text-shadow: 0 4px 10px rgba(0,0,0,0.7); cursor: pointer; }
+        .player-input { background: none; border: none; color: #fff; text-align: center; width: 100%; font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; outline: none; }
+        .score-total { font-size: 3.5rem; font-weight: 900; color: var(--main); cursor: pointer; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
 
-        #settings-panel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; flex-direction: column; padding: 20px; overflow-y: auto; }
-        .folder { background: #111; border-radius: 18px; margin-bottom: 15px; border: 1px solid rgba(239,191,59,0.3); overflow: hidden; }
-        .folder-head { padding: 15px; background: var(--main); color: #000; font-weight: 900; display: flex; justify-content: space-between; cursor: pointer; }
-        .folder-body { display: none; padding: 15px; text-align: right; line-height: 1.8; color: #ddd; }
+        /* لیستی خاڵە تۆمارکراوەکان */
+        .history-list { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; max-height: 100px; overflow-y: auto; padding: 5px; }
+        .history-item { background: rgba(0,0,0,0.5); padding: 2px 8px; border-radius: 8px; font-size: 0.85rem; display: flex; align-items: center; gap: 5px; border: 1px solid rgba(255,255,255,0.1); }
+        .del-btn { color: var(--red); font-weight: bold; cursor: pointer; padding: 0 2px; }
 
-        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .theme-item { height: 100px; border-radius: 12px; border: 1px solid #444; background-size: cover; background-position: center; cursor: pointer; transition: 0.3s; }
-
-        .btn { padding: 15px; border-radius: 15px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.1rem; }
-        .btn-red { background: #ff4444; color: #fff; margin-top: 10px; margin-bottom: 30px; }
-
+        /* مۆداڵەکان */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; align-items: center; justify-content: center; }
-        .modal-box { background: #111; width: 90%; max-width: 350px; padding: 30px; border-radius: 30px; border: 2px solid var(--main); text-align: center; }
-        .num-input { width: 100%; font-size: 4.5rem; background: none; border: none; border-bottom: 3px solid var(--main); color: var(--main); text-align: center; outline: none; margin-bottom: 25px; }
+        .modal-box { background: #111; width: 90%; max-width: 350px; padding: 25px; border-radius: 25px; border: 2px solid var(--main); text-align: center; }
+        .num-input { width: 100%; font-size: 4rem; background: none; border: none; border-bottom: 3px solid var(--main); color: var(--main); text-align: center; outline: none; margin-bottom: 20px; }
+        
+        /* دیزاینی ئاگاداری نایاسایی */
+        #illegal-alert { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,0,0,0.2); backdrop-filter: blur(10px); z-index: 20000; align-items: center; justify-content: center; text-align: center; }
+        .alert-card { background: #000; border: 4px solid var(--red); padding: 30px; border-radius: 30px; width: 85%; box-shadow: 0 0 50px var(--red); }
+
+        .btn { padding: 12px; border-radius: 12px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1rem; transition: 0.2s; }
+        .btn-main { background: var(--main); color: #000; }
+        .btn-red { background: var(--red); color: #fff; }
+        .btn-green { background: var(--green); color: #000; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <div class="logo-text">AWEZA PC</div>
-        <div onclick="document.getElementById('settings-panel').style.display='flex'" style="font-size:1.8rem; cursor:pointer;">⚙️</div>
+        <div onclick="document.getElementById('settings-panel').style.display='flex'" style="font-size:1.6rem; cursor:pointer;">⚙️</div>
     </div>
 
-    <div class="mode-selector">
-        <button id="btn2" class="mode-btn active" onclick="setMode(2)">٢ نەفەری</button>
-        <button id="btn3" class="mode-btn" onclick="setMode(3)">٣ نەفەری</button>
+    <div style="display:flex; justify-content:center; gap:10px; padding:10px;">
+        <button id="btn2" class="mode-btn" onclick="setMode(2)" style="background:none; border:1px solid var(--main); color:#fff; padding:5px 15px; border-radius:10px;">٢ نەفەری</button>
+        <button id="btn3" class="mode-btn" onclick="setMode(3)" style="background:none; border:1px solid var(--main); color:#fff; padding:5px 15px; border-radius:10px;">٣ نەفەری</button>
     </div>
 
     <div id="main-grid" class="game-grid"></div>
 
-    <div id="settings-panel">
-        <h2 style="color:var(--main); text-align:center; margin:20px 0; font-size:1.8rem;">ڕێکخستنی ئاوێزە</h2>
-        
-        <div class="folder">
-            <div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندە شاهانەکان</span><span>▼</span></div>
-            <div class="folder-body theme-grid" style="display: block;">
-                <div class="theme-item" style="background-image:url('https://blog.tmlirp.org/hs-fs/hubfs/abstract%20dominoes%20background.jpeg?width=900')" onclick="changeTheme(this.style.backgroundImage)"></div>
-                <div class="theme-item" style="background-image:url('https://images.unsplash.com/photo-1769029174092-d26bc1a51efc?fm=jpg&q=60&w=3000')" onclick="changeTheme(this.style.backgroundImage)"></div>
-                
-                <div class="theme-item" style="background-image:url('https://img.goodfon.com/wallpaper/big/6/2c/domino-makro-igra.webp')" onclick="changeTheme(this.style.backgroundImage)"></div>
-                <div class="theme-item" style="background-image:url('https://w0.peakpx.com/wallpaper/744/807/HD-wallpaper-dominos-reflection-dominos.jpg')" onclick="changeTheme(this.style.backgroundImage)"></div>
-                <div class="theme-item" style="background-image:url('https://wallpapers.com/images/hd/ongoing-domino-game-mcerg8h2hzc7389q.jpg')" onclick="changeTheme(this.style.backgroundImage)"></div>
-                <div class="theme-item" style="background-image:url('https://images.pexels.com/photos/1393972/pexels-photo-1393972.jpeg?auto=compress&cs=tinysrgb&w=800')" onclick="changeTheme(this.style.backgroundImage)"></div>
-                <div class="theme-item" style="background-image:url('https://i5.walmartimages.com/seo/India-Curated-Hand-Finished-Domino-Game-Set-of-28-Chips-with-Intricate-Design-Resin-Tiles_218d2d00-c693-4ae8-810a-10dee4a64fab.5132fdbd66dbcb494fa71f676090810a.jpeg')" onclick="changeTheme(this.style.backgroundImage)"></div>
-                <div class="theme-item" style="background-image:url('https://img.freepik.com/premium-photo/white-domino-tiles-falling-row-isolated-white_771335-38965.jpg?w=740')" onclick="changeTheme(this.style.backgroundImage)"></div>
-            </div>
+    <div id="illegal-alert">
+        <div class="alert-card">
+            <h1 style="color:var(--red); font-size:4rem;">⛔</h1>
+            <h2 style="color:#fff; margin:15px 0;">خاڵێکی نایاساییە!</h2>
+            <p style="color:#ddd;">نمرەی (١٠١) و سەرووتر لە یاسای ئاوێزە PC ڕێگەپێنەدراوە.</p>
+            <button class="btn btn-red" style="margin-top:20px;" onclick="closeIllegal()">تێگەیشتم</button>
         </div>
-
-        <div class="folder">
-            <div class="folder-head" onclick="toggleF(this)"><span>❓ پرسیارە باوەکان</span><span>▼</span></div>
-            <div class="folder-body">
-                <b>١. چۆن خاڵ زیاد بکەم؟</b><br>تەنها دەست بنێ بەو ژمارەیەی ژێر ناوی یاریزانەکە.<br><hr style="opacity:0.1; margin:5px 0;">
-                <b>٢. چۆن ناو بگۆڕم؟</b><br>دەست بنێ بە ناوی "یاریزان"ەکە، خۆکارانە دەسڕێتەوە.<br><hr style="opacity:0.1; margin:5px 0;">
-                <b>٣. یاسای ١٠١ چییە؟</b><br>نمرەی ١٠١ و سەرووتر نایاساییە و یارییەکە تەواو دەکات.<br><hr style="opacity:0.1; margin:5px 0;">
-                <b>٤. ئایا نمرەکان دەمێنن؟</b><br>بەڵێ، باکگگراوند و نمرەکان پاشەکەوت دەبن.<br><hr style="opacity:0.1; margin:5px 0;">
-                <b>٥. ئاوێزە PC کێیە؟</b><br>ناوەندێکی مۆبایل و کۆمپیوتەرە بۆ خزمەتگوزارییە تەکنەلۆژییەکان.<br>
-            </div>
-        </div>
-
-        <div class="folder">
-            <div class="folder-head" onclick="toggleF(this)"><span>📱 سۆشیال میدیا</span><span>▼</span></div>
-            <div class="folder-body" style="text-align: center;">
-                🔵 FB: Aweza PC | 📸 IG: @Aweza_PC<br>👻 Snap: Aweza.Computers
-            </div>
-        </div>
-
-        <button class="btn btn-red" onclick="document.getElementById('settings-panel').style.display='none'">گەڕانەوە</button>
     </div>
 
     <div id="score-modal" class="modal">
         <div class="modal-box">
             <h2 id="modal-title" style="color:var(--main);">تۆمارکردن</h2>
             <input type="number" id="points-input" class="num-input" placeholder="0" inputmode="numeric">
-            <div id="confirm-box" style="display:none; margin-bottom:15px;">
-                <p style="color:var(--main); font-weight:bold;">⚠️ ئایا دڵنیایت؟</p>
-                <button class="btn" style="background:#00ff88; margin-top:10px;" onclick="saveScore()">بەڵێ</button>
+            
+            <div id="confirm-box" style="display:none;">
+                <p style="color:var(--main); margin-bottom:15px;">⚠️ ئەم خاڵە زۆرە، ئایا دڵنیایت؟</p>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-green" onclick="saveScore(true)">بەڵێ</button>
+                    <button class="btn btn-red" onclick="closeModal()">نەخێر</button>
+                </div>
             </div>
+
             <div id="normal-btns" style="display:flex; gap:10px;">
                 <button class="btn btn-red" onclick="closeModal()">لابردن</button>
-                <button class="btn" style="background:var(--main);" onclick="validateScore()">تۆمارکردن</button>
+                <button class="btn btn-main" onclick="validateScore()">تۆمارکردن</button>
             </div>
         </div>
+    </div>
+
+    <div id="win-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:30000; align-items:center; justify-content:center; flex-direction:column; text-align:center;" onclick="location.reload()">
+        <h1 style="color:var(--main); font-size:3rem;">👑 پیرۆزە</h1>
+        <h2 id="win-name" style="color:#fff; margin:10px 0;"></h2>
+        <button class="btn btn-main" style="width:200px;">یاری نوێ</button>
     </div>
 
     <script>
         let players = {}; let curT = 1;
 
         function setMode(n) {
-            document.getElementById('btn2').classList.toggle('active', n===2);
-            document.getElementById('btn3').classList.toggle('active', n===3);
             players = {}; const grid = document.getElementById('main-grid');
             grid.className = (n === 3 ? 'game-grid grid-3' : 'game-grid');
-            for(let i=1; i<=n; i++) players[i] = { name: "یاریزان " + i, score: 0 };
+            for(let i=1; i<=n; i++) players[i] = { name: "یاریزان " + i, score: 0, history: [] };
             render();
         }
 
         function render() {
             const grid = document.getElementById('main-grid'); grid.innerHTML = "";
             for (let i in players) {
+                let hHtml = players[i].history.map((pt, index) => `
+                    <div class="history-item">${pt} <span class="del-btn" onclick="deletePoint(${i}, ${index})">×</span></div>
+                `).join("");
+
                 grid.innerHTML += `
                     <div class="card">
                         <input type="text" class="player-input" value="${players[i].name}" onfocus="this.value=''" onchange="players[${i}].name=this.value">
                         <div class="score-total" onclick="openModal(${i})">${players[i].score}</div>
+                        <div class="history-list">${hHtml}</div>
                     </div>`;
             }
         }
 
         function openModal(t) {
-            curT = t; document.getElementById('score-modal').style.display = 'flex';
-            document.getElementById('points-input').value = ""; 
+            curT = t; document.getElementById('modal-title').innerText = players[t].name;
+            document.getElementById('score-modal').style.display = 'flex';
+            document.getElementById('points-input').value = ""; document.getElementById('points-input').focus();
             document.getElementById('confirm-box').style.display = 'none';
             document.getElementById('normal-btns').style.display = 'flex';
-            document.getElementById('points-input').focus();
         }
 
         function validateScore() {
             let v = parseInt(document.getElementById('points-input').value);
             if (isNaN(v)) return;
-            if (v >= 101) { alert("⛔ خاڵێکی نایاساییە!"); return; }
-            if (v >= 40) { 
-                document.getElementById('confirm-box').style.display = 'block'; 
+            if (v >= 101) {
+                document.getElementById('illegal-alert').style.display = 'flex';
+                if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                return;
+            }
+            if (v >= 50 && v <= 100) {
+                document.getElementById('confirm-box').style.display = 'block';
                 document.getElementById('normal-btns').style.display = 'none';
             } else { saveScore(); }
         }
 
         function saveScore() {
-            players[curT].score += parseInt(document.getElementById('points-input').value);
+            let v = parseInt(document.getElementById('points-input').value);
+            players[curT].score += v;
+            players[curT].history.push(v);
             render(); closeModal();
-            if(players[curT].score >= 101) { 
-                confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
-                alert("🏆 پیرۆزە " + players[curT].name + " بردییەوە!"); 
+            if(players[curT].score >= 101) {
+                confetti(); document.getElementById('win-name').innerText = players[curT].name;
+                document.getElementById('win-overlay').style.display = 'flex';
             }
         }
 
+        function deletePoint(pIdx, hIdx) {
+            event.stopPropagation();
+            players[pIdx].score -= players[pIdx].history[hIdx];
+            players[pIdx].history.splice(hIdx, 1);
+            render();
+        }
+
         function closeModal() { document.getElementById('score-modal').style.display = 'none'; }
-        function toggleF(h) { 
-            let b = h.nextElementSibling; 
-            b.style.display = (b.style.display === 'block' ? 'none' : 'block'); 
-        }
-
-        function changeTheme(img) { 
-            document.body.style.backgroundImage = img; 
-            localStorage.setItem('aweza_bg', img);
-        }
-
-        window.onload = () => {
-            setMode(2);
-            const savedBg = localStorage.getItem('aweza_bg');
-            if(savedBg) document.body.style.backgroundImage = savedBg;
-        };
+        function closeIllegal() { document.getElementById('illegal-alert').style.display = 'none'; }
+        
+        window.onload = () => setMode(2);
     </script>
 </body>
 </html>
