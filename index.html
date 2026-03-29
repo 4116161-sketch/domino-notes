@@ -34,6 +34,7 @@
         .btn { padding: 15px; border-radius: 18px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.1rem; margin-top: 15px; }
         .btn-neon { background: var(--neon); color: #000; }
         .btn-red { background: var(--red); color: #fff; }
+        .q-item { border-bottom: 1px solid #333; padding: 12px 0; display: block; }
     </style>
 </head>
 <body>
@@ -77,8 +78,27 @@
             </div>
             <div class="folder">
                 <div class="folder-head" onclick="toggleF(this)"><span>❓ ٢٠ پرسیارە باوەکە</span><span>▼</span></div>
-                <div class="folder-body" style="line-height:1.6; font-size:0.8rem; text-align:right;">
-                    ١. سڕینەوەی نمرە؟ (×). ٢. ناو؟ دەست بنێ دەسڕێتەوە. ٣. کات؟ سوور دەبێت. ٤. تۆمار؟ Enter. ٥. نافەوتێت؟ بەڵێ پاشەکەوت دەبێت. ٦. نایاسایی؟ ١٠١ ڕێگری دەکرێت. ٧. باکگراوند؟ لێرە هەڵبژێرە. ٨. بردنەوە؟ ١٠١. ٩. مۆبایل بکوژێتەوە؟ خاڵەکان دەمێنن. ١٠. کاتژمێر؟ لە مێژوو هەیە. ١١. ئیمۆجی؟ 👨 جێگیرە. ١٢. جیاوازی؟ لە مێژوو هەیە. ١٣. ٤٠-١٠٠؟ دڵنیایی دێت. ١٤. گۆڕینی تیم؟ لە ڕێکخستن. ١٥. سڕینەوەی مێژوو؟ لە فۆڵدەری مێژوو. ١٦. کیبۆرد؟ خۆکار دەڕوات. ١٧. Backspace؟ کار دەکات. ١٨. جۆری یاری؟ ٢ یان ٣ نەفەر. ١٩. خاڵ ماوە؟ نوسراوە. ٢٠. ئەپدەیت؟ مێژوو نامێنێت.
+                <div class="folder-body" style="text-align:right;">
+                    <span class="q-item">١. سڕینەوەی نمرە؟ (×).</span>
+                    <span class="q-item">٢. گۆڕینی ناو؟ دەست بنێ دەسڕێتەوە.</span>
+                    <span class="q-item">٣. کات؟ سوور دەبێت.</span>
+                    <span class="q-item">٤. تۆمار؟ Enter.</span>
+                    <span class="q-item">٥. نافەوتێت؟ بەڵێ پاشەکەوت دەبێت.</span>
+                    <span class="q-item">٦. نایاسایی؟ ١٠١ ڕێگری دەکرێت.</span>
+                    <span class="q-item">٧. باکگراوند؟ لێرە هەڵبژێرە.</span>
+                    <span class="q-item">٨. بردنەوە؟ ١٠١.</span>
+                    <span class="q-item">٩. مۆبایل بکوژێتەوە؟ خاڵەکان دەمێنن.</span>
+                    <span class="q-item">١٠. کاتژمێر؟ لە مێژوو هەیە.</span>
+                    <span class="q-item">١١. ئیمۆجی؟ 👨 جێگیرە.</span>
+                    <span class="q-item">١٢. جیاوازی؟ لە مێژوو هەیە.</span>
+                    <span class="q-item">١٣. ٤٠-١٠٠؟ دڵنیایی دێت.</span>
+                    <span class="q-item">١٤. گۆڕینی تیم؟ لە ڕێکخستن.</span>
+                    <span class="q-item">١٥. سڕینەوەی مێژوو؟ لە فۆڵدەری مێژوو.</span>
+                    <span class="q-item">١٦. کیبۆرد؟ خۆکار دەڕوات.</span>
+                    <span class="q-item">١٧. Backspace؟ کار دەکات.</span>
+                    <span class="q-item">١٨. جۆری یاری؟ ٢ یان ٣ نەفەر.</span>
+                    <span class="q-item">١٩. خاڵ ماوە؟ نوسراوە.</span>
+                    <span class="q-item">٢٠. ئەپدەیت؟ مێژوو نامێنێت.</span>
                 </div>
             </div>
             <div class="folder">
@@ -109,7 +129,6 @@
         <div class="modal-box" style="border-color: var(--red);">
             <h1 style="font-size: 5rem;">⛔</h1>
             <h2 id="illegal-text" style="color:var(--red);"></h2>
-            <p>تۆمارکردنی ١٠١ و سەرووتر قەدەغەیە.</p>
             <button class="btn btn-red" onclick="document.getElementById('illegal-modal').style.display='none'; document.getElementById('points-input').focus();">ڕاستکردنەوە</button>
         </div>
     </div>
