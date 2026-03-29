@@ -57,11 +57,6 @@
         .btn-neon { background: var(--neon); color: #000; }
         .btn-red { background: var(--red); color: #fff; }
 
-        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .theme-item { height: 75px; border-radius: 12px; border: 2.5px solid #444; background-size: cover; cursor: pointer; position: relative; }
-        .theme-item.active { border-color: var(--neon); box-shadow: 0 0 15px var(--neon); }
-        .theme-item.active::after { content: '✅'; position: absolute; top: 5px; right: 5px; }
-
         .history-record { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px; margin-bottom: 12px; border-right: 4px solid var(--neon); text-align: right; }
         .points-log { font-size: 0.75rem; color: #aaa; margin-top: 5px; line-height: 1.4; border-top: 1px solid #333; padding-top: 5px; }
 
@@ -88,51 +83,16 @@
             <div class="folder">
                 <div class="folder-head" onclick="toggleF(this)"><span>👥 جۆری یاری</span><span>▼</span></div>
                 <div class="folder-body">
-                    <button class="btn btn-neon" onclick="setMode(2); closeSettings();">٢ نەفەری (تیم)</button>
-                    <button class="btn btn-neon" onclick="setMode(3); closeSettings();">٣ نەفەری (یاریزان)</button>
-                </div>
-            </div>
-
-            <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندەکان</span><span>▼</span></div>
-                <div class="folder-body theme-grid">
-                    <div class="theme-item" style="background-image:url('https://wallpaperaccess.com/full/2977045.jpg')" onclick="changeTheme(this)"></div>
-                    <div class="theme-item" style="background-image:url('https://images8.alphacoders.com/601/601596.jpg')" onclick="changeTheme(this)"></div>
-                    <div class="theme-item" style="background-image:url('https://media.istockphoto.com/id/174766240/photo/domino-effect-with-donimoes-on-a-wooden-table.jpg?s=612x612&w=0&k=20&c=nJukKFDytXlvZ6d4XOycxHy4aRWrg3kiIJZllGWU2ug=')" onclick="changeTheme(this)"></div>
-                    <div class="theme-item" style="background-image:url('https://static.vecteezy.com/system/resources/thumbnails/068/153/133/small/dominoes-on-a-black-background-photo.jpg')" onclick="changeTheme(this)"></div>
+                    <button class="btn btn-neon" onclick="setNewGame(2)">٢ نەفەری (تیم) 👥</button>
+                    <button class="btn btn-neon" onclick="setNewGame(3)">٣ نەفەری (یاریزان) 👤</button>
                 </div>
             </div>
 
             <div class="folder">
                 <div class="folder-head" onclick="toggleF(this)"><span>📜 مێژووی یارییەکان</span><span>▼</span></div>
                 <div class="folder-body">
-                    <button class="btn btn-red" id="clear-hist-btn" onclick="askClearHistory()" style="margin-bottom:15px; font-size:0.9rem;">پاککردنەوەی هەموو مێژووەکان 🗑️</button>
+                    <button class="btn btn-red" onclick="askClearHistory()" style="margin-bottom:15px; font-size:0.9rem;">پاککردنەوەی هەموو مێژووەکان 🗑️</button>
                     <div id="history-content"></div>
-                </div>
-            </div>
-
-            <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>❓ ٢٠ پرسیاری باو</span><span>▼</span></div>
-                <div class="folder-body" style="line-height:1.8; font-size:0.85rem; text-align:right;">
-                    ١. سڕینەوەی نمرە؟ دەست بنێ بە (×).<br>
-                    ٢. گۆڕینی ناو؟ دەست بنێ بە ناوەکە خۆی دەسڕێتەوە.<br>
-                    ٣. ڕاگرتنی کات؟ دەست بنێ بە کاتژمێرەکە تا سوور دەبێت.<br>
-                    ٤. خاڵ چۆن تۆمار بکەم؟ نمرەکە بنووسە و <b>Enter</b> دابگرە.<br>
-                    ٥. مێژوو دەسڕێتەوە؟ تەنها بە دوگمەی ناو مێژوو.<br>
-                    ٦. خاڵی نایاسایی؟ ١٠١ و سەرووتر تۆمار ناکرێت.<br>
-                    ٧. باکگراوند؟ لێرە بە ✅ دیاری کراوە.<br>
-                    ٨. بردنەوە؟ گەیشتن بە ١٠١ یاری تەواو دەکات.<br>
-                    ٩. تیمەکان؟ لە ٢ نەفەریدا دوو تیم و لە ٣دا سێ یاریزان.<br>
-                    ١٠. ئیمۆجی؟ ئیمۆجی 👨 جێگیر کراوە.<br>
-                    (تێبینی: ١٠ پرسیاری تر لە فێرکاری ناو ئەپەکەدا هەیە).
-                </div>
-            </div>
-
-            <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>📱 سۆشیال میدیا</span><span>▼</span></div>
-                <div class="folder-body">
-                    <button class="btn btn-neon" onclick="window.open('https://facebook.com', '_blank')">Facebook</button>
-                    <button class="btn btn-neon" onclick="window.open('https://tiktok.com', '_blank')">TikTok</button>
                 </div>
             </div>
 
@@ -143,17 +103,17 @@
     <div id="score-modal" class="modal">
         <div class="modal-box">
             <h2 style="color:var(--neon);">تۆمارکردن</h2>
-            <input type="number" id="points-input" onkeydown="if(event.key==='Enter') validateScore()" style="width:100%; font-size:5rem; background:none; border:none; border-bottom:4px solid var(--neon); color:var(--neon); text-align:center; outline:none; margin:20px 0;" placeholder="0" inputmode="numeric">
+            <input type="number" id="points-input" onkeydown="if(event.key==='Enter') { validateScore(); this.blur(); }" style="width:100%; font-size:5rem; background:none; border:none; border-bottom:4px solid var(--neon); color:var(--neon); text-align:center; outline:none; margin:20px 0;" placeholder="0" inputmode="numeric">
             <div id="confirm-box" style="display:none; margin-bottom:20px;">
                 <p style="color:var(--red); font-weight:900; font-size:1.4rem;">⚠️ ئەم خاڵە زۆرە، ئایا دڵنیایت؟</p>
                 <div style="display:flex; gap:12px; margin-top:20px;">
-                    <button class="btn btn-neon" onclick="saveScore()">بەڵێ</button>
+                    <button class="btn btn-neon" onclick="saveScore(); document.activeElement.blur();">بەڵێ</button>
                     <button class="btn btn-red" onclick="closeModal()">نەخێر</button>
                 </div>
             </div>
             <div id="normal-btns" style="display:flex; gap:12px;">
                 <button class="btn btn-red" onclick="closeModal()">لابردن</button>
-                <button class="btn btn-neon" onclick="validateScore()">تۆمارکردن</button>
+                <button class="btn btn-neon" onclick="validateScore(); document.activeElement.blur();">تۆمارکردن</button>
             </div>
         </div>
     </div>
@@ -161,11 +121,20 @@
     <div id="clear-confirm-modal" class="modal">
         <div class="modal-box" style="border-color: var(--red);">
             <h2 style="color:var(--red);">⚠️ ئاگاداری</h2>
-            <p style="margin:20px 0; font-size:1.1rem;">ئایا دڵنیایت بۆ سڕینەوەی هەموو مێژووەکان؟ ئەم کارە ناگەڕێتەوە.</p>
+            <p style="margin:20px 0;">ئایا دڵنیایت بۆ سڕینەوەی هەموو مێژووەکان؟</p>
             <div style="display:flex; gap:12px;">
-                <button class="btn btn-red" onclick="executeClearHistory()">بەڵێ، بیسڕەوە</button>
-                <button class="btn btn-neon" onclick="document.getElementById('clear-confirm-modal').style.display='none'">نەخێر، پەشیمانم</button>
+                <button class="btn btn-red" onclick="executeClearHistory()">بەڵێ</button>
+                <button class="btn btn-neon" onclick="document.getElementById('clear-confirm-modal').style.display='none'">نەخێر</button>
             </div>
+        </div>
+    </div>
+
+    <div id="win-modal" class="modal">
+        <div class="modal-box" style="background: #000; border: 4px solid var(--main); padding: 40px 20px; border-radius: 40px;">
+            <h1 style="font-size: 5rem;">🏆</h1>
+            <h1 style="color:var(--main); font-size: 2.6rem;">پیرۆزە!</h1>
+            <h2 id="winner-name" style="font-size: 2rem; margin: 15px 0;"></h2>
+            <button class="btn btn-main" onclick="resetCurrentGame()">یاری نوێ 🔄</button>
         </div>
     </div>
 
@@ -177,15 +146,6 @@
         </div>
     </div>
 
-    <div id="win-modal" class="modal">
-        <div class="modal-box" style="background: #000; border: 4px solid var(--main); padding: 40px 20px; border-radius: 40px;">
-            <h1 style="font-size: 5rem;">🏆</h1>
-            <h1 style="color:var(--main); font-size: 2.6rem;">پیرۆزە!</h1>
-            <h2 id="winner-name" style="font-size: 2rem; margin: 15px 0;"></h2>
-            <button class="btn btn-main" onclick="location.reload()">یاری نوێ 🔄</button>
-        </div>
-    </div>
-
     <script>
         let players = {}; let curT = 1; let seconds = 0; let timerInterval; let isPaused = false;
 
@@ -194,10 +154,15 @@
             timerInterval = setInterval(() => {
                 if (!isPaused) {
                     seconds++;
-                    let m = Math.floor(seconds / 60); let s = seconds % 60;
-                    document.getElementById('game-timer').innerText = (m<10?"0"+m:m)+":"+(s<10?"0"+s:s);
+                    updateTimerUI();
+                    localStorage.setItem('domino_current_seconds', seconds);
                 }
             }, 1000);
+        }
+
+        function updateTimerUI() {
+            let m = Math.floor(seconds / 60); let s = seconds % 60;
+            document.getElementById('game-timer').innerText = (m<10?"0"+m:m)+":"+(s<10?"0"+s:s);
         }
 
         function toggleTimer() {
@@ -206,14 +171,27 @@
             document.getElementById('timer-container').parentElement.classList.toggle('paused', isPaused);
         }
 
-        function setMode(n) {
-            players = {}; seconds = 0; isPaused = false; startTimer();
-            const grid = document.getElementById('main-grid');
-            grid.className = (n === 3 ? 'game-grid grid-3' : 'game-grid');
-            for(let i=1; i<=n; i++) {
-                let name = (n === 2) ? `تیمی ${i} 👨` : `یاریزان ${i} 👨`;
-                players[i] = { name: name, score: 0, history: [] };
+        function setMode(n, isNew = false) {
+            if (isNew) {
+                players = {}; seconds = 0; isPaused = false;
+                for(let i=1; i<=n; i++) {
+                    let name = (n === 2) ? `تیمی ${i} 👨` : `یاریزان ${i} 👨`;
+                    players[i] = { name: name, score: 0, history: [] };
+                }
+                saveCurrentState();
+            } else {
+                let saved = JSON.parse(localStorage.getItem('domino_current_game'));
+                if (saved && Object.keys(saved).length == n) {
+                    players = saved;
+                    seconds = parseInt(localStorage.getItem('domino_current_seconds')) || 0;
+                } else {
+                    return setMode(n, true);
+                }
             }
+            const grid = document.getElementById('main-grid');
+            grid.className = (Object.keys(players).length == 3 ? 'game-grid grid-3' : 'game-grid');
+            updateTimerUI();
+            startTimer();
             render();
         }
 
@@ -223,10 +201,10 @@
                 let rem = 101 - players[i].score;
                 grid.innerHTML += `
                     <div class="card">
-                        <input type="text" class="player-input" value="${players[i].name}" onfocus="this.value=''" onchange="players[${i}].name=(this.value || players[${i}].name)">
+                        <input type="text" class="player-input" value="${players[i].name}" onfocus="this.value=''" onchange="players[${i}].name=(this.value || players[${i}].name); saveCurrentState();">
                         <div class="score-total" onclick="openModal(${i})">${players[i].score}</div>
                         <div class="rem-pts">ماوە: ${rem}</div>
-                        <div style="display:flex; flex-wrap:wrap; gap:5px; justify-content:center;">
+                        <div style="display:flex; flex-wrap:wrap; gap:5px; justify-content:center; border-top:1px solid rgba(57,255,20,0.3); padding-top:10px;">
                             ${players[i].history.map((pt, idx) => `<div style="background:var(--neon); color:#000; padding:2px 8px; border-radius:8px; font-weight:bold; font-size:0.8rem;">${pt} <span onclick="deletePoint(${i}, ${idx})" style="color:red; cursor:pointer;">×</span></div>`).join("")}
                         </div>
                     </div>`;
@@ -240,15 +218,14 @@
                 document.getElementById('illegal-text').innerText = v + " خاڵ نایاساییە!";
                 document.getElementById('illegal-modal').style.display = 'flex'; return; 
             }
-            if (v >= 40) { 
-                document.getElementById('confirm-box').style.display = 'block'; 
-                document.getElementById('normal-btns').style.display = 'none'; 
-            } else { saveScore(); }
+            if (v >= 40) { document.getElementById('confirm-box').style.display = 'block'; document.getElementById('normal-btns').style.display = 'none'; }
+            else { saveScore(); }
         }
 
         function saveScore() {
             let v = parseInt(document.getElementById('points-input').value);
             players[curT].score += v; players[curT].history.push(v);
+            saveCurrentState();
             render(); closeModal();
             if(players[curT].score >= 101) {
                 confetti({ particleCount: 500, spread: 150, origin: { y: 0.6 } });
@@ -258,53 +235,45 @@
             }
         }
 
+        function saveCurrentState() { localStorage.setItem('domino_current_game', JSON.stringify(players)); }
+        function resetCurrentGame() { localStorage.removeItem('domino_current_game'); localStorage.removeItem('domino_current_seconds'); location.reload(); }
+        function setNewGame(n) { localStorage.removeItem('domino_current_game'); localStorage.removeItem('domino_current_seconds'); setMode(n, true); closeSettings(); }
+
         function saveHistory(allP) {
             let now = new Date();
             let dateKey = now.toLocaleDateString('ku-IQ');
-            let history = JSON.parse(localStorage.getItem('domino_vfinal_hist') || '{}');
+            let exactTime = now.toLocaleTimeString('ku-IQ', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            let history = JSON.parse(localStorage.getItem('domino_v50_hist') || '{}');
             if(!history[dateKey]) history[dateKey] = [];
             let gameData = Object.values(allP).map(p => ({ name: p.name, score: p.score, log: p.history.join(", ") }));
-            history[dateKey].unshift({ winner: allP[curT].name, time: document.getElementById('game-timer').innerText, players: gameData });
-            localStorage.setItem('domino_vfinal_hist', JSON.stringify(history));
+            history[dateKey].unshift({ winner: allP[curT].name, duration: document.getElementById('game-timer').innerText, finishTime: exactTime, players: gameData });
+            localStorage.setItem('domino_v50_hist', JSON.stringify(history));
         }
 
         function loadHistory() {
-            let history = JSON.parse(localStorage.getItem('domino_vfinal_hist') || '{}');
-            let content = document.getElementById('history-content');
-            content.innerHTML = "";
-            let dates = Object.keys(history);
-            if (dates.length > 0) {
-                for (let date of dates) {
-                    content.innerHTML += `<div class="folder"><div class="folder-head" onclick="toggleF(this)">📅 ${date} <span>▼</span></div><div class="folder-body">
-                        ${history[date].map(g => `<div class="history-record">👑 <b>${g.winner}</b> <span style="float:left">${g.time}</span><div class="points-log">${g.players.map(p => `<div>• ${p.name}: <b>${p.score}</b> [${p.log}]</div>`).join("")}</div></div>`).join("")}</div></div>`;
-                }
-            } else { content.innerHTML = "<p style='padding:20px'>مێژوو بەتاڵە</p>"; }
+            let history = JSON.parse(localStorage.getItem('domino_v50_hist') || '{}');
+            let content = document.getElementById('history-content'); content.innerHTML = "";
+            for (let date in history) {
+                content.innerHTML += `<div class="folder"><div class="folder-head" onclick="toggleF(this)">📅 ${date} <span>▼</span></div><div class="folder-body">${history[date].map(g => `<div class="history-record">👑 <b>${g.winner}</b> <br> <small>کاتی بردنەوە: ${g.finishTime} | ماوە: ${g.duration}</small><div class="points-log">${g.players.map(p => `<div>• ${p.name}: <b>${p.score}</b> [${p.log}]</div>`).join("")}</div></div>`).join("")}</div></div>`;
+            }
         }
 
         function askClearHistory() { document.getElementById('clear-confirm-modal').style.display = 'flex'; }
-        function executeClearHistory() { localStorage.removeItem('domino_vfinal_hist'); loadHistory(); document.getElementById('clear-confirm-modal').style.display = 'none'; }
-        
-        function deletePoint(p, h) { event.stopPropagation(); players[p].score -= players[p].history[h]; players[p].history.splice(h, 1); render(); }
-        function openModal(t) { curT = t; document.getElementById('score-modal').style.display = 'flex'; document.getElementById('confirm-box').style.display = 'none'; document.getElementById('normal-btns').style.display = 'flex'; document.getElementById('points-input').value = ""; document.getElementById('points-input').focus(); }
-        function closeModal() { document.getElementById('score-modal').style.display = 'none'; }
+        function executeClearHistory() { localStorage.removeItem('domino_v50_hist'); loadHistory(); document.getElementById('clear-confirm-modal').style.display = 'none'; }
+        function deletePoint(p, h) { event.stopPropagation(); players[p].score -= players[p].history[h]; players[p].history.splice(h, 1); saveCurrentState(); render(); }
+        function openModal(t) { curT = t; document.getElementById('score-modal').style.display = 'flex'; document.getElementById('confirm-box').style.display = 'none'; document.getElementById('normal-btns').style.display = 'flex'; document.getElementById('points-input').value = ""; setTimeout(()=>document.getElementById('points-input').focus(), 100); }
+        function closeModal() { document.getElementById('score-modal').style.display = 'none'; document.activeElement.blur(); }
         function openSettings() { loadHistory(); document.getElementById('settings-panel').style.display = 'flex'; }
         function closeSettings() { document.getElementById('settings-panel').style.display = 'none'; }
         function toggleF(h) { let b = h.nextElementSibling; b.style.display = (b.style.display === 'block' ? 'none' : 'block'); }
-        
-        function changeTheme(el) {
-            let img = el.style.backgroundImage;
-            document.body.style.backgroundImage = img;
-            localStorage.setItem('domino_bg', img);
-            document.querySelectorAll('.theme-item').forEach(item => item.classList.remove('active'));
-            el.classList.add('active');
-        }
 
-        window.onload = () => { 
-            setMode(2); 
-            let bg = localStorage.getItem('domino_bg'); 
-            if(bg) {
-                document.body.style.backgroundImage = bg;
-                document.querySelectorAll('.theme-item').forEach(item => { if(item.style.backgroundImage === bg) item.classList.add('active'); });
+        window.onload = () => {
+            let savedGame = localStorage.getItem('domino_current_game');
+            if (savedGame) {
+                let n = Object.keys(JSON.parse(savedGame)).length;
+                setMode(n);
+            } else {
+                setMode(2, true);
             }
         };
     </script>
