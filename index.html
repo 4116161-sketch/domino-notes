@@ -17,20 +17,37 @@
             height: 100vh; display: flex; flex-direction: column; overflow: hidden;
         }
 
+        /* بەشی سەرەوە */
         .header { 
             display: flex; justify-content: space-between; align-items: center; 
             padding: 45px 20px 15px 20px; background: rgba(0, 0, 0, 0.9); 
             border-bottom: 2.5px solid var(--neon); z-index: 100;
         }
 
-        .logo-text { color: var(--neon); font-size: 1.4rem; font-weight: 900; text-shadow: 0 0 12px var(--neon); }
-
+        /* ستایلی کاتژمێر و پرتەپرتەکە */
         .timer-wrapper { 
             display: flex; align-items: center; gap: 8px; 
             background: rgba(57, 255, 20, 0.1); padding: 6px 18px; border-radius: 50px; 
             cursor: pointer; border: 1.5px solid var(--neon); box-shadow: 0 0 15px var(--neon); 
+            transition: 0.3s;
         }
         #game-timer { font-family: monospace; font-size: 1.5rem; font-weight: 900; color: var(--neon); text-shadow: 0 0 8px var(--neon); }
+
+        /* کاتێک کاتەکە ڕادەگیرێت */
+        .paused .timer-wrapper { 
+            border-color: var(--red); 
+            background: rgba(255, 0, 0, 0.2);
+            box-shadow: 0 0 20px var(--red);
+            animation: blinker 1s linear infinite;
+        }
+        .paused #game-timer { 
+            color: var(--red); 
+            text-shadow: 0 0 10px var(--red); 
+        }
+
+        @keyframes blinker {
+            50% { opacity: 0.3; }
+        }
 
         .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; flex: 1; align-content: start; overflow-y: auto; }
         .grid-3 .card:last-child { grid-column: 1 / span 2; width: 85%; margin: 0 auto; }
@@ -40,63 +57,71 @@
         .score-total { font-size: 4.2rem; font-weight: 900; color: var(--neon); cursor: pointer; line-height: 1; text-shadow: 0 0 15px var(--neon); }
         .rem-pts { color: #fff; font-size: 0.85rem; margin-bottom: 10px; font-weight: bold; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
-        
-        /* ستایلی مێژوو */
-        .history-folder { background: #111; border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--neon); overflow: hidden; }
-        .folder-head { padding: 12px; background: var(--neon); color: #000; font-weight: 900; display: flex; justify-content: space-between; cursor: pointer; }
-        .folder-body { display: none; padding: 10px; background: #050505; }
-        .history-item { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; margin-bottom: 8px; border-right: 3px solid var(--neon); display: flex; justify-content: space-between; font-size: 0.9rem; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-box { background: #000; width: 100%; max-width: 450px; padding: 30px; border-radius: 35px; border: 2px solid var(--neon); text-align: center; }
 
-        .win-box { background: #000; border: 4px solid var(--main); padding: 40px 20px; border-radius: 40px; text-align: center; width: 90%; max-width: 400px; box-shadow: 0 0 60px rgba(239, 191, 59, 0.7); animation: bounceIn 0.8s; }
-        .illegal-box { background: #000; border: 5px solid var(--red); padding: 40px 20px; border-radius: 40px; text-align: center; width: 90%; box-shadow: 0 0 40px var(--red); animation: shake 0.5s; }
+        .folder { background: #111; border-radius: 15px; margin-bottom: 10px; border: 1px solid rgba(57,255,20,0.3); overflow: hidden; text-align: right; }
+        .folder-head { padding: 15px; background: var(--neon); color: #000; font-weight: 900; display: flex; justify-content: space-between; cursor: pointer; }
+        .folder-body { display: none; padding: 15px; background: #050505; }
 
-        .btn { padding: 15px; border-radius: 18px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.2rem; margin-top: 15px; }
+        .btn { padding: 15px; border-radius: 18px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.1rem; margin-top: 15px; }
         .btn-neon { background: var(--neon); color: #000; }
         .btn-red { background: var(--red); color: #fff; }
         .btn-main { background: var(--main); color: #000; }
 
-        @keyframes bounceIn { from { transform: scale(0.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-12px); } 80% { transform: translateX(12px); } }
+        .history-record { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; border-right: 3px solid var(--neon); }
+
+        @keyframes winBounce { from { transform: scale(0.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
     </style>
 </head>
 <body>
 
-    <div class="header">
+    <div class="header" id="header-area">
         <div onclick="openSettings()" style="font-size:1.8rem; cursor:pointer; color:var(--neon);">⚙️</div>
         <div class="timer-wrapper" id="timer-container" onclick="toggleTimer()">
             <span id="timer-icon" style="color:white;">⏸️</span>
             <span id="game-timer">00:00</span>
         </div>
-        <div class="logo-text">SCORE BOARD</div>
+        <div style="color:var(--neon); font-weight:900;">SCORE BOARD</div>
     </div>
 
-    <div style="display:flex; justify-content:center; gap:12px; padding:15px; z-index: 50;">
+    <div style="display:flex; justify-content:center; gap:12px; padding:15px;">
         <button onclick="setMode(2)" style="background:var(--neon); color:#000; border:none; padding:8px 25px; border-radius:12px; font-weight:900;">٢ نەفەری</button>
         <button onclick="setMode(3)" style="background:rgba(57, 255, 20, 0.1); color:var(--neon); border:1px solid var(--neon); padding:8px 25px; border-radius:12px; font-weight:900;">٣ نەفەری</button>
     </div>
 
     <div id="main-grid" class="game-grid"></div>
 
-    <div id="settings-panel" class="modal" style="justify-content: flex-start; overflow-y: auto;">
-        <div class="modal-box" style="background:#000; border: 2px solid var(--neon); padding: 25px; border-radius: 30px; width: 100%; max-width: 500px;">
-            <h2 style="color:var(--neon); margin-bottom:20px;">📜 مێژووی یارییەکان</h2>
-            <div id="history-content"></div>
-            <button class="btn btn-red" onclick="closeSettings()">گەڕانەوە</button>
+    <div id="score-modal" class="modal">
+        <div class="modal-box">
+            <h2 style="color:var(--neon);">تۆمارکردن</h2>
+            <input type="number" id="points-input" style="width:100%; font-size:5rem; background:none; border:none; border-bottom:4px solid var(--neon); color:var(--neon); text-align:center; outline:none; margin:20px 0;" placeholder="0" inputmode="numeric">
+            <div id="confirm-box" style="display:none; margin-bottom:20px;">
+                <p style="color:var(--red); font-weight:bold; font-size:1.2rem;">⚠️ ئەم خاڵە (٤٠-١٠٠) زۆرە، ئایا دڵنیایت؟</p>
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <button class="btn btn-neon" onclick="saveScore()">بەڵێ</button>
+                    <button class="btn btn-red" onclick="closeModal()">نەخێر</button>
+                </div>
+            </div>
+            <div id="normal-btns" style="display:flex; gap:12px;">
+                <button class="btn btn-red" onclick="closeModal()">لابردن</button>
+                <button class="btn btn-neon" onclick="validateScore()">تۆمارکردن</button>
+            </div>
         </div>
     </div>
 
     <div id="illegal-modal" class="modal">
-        <div class="illegal-box">
+        <div class="illegal-box" style="background: #000; border: 5px solid var(--red); padding: 40px 20px; border-radius: 40px; text-align: center; width: 90%; box-shadow: 0 0 40px var(--red); animation: shake 0.4s ease-in-out;">
             <h1 style="font-size: 5.5rem;">⛔</h1>
-            <h2 style="color:var(--red); font-size: 2.4rem;">نایاساییە!</h2>
-            <p style="margin-top:10px; font-size: 1.1rem; color: white;">تۆمارکردنی ١٠١ و سەرووتر قەدەغەیە.</p>
+            <h2 style="color:var(--red); font-size: 2.2rem;">خاڵێکی نایاساییە!</h2>
+            <p style="margin-top:15px; color: white;">تۆمارکردنی ١٠١ یان زیاتر قەدەغەیە.</p>
             <button class="btn btn-red" onclick="document.getElementById('illegal-modal').style.display='none'">تێگەیشتم</button>
         </div>
     </div>
 
     <div id="win-modal" class="modal">
-        <div class="win-box">
+        <div class="win-box" style="background: #000; border: 4px solid var(--main); padding: 40px 20px; border-radius: 40px; text-align: center; width: 90%; max-width: 400px; box-shadow: 0 0 60px rgba(239, 191, 59, 0.7); animation: winBounce 0.8s;">
             <h1 style="font-size: 5rem;">🏆</h1>
             <h1 style="color:var(--main); font-size: 2.6rem;">پیرۆزە!</h1>
             <h2 id="winner-name" style="font-size: 2rem; margin: 15px 0; color: white;"></h2>
@@ -105,18 +130,14 @@
         </div>
     </div>
 
-    <div id="score-modal" class="modal">
-        <div class="modal-box" style="background: #000; border: 2.5px solid var(--neon); padding: 30px; border-radius: 35px;">
-            <h2 style="color:var(--neon);">تۆمارکردن</h2>
-            <input type="number" id="points-input" style="width:100%; font-size:5rem; background:none; border:none; border-bottom:4px solid var(--neon); color:var(--neon); text-align:center; outline:none; margin:20px 0;" placeholder="0" inputmode="numeric">
-            <div id="confirm-box" style="display:none; margin-bottom:20px;">
-                <p style="color:var(--red); font-weight:bold;">⚠️ ئەم خاڵە زۆرە، دڵنیایت؟</p>
-                <button class="btn btn-neon" onclick="saveScore()">بەڵێ</button>
+    <div id="settings-panel" class="modal" style="justify-content: flex-start;">
+        <div class="modal-box" style="max-width:100%;">
+            <h2 style="color:var(--neon); margin-bottom:20px;">ڕێکخستن</h2>
+            <div class="folder">
+                <div class="folder-head" onclick="toggleF(this)"><span>📜 مێژووی یارییەکان</span><span>▼</span></div>
+                <div id="history-content" class="folder-body"></div>
             </div>
-            <div id="normal-btns" style="display:flex; gap:12px;">
-                <button class="btn btn-red" onclick="closeModal()">لابردن</button>
-                <button class="btn btn-neon" onclick="validateScore()">تۆمارکردن</button>
-            </div>
+            <button class="btn btn-red" onclick="closeSettings()">گەڕانەوە</button>
         </div>
     </div>
 
@@ -136,8 +157,16 @@
 
         function toggleTimer() {
             isPaused = !isPaused;
-            document.getElementById('timer-icon').innerText = isPaused ? "▶️" : "⏸️";
-            document.getElementById('timer-container').parentElement.classList.toggle('paused', isPaused);
+            const container = document.getElementById('header-area');
+            const icon = document.getElementById('timer-icon');
+            
+            if (isPaused) {
+                container.classList.add('paused');
+                icon.innerText = "▶️";
+            } else {
+                container.classList.remove('paused');
+                icon.innerText = "⏸️";
+            }
         }
 
         function setMode(n) {
@@ -176,7 +205,7 @@
             players[curT].score += v; players[curT].history.push(v);
             render(); closeModal();
             if(players[curT].score >= 101) {
-                confetti({ particleCount: 500, spread: 150, origin: { y: 0.6 } });
+                confetti({ particleCount: 400, spread: 150, origin: { y: 0.6 } });
                 finishGame(players[curT]);
             }
         }
@@ -187,10 +216,10 @@
             let timeStr = now.getHours() + ":" + (now.getMinutes()<10?"0"+now.getMinutes():now.getMinutes()) + ":" + (now.getSeconds()<10?"0"+now.getSeconds():now.getSeconds());
             let gameTime = document.getElementById('game-timer').innerText;
 
-            let history = JSON.parse(localStorage.getItem('domino_history_v2') || '{}');
+            let history = JSON.parse(localStorage.getItem('domino_v4_history') || '{}');
             if (!history[dateKey]) history[dateKey] = [];
-            history[dateKey].unshift({ name: winner.name, score: winner.score, gameTime: gameTime, exactTime: timeStr });
-            localStorage.setItem('domino_history_v2', JSON.stringify(history));
+            history[dateKey].unshift({ name: winner.name, score: winner.score, time: gameTime, exact: timeStr });
+            localStorage.setItem('domino_v4_history', JSON.stringify(history));
 
             document.getElementById('winner-name').innerText = winner.name;
             document.getElementById('winner-stats').innerText = "کات: " + gameTime;
@@ -198,36 +227,24 @@
         }
 
         function loadHistory() {
-            let history = JSON.parse(localStorage.getItem('domino_history_v2') || '{}');
-            let container = document.getElementById('history-content');
-            container.innerHTML = "";
-            
+            let history = JSON.parse(localStorage.getItem('domino_v4_history') || '{}');
+            let container = document.getElementById('history-content'); container.innerHTML = "";
             for (let date in history) {
-                let folderHtml = `
-                    <div class="history-folder">
-                        <div class="folder-head" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'block' ? 'none' : 'block'">
-                            <span>📅 ${date}</span><span>▼</span>
-                        </div>
-                        <div class="folder-body">
-                            ${history[date].map(game => `
-                                <div class="history-item">
-                                    <span>👑 <b>${game.name}</b></span>
-                                    <span style="color:var(--neon)">${game.score} خاڵ</span>
-                                    <small>${game.gameTime} | ${game.exactTime}</small>
-                                </div>
-                            `).join("")}
-                        </div>
+                container.innerHTML += `
+                    <div class="folder">
+                        <div class="folder-head" onclick="toggleF(this)"><span>📅 ${date}</span><span>▼</span></div>
+                        <div class="folder-body">${history[date].map(g => `<div class="history-record"><span>👑 ${g.name}</span><span>${g.score} خاڵ</span><small>${g.time} | ${g.exact}</small></div>`).join("")}</div>
                     </div>`;
-                container.innerHTML += folderHtml;
             }
         }
 
         function deletePoint(p, h) { event.stopPropagation(); players[p].score -= players[p].history[h]; players[p].history.splice(h, 1); render(); }
-        function openModal(t) { curT = t; document.getElementById('score-modal').style.display = 'flex'; document.getElementById('confirm-box').style.display = 'none'; document.getElementById('normal-btns').style.display = 'flex'; document.getElementById('points-input').value = ""; document.getElementById('points-input').focus(); }
+        function openModal(t) { curT = t; document.getElementById('score-modal').style.display = 'flex'; document.getElementById('confirm-box').style.display = 'none'; document.getElementById('normal-btns').style.display = 'flex'; document.getElementById('points-input').value = ""; }
         function closeModal() { document.getElementById('score-modal').style.display = 'none'; }
         function openSettings() { loadHistory(); document.getElementById('settings-panel').style.display = 'flex'; }
         function closeSettings() { document.getElementById('settings-panel').style.display = 'none'; }
-        
+        function toggleF(h) { let b = h.nextElementSibling; b.style.display = (b.style.display === 'block' ? 'none' : 'block'); }
+
         window.onload = () => setMode(2);
     </script>
 </body>
