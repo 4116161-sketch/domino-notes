@@ -20,7 +20,7 @@
         .header { 
             display: flex; justify-content: space-between; align-items: center; 
             padding: 45px 20px 15px 20px; background: rgba(0, 0, 0, 0.9); 
-            border-bottom: 3px solid var(--neon); z-index: 100;
+            border-bottom: 2.5px solid var(--neon); z-index: 100;
         }
 
         .timer-wrapper { 
@@ -52,16 +52,17 @@
         .folder-head { padding: 15px; background: var(--neon); color: #000; font-weight: 900; display: flex; justify-content: space-between; cursor: pointer; }
         .folder-body { display: none; padding: 15px; background: #050505; color: #eee; }
 
+        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .theme-item { height: 75px; border-radius: 12px; border: 2.5px solid #444; background-size: cover; cursor: pointer; position: relative; }
+        .theme-item.active { border-color: var(--neon); box-shadow: 0 0 15px var(--neon); }
+        .theme-item.active::after { content: '✅'; position: absolute; top: 5px; right: 5px; }
+
         .history-record { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px; margin-bottom: 12px; border-right: 4px solid var(--neon); text-align: right; }
-        .history-p-detail { color: var(--main); font-size: 0.85rem; margin-top: 8px; border-top: 1px solid #333; padding-top: 8px; }
-        .points-log { font-size: 0.75rem; color: #aaa; margin-top: 3px; word-break: break-all; }
+        .points-log { font-size: 0.75rem; color: #aaa; margin-top: 5px; line-height: 1.4; border-top: 1px solid #333; padding-top: 5px; }
 
         .btn { padding: 15px; border-radius: 18px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.1rem; margin-top: 15px; }
         .btn-neon { background: var(--neon); color: #000; }
         .btn-red { background: var(--red); color: #fff; }
-
-        .theme-item { height: 75px; border-radius: 12px; border: 2.5px solid #444; background-size: cover; cursor: pointer; margin-bottom: 10px; }
-        .theme-item.active { border-color: var(--neon); box-shadow: 0 0 15px var(--neon); }
 
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-15px); } 75% { transform: translateX(15px); } }
     </style>
@@ -92,9 +93,57 @@
             </div>
 
             <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>📜 مێژووی یارییەکان</span><span>▼</span></div>
+                <div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندەکان</span><span>▼</span></div>
+                <div class="folder-body theme-grid" id="theme-selector">
+                    <div class="theme-item" style="background-image:url('https://wallpaperaccess.com/full/2977045.jpg')" onclick="changeTheme(this)"></div>
+                    <div class="theme-item" style="background-image:url('https://images8.alphacoders.com/601/601596.jpg')" onclick="changeTheme(this)"></div>
+                    <div class="theme-item" style="background-image:url('https://media.istockphoto.com/id/174766240/photo/domino-effect-with-donimoes-on-a-wooden-table.jpg?s=612x612&w=0&k=20&c=nJukKFDytXlvZ6d4XOycxHy4aRWrg3kiIJZllGWU2ug=')" onclick="changeTheme(this)"></div>
+                    <div class="theme-item" style="background-image:url('https://static.vecteezy.com/system/resources/thumbnails/068/153/133/small/dominoes-on-a-black-background-photo.jpg')" onclick="changeTheme(this)"></div>
+                </div>
+            </div>
+
+            <div class="folder">
+                <div class="folder-head" onclick="toggleF(this)"><span>📜 مێژووی ورد</span><span>▼</span></div>
                 <div id="history-content" class="folder-body"></div>
-                <button class="btn btn-red" id="clear-hist-btn" onclick="clearHistory()" style="margin: 10px; width: calc(100% - 20px); font-size: 0.9rem; display: none;">پاککردنەوەی هەموو مێژوو 🗑️</button>
+                <button class="btn btn-red" id="clear-hist-btn" onclick="clearHistory()" style="margin:10px; width:calc(100% - 20px); font-size:0.9rem; display:none;">پاککردنەوەی مێژوو 🗑️</button>
+            </div>
+
+            <div class="folder">
+                <div class="folder-head" onclick="toggleF(this)"><span>❓ پرسیارە باوەکان (٢٠)</span><span>▼</span></div>
+                <div class="folder-body" style="line-height:1.8; font-size:0.9rem;">
+                    <b>• بەشی یەکەم:</b><br>
+                    ١. چۆن یاری دەستپێبکەم؟ لە مۆدی ٢ یان ٣ نەفەری.<br>
+                    ٢. گۆڕینی ناو؟ دەست بنێ بە ناوەکە، خۆکار دەسڕێتەوە.<br>
+                    ٣. خاڵ چۆن تۆمار بکەم؟ دەست بنێ بە نمرە گەورەکە.<br>
+                    ٤. سڕینەوەی خاڵ؟ تەنها دەست بنێ بە (×).<br>
+                    ٥. مێژوو دەسڕێتەوە؟ تەنها بە دوگمەی "پاککردنەوە".<br>
+                    <b>• بەشی دووەم:</b><br>
+                    ٦. ڕاگرتنی کات؟ دەست بنێ بە کاتژمێرەکە تا سوور دەبێت.<br>
+                    ٧. خاڵی نایاسایی؟ ١٠١ و سەرووتر تۆمار ناکرێت.<br>
+                    ٨. ئایا مێژوو وردە؟ بەڵێ، هەموو نمرەکان نیشان دەدات.<br>
+                    ٩. باکگراوند؟ لێرە بە ✅ دیاری دەکرێت.<br>
+                    ١٠. دڵنیایی؟ لە نێوان ٤٠-١٠٠ دوگمەی دڵنیایی دێت.<br>
+                    <b>• بەشی سێیەم:</b><br>
+                    ١١. ئیمۆجی یاریزان؟ ئیمۆجی 👨 جێگیر کراوە.<br>
+                    ١٢. جیاوازی نمرە؟ لە مێژوودا بە جوانی دەردەکەوێت.<br>
+                    ١٣. چاککردنی هەڵە؟ بە سڕینەوەی نمرە وردەکان.<br>
+                    ١٤. بەرواری یاری؟ لە سەرەوەی مێژووەکە نووسراوە.<br>
+                    ١٥. بردنەوە؟ بە گەیشتن بە ١٠١ باران دەبارێت.<br>
+                    <b>• بەشی چوارەم:</b><br>
+                    ١٦. دەنگی کات؟ تەنها بە شێوەی بینراو (سوور) پرتە دەکات.<br>
+                    ١٧. گۆڕینی تیم؟ دەتوانیت ناوەکان بە ئارەزوو بگۆڕیت.<br>
+                    ١٨. چەند یاری پاشەکەوت دەبێت؟ بێ سنوور.<br>
+                    ١٩. ئەی پرسیاری تر؟ لێرە هەموو وەڵامەکان هەن.<br>
+                    ٢٠. مۆدی تاریک؟ ئەپەکە بە شێوەی جێگیر تاریک و فسفۆڕییە.
+                </div>
+            </div>
+
+            <div class="folder">
+                <div class="folder-head" onclick="toggleF(this)"><span>📱 سۆشیال میدیا</span><span>▼</span></div>
+                <div class="folder-body">
+                    <button class="btn btn-neon" onclick="window.open('https://facebook.com', '_blank')">Facebook Page 🔵</button>
+                    <button class="btn btn-neon" onclick="window.open('https://tiktok.com', '_blank')">TikTok Channel ⚫</button>
+                </div>
             </div>
 
             <button class="btn btn-red" onclick="closeSettings()">گەڕانەوە</button>
@@ -190,10 +239,8 @@
                 document.getElementById('illegal-text').innerText = v + " خاڵ نایاساییە!";
                 document.getElementById('illegal-modal').style.display = 'flex'; return; 
             }
-            if (v >= 40) { 
-                document.getElementById('confirm-box').style.display = 'block'; 
-                document.getElementById('normal-btns').style.display = 'none'; 
-            } else { saveScore(); }
+            if (v >= 40) { document.getElementById('confirm-box').style.display = 'block'; document.getElementById('normal-btns').style.display = 'none'; }
+            else { saveScore(); }
         }
 
         function saveScore() {
@@ -211,58 +258,54 @@
         function saveHistory(allP) {
             let now = new Date();
             let dateKey = now.toLocaleDateString('ku-IQ');
-            let history = JSON.parse(localStorage.getItem('domino_v30_hist') || '{}');
+            let history = JSON.parse(localStorage.getItem('domino_v40_hist') || '{}');
             if(!history[dateKey]) history[dateKey] = [];
-            
-            let gameData = Object.values(allP).map(p => ({
-                name: p.name,
-                score: p.score,
-                log: p.history.join(", ")
-            }));
-
-            history[dateKey].unshift({
-                winner: allP[curT].name,
-                time: document.getElementById('game-timer').innerText,
-                players: gameData
-            });
-            localStorage.setItem('domino_v30_hist', JSON.stringify(history));
+            let gameData = Object.values(allP).map(p => ({ name: p.name, score: p.score, log: p.history.join(", ") }));
+            history[dateKey].unshift({ winner: allP[curT].name, time: document.getElementById('game-timer').innerText, players: gameData });
+            localStorage.setItem('domino_v40_hist', JSON.stringify(history));
         }
 
         function loadHistory() {
-            let history = JSON.parse(localStorage.getItem('domino_v30_hist') || '{}');
+            let history = JSON.parse(localStorage.getItem('domino_v40_hist') || '{}');
             let content = document.getElementById('history-content');
             let clearBtn = document.getElementById('clear-hist-btn');
             content.innerHTML = "";
-            
             let dates = Object.keys(history);
             if (dates.length > 0) {
                 clearBtn.style.display = 'block';
                 for (let date of dates) {
                     content.innerHTML += `<div class="folder"><div class="folder-head" onclick="toggleF(this)">📅 ${date} <span>▼</span></div><div class="folder-body">
-                        ${history[date].map(g => `
-                            <div class="history-record">
-                                👑 <b>${g.winner}</b> <span style="float:left">${g.time}</span>
-                                <div class="history-p-detail">
-                                    ${g.players.map(p => `<div>• ${p.name}: <b>${p.score}</b> <div class="points-log">نمرەکان: [${p.log}]</div></div>`).join("")}
-                                </div>
-                            </div>
-                        `).join("")}</div></div>`;
+                        ${history[date].map(g => `<div class="history-record">👑 <b>${g.winner}</b> <span style="float:left">${g.time}</span><div class="points-log">${g.players.map(p => `<div>• ${p.name}: <b>${p.score}</b> [${p.log}]</div>`).join("")}</div></div>`).join("")}</div></div>`;
                 }
-            } else {
-                content.innerHTML = "<p style='padding:20px'>مێژوو بەتاڵە</p>";
-                clearBtn.style.display = 'none';
-            }
+            } else { content.innerHTML = "<p style='padding:20px'>مێژوو بەتاڵە</p>"; clearBtn.style.display = 'none'; }
         }
 
-        function clearHistory() { if(confirm("ئایا دڵنیایت لە سڕینەوەی هەموو مێژوو؟")) { localStorage.removeItem('domino_v30_hist'); loadHistory(); } }
+        function clearHistory() { if(confirm("ئایا دڵنیایت لە سڕینەوەی مێژوو؟")) { localStorage.removeItem('domino_v40_hist'); loadHistory(); } }
         function deletePoint(p, h) { event.stopPropagation(); players[p].score -= players[p].history[h]; players[p].history.splice(h, 1); render(); }
         function openModal(t) { curT = t; document.getElementById('score-modal').style.display = 'flex'; document.getElementById('confirm-box').style.display = 'none'; document.getElementById('normal-btns').style.display = 'flex'; document.getElementById('points-input').value = ""; }
         function closeModal() { document.getElementById('score-modal').style.display = 'none'; }
         function openSettings() { loadHistory(); document.getElementById('settings-panel').style.display = 'flex'; }
         function closeSettings() { document.getElementById('settings-panel').style.display = 'none'; }
         function toggleF(h) { let b = h.nextElementSibling; b.style.display = (b.style.display === 'block' ? 'none' : 'block'); }
+        
+        function changeTheme(el) {
+            let img = el.style.backgroundImage;
+            document.body.style.backgroundImage = img;
+            localStorage.setItem('domino_bg', img);
+            document.querySelectorAll('.theme-item').forEach(item => item.classList.remove('active'));
+            el.classList.add('active');
+        }
 
-        window.onload = () => setMode(2);
+        window.onload = () => { 
+            setMode(2); 
+            let bg = localStorage.getItem('domino_bg'); 
+            if(bg) {
+                document.body.style.backgroundImage = bg;
+                document.querySelectorAll('.theme-item').forEach(item => {
+                    if(item.style.backgroundImage === bg) item.classList.add('active');
+                });
+            }
+        };
     </script>
 </body>
 </html>
