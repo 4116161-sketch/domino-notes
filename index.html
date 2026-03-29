@@ -120,11 +120,7 @@
         <div class="modal-box">
             <h2 style="color:var(--neon);">تۆمارکردن</h2>
             <input type="number" id="points-input" onkeydown="if(event.key==='Enter') validateScore()" style="width:100%; font-size:5rem; background:none; border:none; border-bottom:4px solid var(--neon); color:var(--neon); text-align:center; outline:none; margin:20px 0;" placeholder="0" inputmode="numeric">
-            <div id="confirm-box" style="display:none; border: 1.5px dashed var(--red); padding: 15px; border-radius: 20px; background: rgba(255,0,0,0.1); margin-bottom: 15px;">
-                <p style="color:var(--red); font-weight:900;">⚠️ ئایا دڵنیایت؟</p>
-                <p style="font-size:0.85rem; color:#eee; margin-top:8px;">ئەم نمرەیە زۆرە (٤٠ یان زیاتر)، بۆ ڕێگریکردن لە هەڵەی مرۆیی و نووسینی خاڵی هەڵە تکایە دڵنیا بەرەوە.</p>
-                <div style="display:flex; gap:10px; margin-top:15px;"><button class="btn btn-neon" onclick="saveScore()">بەڵێ، ڕاستە</button><button class="btn btn-red" onclick="closeModal()">نەخێر</button></div>
-            </div>
+            
             <div id="normal-btns" style="display:flex; gap:12px;"><button class="btn btn-red" onclick="closeModal()">لابردن</button><button class="btn btn-neon" onclick="validateScore()">تۆمارکردن</button></div>
         </div>
     </div>
@@ -187,12 +183,34 @@
             }
         }
 
-        function validateScore() { let v=parseInt(document.getElementById('points-input').value); if(v>=targetScore){document.getElementById('illegal-text').innerText=v+" نایاساییە!";document.getElementById('illegal-modal').style.display='flex';return;} if(v>=40){document.getElementById('confirm-box').style.display='block';document.getElementById('normal-btns').style.display='none';}else saveScore(); }
-        function saveScore() { let v=parseInt(document.getElementById('points-input').value); players[curT].score+=v; players[curT].history.push(v); saveState(); render(); closeModal(); if(players[curT].score>=targetScore){confetti({particleCount:500,spread:160});document.getElementById('winner-name').innerText="👑 "+players[curT].name;document.getElementById('win-modal').style.display='flex';saveHist(players);}}
+        function validateScore() { 
+            let v=parseInt(document.getElementById('points-input').value); 
+            if(isNaN(v)) return;
+            if(v >= targetScore){
+                document.getElementById('illegal-text').innerText=v+" نایاساییە!";
+                document.getElementById('illegal-modal').style.display='flex';
+                return;
+            } 
+            // لێرەدا ڕاستەوخۆ پاشەکەوت دەبێت بێ پرسیار
+            saveScore(); 
+        }
+
+        function saveScore() { 
+            let v=parseInt(document.getElementById('points-input').value); 
+            players[curT].score+=v; players[curT].history.push(v); 
+            saveState(); render(); closeModal(); 
+            if(players[curT].score>=targetScore){
+                confetti({particleCount:500,spread:160});
+                document.getElementById('winner-name').innerText="👑 "+players[curT].name;
+                document.getElementById('win-modal').style.display='flex';
+                saveHist(players);
+            }
+        }
+
         function saveState() { localStorage.setItem('domino_g', JSON.stringify(players)); }
         function saveHist(p) { let h=JSON.parse(localStorage.getItem('domino_h')||'{}'), d=new Date().toLocaleDateString('ku-IQ'); if(!h[d])h[d]=[]; h[d].unshift({ winner:p[curT].name, time:new Date().toLocaleTimeString('ku-IQ'), dur:document.getElementById('game-timer').innerText, ps:Object.values(p).map(x=>`${x.name}:${x.score}`).join(" | ") }); localStorage.setItem('domino_h', JSON.stringify(h)); }
         function loadHist() { let h=JSON.parse(localStorage.getItem('domino_h')||'{}'), c=document.getElementById('history-content'); c.innerHTML=""; for(let d in h) c.innerHTML+=`<div class="folder"><div class="folder-head" onclick="toggleF(this)">📅 ${d} <span>▼</span></div><div class="folder-body">${h[d].map(g=>`<div style="border-bottom:1px solid #333; padding:8px">👑 ${g.winner} <span style="float:left; color:var(--neon)">${g.dur}</span><br><small>${g.time}</small></div>`).join("")}</div></div>`; }
-        function closeModal() { document.getElementById('score-modal').style.display='none'; document.getElementById('confirm-box').style.display='none'; document.getElementById('normal-btns').style.display='flex'; document.activeElement.blur(); }
+        function closeModal() { document.getElementById('score-modal').style.display='none'; document.getElementById('points-input').blur(); }
         function openSettings() { loadHist(); document.getElementById('settings-panel').style.display='flex'; }
         function closeSettings() { document.getElementById('settings-panel').style.display='none'; }
         function toggleF(h) { let b=h.nextElementSibling; b.style.display=(b.style.display=='block'?'none':'block'); }
