@@ -31,10 +31,11 @@
         .theme-item { height: 75px; border-radius: 12px; border: 2.5px solid #444; background-size: cover; cursor: pointer; position: relative; }
         .theme-item.active { border-color: var(--neon); box-shadow: 0 0 15px var(--neon); }
         .theme-item.active::after { content: '✅'; position: absolute; top: 5px; right: 5px; }
-        .btn { padding: 15px; border-radius: 18px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.1rem; margin-top: 15px; }
+        .btn { padding: 15px; border-radius: 18px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.1rem; margin-top: 10px; text-decoration: none; display: block; text-align: center; }
         .btn-neon { background: var(--neon); color: #000; }
         .btn-red { background: var(--red); color: #fff; }
         .q-item { border-bottom: 1px solid #333; padding: 12px 0; display: block; }
+        .target-input { background: #222; border: 1px solid var(--neon); color: var(--neon); padding: 10px; border-radius: 10px; width: 100px; text-align: center; outline: none; }
     </style>
 </head>
 <body>
@@ -53,6 +54,23 @@
     <div id="settings-panel" class="modal" style="justify-content: flex-start; overflow-y: auto;">
         <div class="modal-box" style="max-width:100%;">
             <h2 style="color:var(--neon); margin-bottom:20px;">ڕێکخستنەکان</h2>
+            
+            <div class="folder">
+                <div class="folder-head" onclick="toggleF(this)"><span>🎯 ئامانجی بردنەوە (<span id="current-target-display">101</span>)</span><span>▼</span></div>
+                <div class="folder-body" style="text-align:center;">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                        <button class="btn btn-neon" onclick="setTarget(100)">100</button>
+                        <button class="btn btn-neon" onclick="setTarget(101)">101</button>
+                        <button class="btn btn-neon" onclick="setTarget(150)">150</button>
+                        <button class="btn btn-neon" onclick="setTarget(200)">200</button>
+                    </div>
+                    <div style="margin-top:15px;">
+                        خۆت بنووسە: <input type="number" id="custom-target" class="target-input" placeholder="...">
+                        <button class="btn btn-neon" style="display:inline-block; width:auto; padding:10px 20px;" onclick="setTarget(document.getElementById('custom-target').value)">تۆمارکردن</button>
+                    </div>
+                </div>
+            </div>
+
             <div class="folder">
                 <div class="folder-head" onclick="toggleF(this)"><span>👥 جۆری یاری</span><span>▼</span></div>
                 <div class="folder-body">
@@ -60,6 +78,7 @@
                     <button class="btn btn-neon" onclick="setNewGame(3)">٣ نەفەری (یاریزان) 👤</button>
                 </div>
             </div>
+
             <div class="folder">
                 <div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندەکان</span><span>▼</span></div>
                 <div class="folder-body theme-grid">
@@ -69,6 +88,7 @@
                     <div class="theme-item" style="background-image:url('https://static.vecteezy.com/system/resources/thumbnails/068/153/133/small/dominoes-on-a-black-background-photo.jpg')" onclick="changeTheme(this)"></div>
                 </div>
             </div>
+
             <div class="folder">
                 <div class="folder-head" onclick="toggleF(this)"><span>📜 مێژووی یارییەکان</span><span>▼</span></div>
                 <div class="folder-body">
@@ -76,6 +96,7 @@
                     <div id="history-content"></div>
                 </div>
             </div>
+
             <div class="folder">
                 <div class="folder-head" onclick="toggleF(this)"><span>❓ ٢٠ پرسیارە باوەکە</span><span>▼</span></div>
                 <div class="folder-body" style="text-align:right;">
@@ -83,29 +104,15 @@
                     <span class="q-item">٢. گۆڕینی ناو؟ دەست بنێ دەسڕێتەوە.</span>
                     <span class="q-item">٣. کات؟ سوور دەبێت.</span>
                     <span class="q-item">٤. تۆمار؟ Enter.</span>
-                    <span class="q-item">٥. نافەوتێت؟ بەڵێ پاشەکەوت دەبێت.</span>
-                    <span class="q-item">٦. نایاسایی؟ ١٠١ ڕێگری دەکرێت.</span>
-                    <span class="q-item">٧. باکگراوند؟ لێرە هەڵبژێرە.</span>
-                    <span class="q-item">٨. بردنەوە؟ ١٠١.</span>
-                    <span class="q-item">٩. مۆبایل بکوژێتەوە؟ خاڵەکان دەمێنن.</span>
-                    <span class="q-item">١٠. کاتژمێر؟ لە مێژوو هەیە.</span>
-                    <span class="q-item">١١. ئیمۆجی؟ 👨 جێگیرە.</span>
-                    <span class="q-item">١٢. جیاوازی؟ لە مێژوو هەیە.</span>
-                    <span class="q-item">١٣. ٤٠-١٠٠؟ دڵنیایی دێت.</span>
-                    <span class="q-item">١٤. گۆڕینی تیم؟ لە ڕێکخستن.</span>
-                    <span class="q-item">١٥. سڕینەوەی مێژوو؟ لە فۆڵدەری مێژوو.</span>
-                    <span class="q-item">١٦. کیبۆرد؟ خۆکار دەڕوات.</span>
-                    <span class="q-item">١٧. Backspace؟ کار دەکات.</span>
-                    <span class="q-item">١٨. جۆری یاری؟ ٢ یان ٣ نەفەر.</span>
-                    <span class="q-item">١٩. خاڵ ماوە؟ نوسراوە.</span>
-                    <span class="q-item">٢٠. ئەپدەیت؟ مێژوو نامێنێت.</span>
+                    <span class="q-item">٥. ئامانج؟ دەتوانیت ١٠١ یان هەر نمرەیەک بێت.</span>
                 </div>
             </div>
+
             <div class="folder">
                 <div class="folder-head" onclick="toggleF(this)"><span>📱 سۆشیال میدیا</span><span>▼</span></div>
                 <div class="folder-body">
-                    <button class="btn btn-neon" onclick="window.open('https://facebook.com', '_blank')">Facebook</button>
-                    <button class="btn btn-neon" onclick="window.open('https://tiktok.com', '_blank')">TikTok</button>
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="btn btn-neon">Facebook Page 🔵</a>
+                    <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" class="btn btn-neon" style="margin-top:10px;">TikTok Channel ⚫</a>
                 </div>
             </div>
             <button class="btn btn-red" onclick="closeSettings()">گەڕانەوە</button>
@@ -137,34 +144,51 @@
     <div id="clear-confirm-modal" class="modal"><div class="modal-box" style="border-color: var(--red);"><h2>⚠️ ئاگاداری</h2><p>ئایا دڵنیایت بۆ سڕینەوەی هەموو مێژووەکان؟</p><button class="btn btn-red" onclick="executeClearHistory()">بەڵێ</button><button class="btn btn-neon" onclick="document.getElementById('clear-confirm-modal').style.display='none'">نەخێر</button></div></div>
 
     <script>
-        let players = {}; let curT = 1; let seconds = 0; let timerInterval; let isPaused = false;
+        let players = {}; let curT = 1; let seconds = 0; let timerInterval; let isPaused = false; let targetScore = 101;
+
         function startTimer() { clearInterval(timerInterval); timerInterval = setInterval(() => { if (!isPaused) { seconds++; updateTimerUI(); localStorage.setItem('domino_s', seconds); } }, 1000); }
         function updateTimerUI() { let m = Math.floor(seconds/60); let s = seconds%60; document.getElementById('game-timer').innerText = (m<10?"0"+m:m)+":"+(s<10?"0"+s:s); }
         function toggleTimer() { isPaused = !isPaused; document.getElementById('timer-icon').innerText = isPaused?"▶️":"⏸️"; document.getElementById('timer-container').parentElement.classList.toggle('paused', isPaused); }
+        
+        function setTarget(val) {
+            let n = parseInt(val);
+            if (isNaN(n) || n < 1) return;
+            targetScore = n;
+            localStorage.setItem('domino_target', targetScore);
+            document.getElementById('current-target-display').innerText = targetScore;
+            render();
+        }
+
         function setMode(n, isNew = false) {
+            targetScore = parseInt(localStorage.getItem('domino_target')) || 101;
+            document.getElementById('current-target-display').innerText = targetScore;
             if (isNew) { players = {}; seconds = 0; for(let i=1; i<=n; i++) players[i] = { name: (n==2?`تیمی ${i} 👨`:`یاریزان ${i} 👨`), score: 0, history: [] }; saveState(); } 
             else { let s = JSON.parse(localStorage.getItem('domino_g')); if(s && Object.keys(s).length==n) { players=s; seconds=parseInt(localStorage.getItem('domino_s'))||0; } else return setMode(n, true); }
             document.getElementById('main-grid').className = (Object.keys(players).length==3?'game-grid grid-3':'game-grid');
             updateTimerUI(); startTimer(); render();
         }
+
         function render() {
             const grid = document.getElementById('main-grid'); grid.innerHTML = "";
             for (let i in players) {
                 grid.innerHTML += `<div class="card"><input type="text" class="player-input" value="${players[i].name}" onfocus="this.value=''" onchange="players[${i}].name=this.value; saveState();">
                 <div class="score-total" onclick="curT=${i}; document.getElementById('score-modal').style.display='flex'; document.getElementById('points-input').value=''; setTimeout(()=>document.getElementById('points-input').focus(),100);">${players[i].score}</div>
-                <div class="rem-pts">ماوە: ${101-players[i].score}</div><div style="display:flex; flex-wrap:wrap; gap:5px; justify-content:center;">
+                <div class="rem-pts">ماوە: ${targetScore - players[i].score}</div><div style="display:flex; flex-wrap:wrap; gap:5px; justify-content:center;">
                 ${players[i].history.map((pt, idx) => `<div style="background:var(--neon); color:#000; padding:2px 8px; border-radius:8px; font-weight:bold; font-size:0.8rem;">${pt} <span onclick="event.stopPropagation(); players[${i}].score-=${pt}; players[${i}].history.splice(${idx},1); saveState(); render();" style="color:red">×</span></div>`).join("")}</div></div>`;
             }
         }
+
         function validateScore() {
             let v = parseInt(document.getElementById('points-input').value);
-            if (v >= 101) { document.getElementById('illegal-text').innerText = v + " خاڵ نایاساییە!"; document.getElementById('illegal-modal').style.display = 'flex'; return; }
+            if (v >= targetScore) { document.getElementById('illegal-text').innerText = v + " خاڵ نایاساییە!"; document.getElementById('illegal-modal').style.display = 'flex'; return; }
             if (v >= 40) { document.getElementById('confirm-box').style.display = 'block'; document.getElementById('normal-btns').style.display = 'none'; } else saveScore();
         }
+
         function saveScore() {
             let v = parseInt(document.getElementById('points-input').value); players[curT].score += v; players[curT].history.push(v); saveState(); render(); closeModal();
-            if(players[curT].score >= 101) { confetti({particleCount:500}); document.getElementById('winner-name').innerText = players[curT].name; document.getElementById('win-modal').style.display='flex'; saveHist(players); }
+            if(players[curT].score >= targetScore) { confetti({particleCount:500}); document.getElementById('winner-name').innerText = players[curT].name; document.getElementById('win-modal').style.display='flex'; saveHist(players); }
         }
+
         function saveState() { localStorage.setItem('domino_g', JSON.stringify(players)); }
         function saveHist(p) {
             let now = new Date(); let d = now.toLocaleDateString('ku-IQ'); let t = now.toLocaleTimeString('ku-IQ');
@@ -172,10 +196,12 @@
             h[d].unshift({ winner: p[curT].name, time: t, dur: document.getElementById('game-timer').innerText, ps: Object.values(p).map(x=>`${x.name}: ${x.score} [${x.history.join(",")}]`).join(" | ") });
             localStorage.setItem('domino_h', JSON.stringify(h));
         }
+
         function loadHist() {
             let h = JSON.parse(localStorage.getItem('domino_h') || '{}'); let c = document.getElementById('history-content'); c.innerHTML = "";
             for (let d in h) c.innerHTML += `<div class="folder"><div class="folder-head" onclick="toggleF(this)">📅 ${d} <span>▼</span></div><div class="folder-body">${h[d].map(g=>`<div style="border-bottom:1px solid #333; padding:5px">👑 ${g.winner} <small>${g.time}</small><br><small>${g.ps}</small></div>`).join("")}</div></div>`;
         }
+
         function closeModal() { document.getElementById('score-modal').style.display='none'; document.getElementById('confirm-box').style.display='none'; document.getElementById('normal-btns').style.display='flex'; document.activeElement.blur(); }
         function openSettings() { loadHist(); document.getElementById('settings-panel').style.display='flex'; }
         function closeSettings() { document.getElementById('settings-panel').style.display='none'; }
@@ -185,7 +211,13 @@
         function executeClearHistory() { localStorage.removeItem('domino_h'); loadHist(); document.getElementById('clear-confirm-modal').style.display = 'none'; }
         function resetCurrentGame() { localStorage.removeItem('domino_g'); localStorage.removeItem('domino_s'); location.reload(); }
         function setNewGame(n) { localStorage.removeItem('domino_g'); localStorage.removeItem('domino_s'); setMode(n, true); }
-        window.onload = () => { let g = localStorage.getItem('domino_g'); let bg = localStorage.getItem('domino_bg'); if(bg) document.body.style.backgroundImage = bg; setMode(g?Object.keys(JSON.parse(g)).length:2); };
+        
+        window.onload = () => { 
+            let g = localStorage.getItem('domino_g'); 
+            let bg = localStorage.getItem('domino_bg'); 
+            if(bg) document.body.style.backgroundImage = bg; 
+            setMode(g?Object.keys(JSON.parse(g)).length:2); 
+        };
     </script>
 </body>
 </html>
