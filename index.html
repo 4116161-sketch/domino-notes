@@ -15,12 +15,13 @@
             background-size: cover; background-position: center; background-attachment: fixed;
             color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; 
             height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+            transition: background-image 0.5s ease-in-out;
         }
 
-        /* چاککردنی بەشی سەرەوە بۆ مۆبایل */
+        /* بەشی سەرەوە (Header) - دابەزێنراوە بۆ مۆبايل */
         .header { 
             display: flex; justify-content: space-between; align-items: center; 
-            padding: 45px 20px 15px 20px; /* زیادکردنی مەودا لە سەرەوە */
+            padding: 45px 20px 15px 20px; 
             background: rgba(0, 0, 0, 0.9); 
             border-bottom: 2.5px solid var(--neon); z-index: 100;
             box-shadow: 0 4px 20px rgba(57, 255, 20, 0.3);
@@ -70,6 +71,11 @@
         .btn-neon { background: var(--neon); color: #000; box-shadow: 0 0 15px var(--neon); }
         .btn-red { background: var(--red); color: #fff; box-shadow: 0 0 15px var(--red); }
         .btn-main { background: var(--main); color: #000; box-shadow: 0 0 20px var(--main); }
+
+        /* بەشی باکگراوندەکان لە ڕێکخستن */
+        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px 0; }
+        .theme-item { height: 90px; border-radius: 12px; border: 2px solid #333; background-size: cover; background-position: center; cursor: pointer; transition: 0.3s; }
+        .theme-item:active { transform: scale(0.9); border-color: var(--neon); }
     </style>
 </head>
 <body>
@@ -106,7 +112,7 @@
             <input type="number" id="points-input" style="width:100%; font-size:5rem; background:none; border:none; border-bottom:4px solid var(--neon); color:var(--neon); text-align:center; outline:none; margin:20px 0;" placeholder="0" inputmode="numeric">
             
             <div id="confirm-box" style="display:none; margin-bottom:20px;">
-                <p style="color:var(--red); font-weight:bold; font-size:1.3rem;">⚠️ ئەم خاڵە زۆرە، دڵنیایت؟</p>
+                <p style="color:var(--red); font-weight:bold; font-size:1.3rem;">⚠️ ئەم خاڵە زۆرە، ئایا دڵنیایت؟</p>
                 <div style="display:flex; gap:12px; margin-top:15px;">
                     <button class="btn btn-neon" onclick="saveScore()">بەڵێ</button>
                     <button class="btn btn-red" onclick="closeModal()">نەخێر</button>
@@ -132,10 +138,15 @@
     <div id="settings-panel" class="modal" style="justify-content: flex-start;">
         <div class="modal-box" style="background:#000; border: 2px solid var(--neon); padding: 25px; border-radius: 30px; width: 100%;">
             <h2 style="color:var(--neon); margin-bottom:20px;">ڕێکخستنی ئاوێزە</h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-                <div style="height:80px; border-radius:10px; border:1px solid #444; background-image:url('https://blog.tmlirp.org/hs-fs/hubfs/abstract%20dominoes%20background.jpeg?width=900'); background-size:cover;" onclick="changeTheme(this.style.backgroundImage)"></div>
-                <div style="height:80px; border-radius:10px; border:1px solid #444; background-image:url('https://w0.peakpx.com/wallpaper/744/807/HD-wallpaper-dominos-reflection-dominos.jpg'); background-size:cover;" onclick="changeTheme(this.style.backgroundImage)"></div>
+            <p style="text-align:right; font-weight: bold; margin-bottom: 10px; color: var(--neon);">🎨 هەڵبژاردنی باکگراوند:</p>
+            <div class="theme-grid">
+                <div class="theme-item" style="background-image:url('https://media.istockphoto.com/id/174766240/photo/domino-effect-with-donimoes-on-a-wooden-table.jpg?s=612x612&w=0&k=20&c=nJukKFDytXlvZ6d4XOycxHy4aRWrg3kiIJZllGWU2ug=')" onclick="changeTheme(this.style.backgroundImage)"></div>
+                <div class="theme-item" style="background-image:url('https://images8.alphacoders.com/601/601596.jpg')" onclick="changeTheme(this.style.backgroundImage)"></div>
+                <div class="theme-item" style="background-image:url('https://static.vecteezy.com/system/resources/thumbnails/068/153/133/small/dominoes-on-a-black-background-photo.jpg')" onclick="changeTheme(this.style.backgroundImage)"></div>
+                <div class="theme-item" style="background-image:url('https://thumbs.dreamstime.com/b/domino-effect-tiles-falling-black-background-closeup-425238587.jpg')" onclick="changeTheme(this.style.backgroundImage)"></div>
+                <div class="theme-item" style="background-image:url('https://w0.peakpx.com/wallpaper/744/807/HD-wallpaper-dominos-reflection-dominos.jpg')" onclick="changeTheme(this.style.backgroundImage)"></div>
             </div>
+            <hr style="opacity: 0.2; margin: 20px 0;">
             <a href="https://www.facebook.com/4116161-sketch" target="_blank" style="color:var(--neon); display:block; margin-bottom:12px; text-decoration:none; font-weight:bold;">🔵 Facebook</a>
             <a href="https://www.tiktok.com/@4116161-sketch" target="_blank" style="color:var(--neon); display:block; text-decoration:none; font-weight:bold;">⚫ TikTok</a>
             <button class="btn btn-red" onclick="closeSettings()">گەڕانەوە</button>
