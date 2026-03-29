@@ -34,6 +34,11 @@
         .select-btn.active { border-color: var(--neon); color: var(--neon); box-shadow: 0 0 10px var(--neon); }
         .select-btn.active::after { content: '✅'; position: absolute; top: 2px; right: 8px; font-size: 0.8rem; }
 
+        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .theme-item { height: 75px; border-radius: 12px; border: 2.5px solid #444; background-size: cover; cursor: pointer; position: relative; }
+        .theme-item.active { border-color: var(--neon); box-shadow: 0 0 15px var(--neon); }
+        .theme-item.active::after { content: '✅'; position: absolute; top: 5px; right: 5px; }
+
         .folder { background: #111; border-radius: 15px; margin-bottom: 12px; border: 1px solid rgba(57,255,20,0.3); text-align: right; overflow: hidden; }
         .folder-head { padding: 15px; background: var(--neon); color: #000; font-weight: 900; display: flex; justify-content: space-between; cursor: pointer; }
         .folder-body { display: none; padding: 15px; background: #050505; color: #eee; }
@@ -41,9 +46,6 @@
         .btn { padding: 15px; border-radius: 18px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.1rem; margin-top: 10px; }
         .btn-neon { background: var(--neon); color: #000; }
         .btn-red { background: var(--red); color: #fff; }
-        
-        .custom-target-box { margin-top: 15px; padding-top: 15px; border-top: 1px solid #333; display: flex; align-items: center; gap: 8px; justify-content: center; }
-        .custom-input { background: #000; border: 1.5px solid var(--neon); color: #fff; padding: 10px; border-radius: 12px; width: 80px; text-align: center; font-weight: bold; outline: none; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-15px); } 75% { transform: translateX(15px); } }
     </style>
 </head>
@@ -87,17 +89,22 @@
                         <div class="select-btn target-item" data-val="150" onclick="setTarget(150, this)">150</div>
                         <div class="select-btn target-item" data-val="200" onclick="setTarget(200, this)">200</div>
                     </div>
-                    <div class="custom-target-box">
-                        <span>خۆت بنووسە:</span>
-                        <input type="number" id="manual-target" class="custom-input" placeholder="...">
-                        <button class="btn btn-neon" style="width: auto; margin: 0; padding: 10px 15px;" onclick="saveManualTarget()">تۆمارکردن</button>
+                    <div style="margin-top:15px; padding-top:15px; border-top:1px solid #333;">
+                        خۆت بنووسە: <input type="number" id="manual-target" style="background:#000; border:1px solid var(--neon); color:#fff; padding:8px; border-radius:10px; width:70px; text-align:center;" placeholder="...">
+                        <button class="btn btn-neon" style="width:auto; margin:0; padding:8px 12px;" onclick="saveManualTarget()">تۆمارکردن</button>
                     </div>
                 </div>
             </div>
 
             <div class="folder">
                 <div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندەکان</span><span>▼</span></div>
-                <div class="folder-body theme-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"><div class="theme-item" style="height:75px; border-radius:12px; border:2px solid #444; background-image:url('https://wallpaperaccess.com/full/2977045.jpg'); background-size:cover;" onclick="changeTheme(this)"></div><div class="theme-item" style="height:75px; border-radius:12px; border:2px solid #444; background-image:url('https://images8.alphacoders.com/601/601596.jpg'); background-size:cover;" onclick="changeTheme(this)"></div><div class="theme-item" style="height:75px; border-radius:12px; border:2px solid #444; background-image:url('https://media.istockphoto.com/id/174766240/photo/domino-effect-with-donimoes-on-a-wooden-table.jpg?s=612x612&w=0&k=20&c=nJukKFDytXlvZ6d4XOycxHy4aRWrg3kiIJZllGWU2ug='); background-size:cover;" onclick="changeTheme(this)"></div><div class="theme-item" style="height:75px; border-radius:12px; border:2px solid #444; background-image:url('https://static.vecteezy.com/system/resources/thumbnails/068/153/133/small/dominoes-on-a-black-background-photo.jpg'); background-size:cover;" onclick="changeTheme(this)"></div></div></div>
+                <div class="folder-body theme-grid" id="theme-selector">
+                    <div class="theme-item" style="background-image:url('https://wallpaperaccess.com/full/2977045.jpg')" onclick="changeTheme(this)"></div>
+                    <div class="theme-item" style="background-image:url('https://images8.alphacoders.com/601/601596.jpg')" onclick="changeTheme(this)"></div>
+                    <div class="theme-item" style="background-image:url('https://media.istockphoto.com/id/174766240/photo/domino-effect-with-donimoes-on-a-wooden-table.jpg?s=612x612&w=0&k=20&c=nJukKFDytXlvZ6d4XOycxHy4aRWrg3kiIJZllGWU2ug=')" onclick="changeTheme(this)"></div>
+                    <div class="theme-item" style="background-image:url('https://static.vecteezy.com/system/resources/thumbnails/068/153/133/small/dominoes-on-a-black-background-photo.jpg')" onclick="changeTheme(this)"></div>
+                </div>
+            </div>
             
             <div class="folder">
                 <div class="folder-head" onclick="toggleF(this)"><span>📜 مێژوو</span><span>▼</span></div>
@@ -107,30 +114,24 @@
         </div>
     </div>
 
-    <div id="clear-confirm-modal" class="modal">
-        <div class="modal-box" style="border-color: var(--red);">
-            <h2 style="color:var(--red);">⚠️ سڕینەوەی مێژوو</h2>
-            <p style="margin: 15px 0;">ئایا دڵنیایت لە سڕینەوەی هەموو مێژوو؟</p>
-            <div style="display:flex; gap:12px;"><button class="btn btn-red" onclick="executeClearHistory()">بەڵێ</button><button class="btn btn-neon" onclick="document.getElementById('clear-confirm-modal').style.display='none'">نەخێر</button></div>
-        </div>
-    </div>
+    <div id="new-game-modal" class="modal"><div class="modal-box" style="border-color: var(--main);"><h1>🎮</h1><h2 style="color:var(--main);">یاری نوێ؟</h2><p>ئایا دڵنیایت؟ خاڵەکان دەسڕێنەوە!</p><div style="display:flex; gap:12px;"><button class="btn btn-neon" id="confirm-new-btn">بەڵێ</button><button class="btn btn-red" onclick="document.getElementById('new-game-modal').style.display='none'">نەخێر</button></div></div></div>
 
     <div id="score-modal" class="modal">
         <div class="modal-box">
             <h2 style="color:var(--neon);">تۆمارکردن</h2>
             <input type="number" id="points-input" onkeydown="if(event.key==='Enter') validateScore()" style="width:100%; font-size:5rem; background:none; border:none; border-bottom:4px solid var(--neon); color:var(--neon); text-align:center; outline:none; margin:20px 0;" placeholder="0" inputmode="numeric">
-            <div id="confirm-box" style="display:none; border: 1px dashed var(--red); padding: 15px; border-radius: 20px; background: rgba(255,0,0,0.1); margin-bottom: 15px;">
-                <p style="color:var(--red); font-weight:900; font-size:1.3rem;">⚠️ ئایا دڵنیایت؟</p>
-                <p style="font-size:0.85rem; color:#eee; line-height:1.5;">ئەم نمرەیە زۆرە (٤٠ یان زیاتر)، بۆ ڕێگریکردن لە هەڵەی مرۆیی و نووسینی خاڵی هەڵە تکایە دڵنیا بەرەوە.</p>
+            <div id="confirm-box" style="display:none; border: 1.5px dashed var(--red); padding: 15px; border-radius: 20px; background: rgba(255,0,0,0.1); margin-bottom: 15px;">
+                <p style="color:var(--red); font-weight:900;">⚠️ ئایا دڵنیایت؟</p>
+                <p style="font-size:0.85rem; color:#eee; margin-top:8px;">ئەم نمرەیە زۆرە (٤٠ یان زیاتر)، بۆ ڕێگریکردن لە هەڵەی مرۆیی و نووسینی خاڵی هەڵە تکایە دڵنیا بەرەوە.</p>
                 <div style="display:flex; gap:10px; margin-top:15px;"><button class="btn btn-neon" onclick="saveScore()">بەڵێ، ڕاستە</button><button class="btn btn-red" onclick="closeModal()">نەخێر</button></div>
             </div>
             <div id="normal-btns" style="display:flex; gap:12px;"><button class="btn btn-red" onclick="closeModal()">لابردن</button><button class="btn btn-neon" onclick="validateScore()">تۆمارکردن</button></div>
         </div>
     </div>
 
-    <div id="new-game-modal" class="modal"><div class="modal-box" style="border-color: var(--main);"><h1>🎮</h1><h2 style="color:var(--main);">یاری نوێ؟</h2><p>ئایا دڵنیایت؟ خاڵەکان دەسڕێنەوە!</p><div style="display:flex; gap:12px;"><button class="btn btn-neon" id="confirm-new-btn">بەڵێ</button><button class="btn btn-red" onclick="document.getElementById('new-game-modal').style.display='none'">نەخێر</button></div></div></div>
     <div id="illegal-modal" class="modal"><div class="modal-box" style="border-color: var(--red); animation: shake 0.4s ease-in-out;"><h1>⛔</h1><h2 id="illegal-text" style="color:var(--red);"></h2><p>تۆمارکردنی ئەم نمرەیە نایاساییە.</p><button class="btn btn-red" onclick="document.getElementById('illegal-modal').style.display='none'; document.getElementById('points-input').focus();">ڕاستکردنەوە</button></div></div>
     <div id="win-modal" class="modal"><div class="modal-box" style="border-color: var(--main);"><h1>🏆</h1><h1 style="color:var(--main);">پیرۆزە!</h1><h2 id="winner-name"></h2><button class="btn btn-main" onclick="resetCurrentGame()">یاری نوێ 🔄</button></div></div>
+    <div id="clear-confirm-modal" class="modal"><div class="modal-box" style="border-color: var(--red);"><h2>⚠️ سڕینەوە</h2><p>ئایا دڵنیایت؟</p><div style="display:flex; gap:12px;"><button class="btn btn-red" onclick="executeClearHistory()">بەڵێ</button><button class="btn btn-neon" onclick="document.getElementById('clear-confirm-modal').style.display='none'">نەخێر</button></div></div></div>
 
     <script>
         let players = {}; let curT = 1; let seconds = 0; let timerInterval; let isPaused = false; let targetScore = 101; let peakShown = false;
@@ -145,12 +146,10 @@
         function toggleTimer() { isPaused = !isPaused; document.getElementById('timer-icon').innerText = isPaused?"▶️":"⏸️"; document.getElementById('timer-container').parentElement.classList.toggle('paused', isPaused); }
         
         function setTarget(v, el) { 
-            targetScore=parseInt(v); 
-            localStorage.setItem('domino_target',v); 
+            targetScore=parseInt(v); localStorage.setItem('domino_target',v); 
             document.getElementById('current-target-display').innerText=v; 
             document.querySelectorAll('.target-item').forEach(i=>i.classList.remove('active')); 
-            if(el) el.classList.add('active'); 
-            render(); 
+            if(el) el.classList.add('active'); render(); 
         }
 
         function saveManualTarget() {
@@ -158,18 +157,24 @@
             if(v && v > 0) setTarget(v, null);
         }
 
+        function changeTheme(el) {
+            let url = el.style.backgroundImage;
+            document.body.style.backgroundImage = url;
+            localStorage.setItem('domino_bg', url);
+            document.querySelectorAll('.theme-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+        }
+
         function confirmNewGame(n) { document.getElementById('new-game-modal').style.display='flex'; document.getElementById('confirm-new-btn').onclick=()=>{ setNewGame(n); document.getElementById('new-game-modal').style.display='none'; }; }
         function setNewGame(n) { localStorage.removeItem('domino_g'); localStorage.removeItem('domino_s'); peakShown=false; setMode(n, true); closeSettings(); }
         
         function setMode(n, isNew = false) {
-            targetScore = parseInt(localStorage.getItem('domino_target')) || 101; 
-            document.getElementById('current-target-display').innerText = targetScore;
+            targetScore = parseInt(localStorage.getItem('domino_target')) || 101; document.getElementById('current-target-display').innerText = targetScore;
             if(isNew) { players={}; seconds=0; for(let i=1; i<=n; i++) players[i] = { name:(n==2?`تیمی ${i} 👨`:`یاریزان ${i} 👨`), score:0, history:[] }; saveState(); }
             else { let s=JSON.parse(localStorage.getItem('domino_g')); if(s && Object.keys(s).length==n) { players=s; seconds=parseInt(localStorage.getItem('domino_s'))||0; } else return setMode(n, true); }
             document.getElementById('main-grid').className = (Object.keys(players).length==3?'game-grid grid-3':'game-grid');
             document.querySelectorAll('#mode-selectors .select-btn').forEach(b=>b.classList.remove('active')); document.getElementById(`btn-mode-${Object.keys(players).length}`).classList.add('active');
-            updateTimerUI(); startTimer(); render(); 
-            setTimeout(()=>{document.querySelectorAll('.target-item').forEach(b=>{if(b.getAttribute('data-val')==targetScore)b.classList.add('active')})},100);
+            updateTimerUI(); startTimer(); render(); setTimeout(()=>{document.querySelectorAll('.target-item').forEach(b=>{if(b.getAttribute('data-val')==targetScore)b.classList.add('active')})},100);
         }
 
         function render() {
@@ -191,11 +196,22 @@
         function openSettings() { loadHist(); document.getElementById('settings-panel').style.display='flex'; }
         function closeSettings() { document.getElementById('settings-panel').style.display='none'; }
         function toggleF(h) { let b=h.nextElementSibling; b.style.display=(b.style.display=='block'?'none':'block'); }
-        function changeTheme(el) { document.body.style.backgroundImage=el.style.backgroundImage; localStorage.setItem('domino_bg', el.style.backgroundImage); document.querySelectorAll('.theme-item').forEach(i=>i.classList.remove('active')); el.classList.add('active'); }
         function askClearHistory() { document.getElementById('clear-confirm-modal').style.display='flex'; }
         function executeClearHistory() { localStorage.removeItem('domino_h'); loadHist(); document.getElementById('clear-confirm-modal').style.display='none'; }
         function resetCurrentGame() { localStorage.removeItem('domino_g'); localStorage.removeItem('domino_s'); location.reload(); }
-        window.onload = () => { let bg=localStorage.getItem('domino_bg'); if(bg){document.body.style.backgroundImage=bg;setTimeout(()=>{document.querySelectorAll('.theme-item').forEach(i=>{if(i.style.backgroundImage===bg)i.classList.add('active')})},100);} setMode(localStorage.getItem('domino_g')?Object.keys(JSON.parse(localStorage.getItem('domino_g'))).length:2); };
+        
+        window.onload = () => { 
+            let bg=localStorage.getItem('domino_bg'); 
+            if(bg){
+                document.body.style.backgroundImage=bg;
+                setTimeout(()=>{
+                    document.querySelectorAll('.theme-item').forEach(i=>{
+                        if(i.style.backgroundImage===bg) i.classList.add('active');
+                    });
+                },100);
+            } 
+            setMode(localStorage.getItem('domino_g')?Object.keys(JSON.parse(localStorage.getItem('domino_g'))).length:2); 
+        };
     </script>
 </body>
 </html>
