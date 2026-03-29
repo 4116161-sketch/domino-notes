@@ -46,6 +46,7 @@
         .btn { padding: 15px; border-radius: 18px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.1rem; margin-top: 10px; }
         .btn-neon { background: var(--neon); color: #000; }
         .btn-red { background: var(--red); color: #fff; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-15px); } 75% { transform: translateX(15px); } }
     </style>
 </head>
 <body>
@@ -80,7 +81,7 @@
             </div>
 
             <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>🎯 ئامانج (<span id="current-target-display">101</span>)</span><span>▼</span></div>
+                <div class="folder-head" onclick="toggleF(this)"><span>🎯 ئامانجی بردنەوە (<span id="current-target-display">101</span>)</span><span>▼</span></div>
                 <div class="folder-body" style="text-align:center;">
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;" id="target-selectors">
                         <div class="select-btn target-item" data-val="100" onclick="setTarget(100, this)">100</div>
@@ -119,20 +120,21 @@
         <div class="modal-box">
             <h2 style="color:var(--neon);">تۆمارکردن</h2>
             <input type="number" id="points-input" onkeydown="if(event.key==='Enter') validateScore()" style="width:100%; font-size:5rem; background:none; border:none; border-bottom:4px solid var(--neon); color:var(--neon); text-align:center; outline:none; margin:20px 0;" placeholder="0" inputmode="numeric">
-            <div id="confirm-box" style="display:none; border: 1px dashed var(--red); padding: 15px; border-radius: 20px; background: rgba(255,0,0,0.1); margin-bottom: 15px;">
+            <div id="confirm-box" style="display:none; border: 1.5px dashed var(--red); padding: 15px; border-radius: 20px; background: rgba(255,0,0,0.1); margin-bottom: 15px;">
                 <p style="color:var(--red); font-weight:900;">⚠️ ئایا دڵنیایت؟</p>
-                <p style="font-size:0.85rem; color:#eee;">ئەم نمرەیە زۆرە (٤٠ یان زیاتر)، بۆ ڕێگریکردن لە هەڵەی مرۆیی تکایە دڵنیا بەرەوە.</p>
-                <div style="display:flex; gap:10px; margin-top:15px;"><button class="btn btn-neon" onclick="saveScore()">بەڵێ</button><button class="btn btn-red" onclick="closeModal()">نەخێر</button></div>
+                <p style="font-size:0.85rem; color:#eee; margin-top:8px;">ئەم نمرەیە زۆرە (٤٠ یان زیاتر)، بۆ ڕێگریکردن لە هەڵەی مرۆیی و نووسینی خاڵی هەڵە تکایە دڵنیا بەرەوە.</p>
+                <div style="display:flex; gap:10px; margin-top:15px;"><button class="btn btn-neon" onclick="saveScore()">بەڵێ، ڕاستە</button><button class="btn btn-red" onclick="closeModal()">نەخێر</button></div>
             </div>
             <div id="normal-btns" style="display:flex; gap:12px;"><button class="btn btn-red" onclick="closeModal()">لابردن</button><button class="btn btn-neon" onclick="validateScore()">تۆمارکردن</button></div>
         </div>
     </div>
 
+    <div id="illegal-modal" class="modal"><div class="modal-box" style="border-color: var(--red); animation: shake 0.4s ease-in-out;"><h1>⛔</h1><h2 id="illegal-text" style="color:var(--red);"></h2><p>تۆمارکردنی ئەم نمرەیە نایاساییە.</p><button class="btn btn-red" onclick="document.getElementById('illegal-modal').style.display='none'; document.getElementById('points-input').focus();">ڕاستکردنەوە</button></div></div>
     <div id="win-modal" class="modal"><div class="modal-box" style="border-color: var(--main);"><h1>🏆</h1><h1 style="color:var(--main);">پیرۆزە!</h1><h2 id="winner-name"></h2><button class="btn btn-main" onclick="resetCurrentGame()">یاری نوێ 🔄</button></div></div>
+    <div id="clear-confirm-modal" class="modal"><div class="modal-box" style="border-color: var(--red);"><h2>⚠️ سڕینەوە</h2><p>ئایا دڵنیایت؟</p><div style="display:flex; gap:12px;"><button class="btn btn-red" onclick="executeClearHistory()">بەڵێ</button><button class="btn btn-neon" onclick="document.getElementById('clear-confirm-modal').style.display='none'">نەخێر</button></div></div></div>
 
     <script>
         let players = {}; let curT = 1; let seconds = 0; let timerInterval; let isPaused = false; let targetScore = 101; let peakShown = false;
-
         function startTimer() { clearInterval(timerInterval); timerInterval = setInterval(() => { if (!isPaused) { seconds++; updateTimerUI(); localStorage.setItem('domino_s', seconds); } }, 1000); }
         function updateTimerUI() { 
             let m = Math.floor(seconds/60), s = seconds%60, t = document.getElementById('game-timer');
@@ -143,22 +145,36 @@
         function c(clr) { const t=document.getElementById('game-timer'), w=document.getElementById('timer-container'); t.style.color=clr; t.style.textShadow=`0 0 10px ${clr}`; w.style.borderColor=clr; w.style.boxShadow=`0 0 15px ${clr}`; }
         function toggleTimer() { isPaused = !isPaused; document.getElementById('timer-icon').innerText = isPaused?"▶️":"⏸️"; document.getElementById('timer-container').parentElement.classList.toggle('paused', isPaused); }
         
-        function setTarget(v, el) { targetScore=parseInt(v); localStorage.setItem('domino_target',v); document.getElementById('current-target-display').innerText=v; document.querySelectorAll('.target-item').forEach(i=>i.classList.remove('active')); if(el) el.classList.add('active'); render(); }
-        function saveManualTarget() { let v = document.getElementById('manual-target').value; if(v > 0) setTarget(v, null); }
+        function setTarget(v, el) { 
+            targetScore=parseInt(v); localStorage.setItem('domino_target',v); 
+            document.getElementById('current-target-display').innerText=v; 
+            document.querySelectorAll('.target-item').forEach(i=>i.classList.remove('active')); 
+            if(el) el.classList.add('active'); render(); 
+        }
 
-        function changeTheme(el) { let url = el.style.backgroundImage; document.body.style.backgroundImage = url; localStorage.setItem('domino_bg', url); document.querySelectorAll('.theme-item').forEach(i => i.classList.remove('active')); el.classList.add('active'); }
+        function saveManualTarget() {
+            let v = document.getElementById('manual-target').value;
+            if(v && v > 0) setTarget(v, null);
+        }
+
+        function changeTheme(el) {
+            let url = el.style.backgroundImage;
+            document.body.style.backgroundImage = url;
+            localStorage.setItem('domino_bg', url);
+            document.querySelectorAll('.theme-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+        }
 
         function confirmNewGame(n) { document.getElementById('new-game-modal').style.display='flex'; document.getElementById('confirm-new-btn').onclick=()=>{ setNewGame(n); document.getElementById('new-game-modal').style.display='none'; }; }
-        function setNewGame(n) { localStorage.removeItem('domino_g'); localStorage.removeItem('domino_s'); localStorage.setItem('domino_last_mode', n); peakShown=false; setMode(n, true); closeSettings(); }
+        function setNewGame(n) { localStorage.removeItem('domino_g'); localStorage.removeItem('domino_s'); peakShown=false; setMode(n, true); closeSettings(); }
         
         function setMode(n, isNew = false) {
-            targetScore = parseInt(localStorage.getItem('domino_target')) || 101;
+            targetScore = parseInt(localStorage.getItem('domino_target')) || 101; document.getElementById('current-target-display').innerText = targetScore;
             if(isNew) { players={}; seconds=0; for(let i=1; i<=n; i++) players[i] = { name:(n==2?`تیمی ${i} 👨`:`یاریزان ${i} 👨`), score:0, history:[] }; saveState(); }
             else { let s=JSON.parse(localStorage.getItem('domino_g')); if(s && Object.keys(s).length==n) { players=s; seconds=parseInt(localStorage.getItem('domino_s'))||0; } else return setMode(n, true); }
             document.getElementById('main-grid').className = (Object.keys(players).length==3?'game-grid grid-3':'game-grid');
             document.querySelectorAll('#mode-selectors .select-btn').forEach(b=>b.classList.remove('active')); document.getElementById(`btn-mode-${Object.keys(players).length}`).classList.add('active');
-            updateTimerUI(); startTimer(); render(); 
-            setTimeout(()=>{document.querySelectorAll('.target-item').forEach(b=>{if(b.getAttribute('data-val')==targetScore)b.classList.add('active')})},100);
+            updateTimerUI(); startTimer(); render(); setTimeout(()=>{document.querySelectorAll('.target-item').forEach(b=>{if(b.getAttribute('data-val')==targetScore)b.classList.add('active')})},100);
         }
 
         function render() {
@@ -171,8 +187,8 @@
             }
         }
 
-        function validateScore() { let v=parseInt(document.getElementById('points-input').value); if(v>=targetScore){alert("خاڵ نایاساییە!");return;} if(v>=40){document.getElementById('confirm-box').style.display='block';document.getElementById('normal-btns').style.display='none';}else saveScore(); }
-        function saveScore() { let v=parseInt(document.getElementById('points-input').value); players[curT].score+=v; players[curT].history.push(v); saveState(); render(); closeModal(); if(players[curT].score>=targetScore){confetti({particleCount:500});document.getElementById('winner-name').innerText="👑 "+players[curT].name;document.getElementById('win-modal').style.display='flex';saveHist(players);}}
+        function validateScore() { let v=parseInt(document.getElementById('points-input').value); if(v>=targetScore){document.getElementById('illegal-text').innerText=v+" نایاساییە!";document.getElementById('illegal-modal').style.display='flex';return;} if(v>=40){document.getElementById('confirm-box').style.display='block';document.getElementById('normal-btns').style.display='none';}else saveScore(); }
+        function saveScore() { let v=parseInt(document.getElementById('points-input').value); players[curT].score+=v; players[curT].history.push(v); saveState(); render(); closeModal(); if(players[curT].score>=targetScore){confetti({particleCount:500,spread:160});document.getElementById('winner-name').innerText="👑 "+players[curT].name;document.getElementById('win-modal').style.display='flex';saveHist(players);}}
         function saveState() { localStorage.setItem('domino_g', JSON.stringify(players)); }
         function saveHist(p) { let h=JSON.parse(localStorage.getItem('domino_h')||'{}'), d=new Date().toLocaleDateString('ku-IQ'); if(!h[d])h[d]=[]; h[d].unshift({ winner:p[curT].name, time:new Date().toLocaleTimeString('ku-IQ'), dur:document.getElementById('game-timer').innerText, ps:Object.values(p).map(x=>`${x.name}:${x.score}`).join(" | ") }); localStorage.setItem('domino_h', JSON.stringify(h)); }
         function loadHist() { let h=JSON.parse(localStorage.getItem('domino_h')||'{}'), c=document.getElementById('history-content'); c.innerHTML=""; for(let d in h) c.innerHTML+=`<div class="folder"><div class="folder-head" onclick="toggleF(this)">📅 ${d} <span>▼</span></div><div class="folder-body">${h[d].map(g=>`<div style="border-bottom:1px solid #333; padding:8px">👑 ${g.winner} <span style="float:left; color:var(--neon)">${g.dur}</span><br><small>${g.time}</small></div>`).join("")}</div></div>`; }
@@ -180,21 +196,21 @@
         function openSettings() { loadHist(); document.getElementById('settings-panel').style.display='flex'; }
         function closeSettings() { document.getElementById('settings-panel').style.display='none'; }
         function toggleF(h) { let b=h.nextElementSibling; b.style.display=(b.style.display=='block'?'none':'block'); }
-        function askClearHistory() { if(confirm("ئایا دڵنیایت لە سڕینەوەی هەموو مێژوو؟")) { localStorage.removeItem('domino_h'); loadHist(); } }
+        function askClearHistory() { document.getElementById('clear-confirm-modal').style.display='flex'; }
+        function executeClearHistory() { localStorage.removeItem('domino_h'); loadHist(); document.getElementById('clear-confirm-modal').style.display='none'; }
+        function resetCurrentGame() { localStorage.removeItem('domino_g'); localStorage.removeItem('domino_s'); location.reload(); }
         
-        function resetCurrentGame() { 
-            let lastMode = parseInt(localStorage.getItem('domino_last_mode')) || Object.keys(players).length;
-            localStorage.removeItem('domino_g'); 
-            localStorage.removeItem('domino_s'); 
-            setMode(lastMode, true); 
-            document.getElementById('win-modal').style.display='none';
-        }
-
         window.onload = () => { 
-            let bg=localStorage.getItem('domino_bg'); if(bg){document.body.style.backgroundImage=bg;setTimeout(()=>{document.querySelectorAll('.theme-item').forEach(i=>{if(i.style.backgroundImage===bg)i.classList.add('active')})},100);}
-            let savedG = localStorage.getItem('domino_g');
-            let lastM = parseInt(localStorage.getItem('domino_last_mode')) || 2;
-            setMode(savedG ? Object.keys(JSON.parse(savedG)).length : lastM); 
+            let bg=localStorage.getItem('domino_bg'); 
+            if(bg){
+                document.body.style.backgroundImage=bg;
+                setTimeout(()=>{
+                    document.querySelectorAll('.theme-item').forEach(i=>{
+                        if(i.style.backgroundImage===bg) i.classList.add('active');
+                    });
+                },100);
+            } 
+            setMode(localStorage.getItem('domino_g')?Object.keys(JSON.parse(localStorage.getItem('domino_g'))).length:2); 
         };
     </script>
 </body>
