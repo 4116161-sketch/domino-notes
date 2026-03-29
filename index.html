@@ -12,6 +12,7 @@
             background-color: #000; background-image: url('https://wallpaperaccess.com/full/2977045.jpg');
             background-size: cover; background-position: center; background-attachment: fixed;
             color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+            transition: 0.5s ease;
         }
         .header { display: flex; justify-content: space-between; align-items: center; padding: 45px 20px 15px 20px; background: rgba(0, 0, 0, 0.9); border-bottom: 3px solid var(--neon); z-index: 100; }
         .timer-wrapper { display: flex; align-items: center; gap: 8px; background: rgba(57, 255, 20, 0.1); padding: 6px 18px; border-radius: 50px; border: 1.5px solid var(--neon); box-shadow: 0 0 15px var(--neon); }
@@ -23,15 +24,17 @@
         .player-input { background: none; border: none; color: var(--neon); text-align: center; width: 100%; font-weight: 900; font-size: 1.3rem; outline: none; }
         .score-total { font-size: 4.5rem; font-weight: 900; color: var(--neon); cursor: pointer; line-height: 1; text-shadow: 0 0 20px var(--neon); margin: 10px 0; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-box { background: #000; width: 100%; max-width: 450px; padding: 30px; border-radius: 40px; border: 2.5px solid var(--neon); text-align: center; color: #fff; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 40px rgba(57, 255, 20, 0.2); }
+        .modal-box { background: #000; width: 100%; max-width: 450px; padding: 25px; border-radius: 40px; border: 2.5px solid var(--neon); text-align: center; color: #fff; max-height: 85vh; overflow-y: auto; }
         .folder { background: #111; border-radius: 15px; margin-bottom: 12px; border: 1px solid rgba(57,255,20,0.3); text-align: right; overflow: hidden; }
         .folder-head { padding: 15px; background: var(--neon); color: #000; font-weight: 900; display: flex; justify-content: space-between; cursor: pointer; }
         .folder-body { display: none; padding: 15px; background: #050505; color: #eee; }
+        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .theme-item { height: 75px; border-radius: 12px; border: 2.5px solid #444; background-size: cover; cursor: pointer; position: relative; }
+        .theme-item.active { border-color: var(--neon); box-shadow: 0 0 15px var(--neon); }
+        .theme-item.active::after { content: '✅'; position: absolute; top: 5px; right: 5px; }
         .btn { padding: 15px; border-radius: 18px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.1rem; margin-top: 10px; }
-        .btn-neon { background: var(--neon); color: #000; box-shadow: 0 0 10px var(--neon); }
-        .btn-red { background: var(--red); color: #fff; box-shadow: 0 0 10px var(--red); }
-        .btn-main { background: var(--main); color: #000; }
-        .target-input { background: #222; border: 1px solid var(--neon); color: var(--neon); padding: 10px; border-radius: 10px; width: 100px; text-align: center; outline: none; }
+        .btn-neon { background: var(--neon); color: #000; }
+        .btn-red { background: var(--red); color: #fff; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-15px); } 75% { transform: translateX(15px); } }
     </style>
 </head>
@@ -61,38 +64,30 @@
                         <button class="btn btn-neon" onclick="setTarget(150)">150</button>
                         <button class="btn btn-neon" onclick="setTarget(200)">200</button>
                     </div>
-                    <div style="margin-top:15px;">
-                        خۆت بنووسە: <input type="number" id="custom-target" class="target-input" placeholder="...">
-                        <button class="btn btn-neon" style="display:inline-block; width:auto; padding:10px 20px;" onclick="setTarget(document.getElementById('custom-target').value)">تۆمارکردن</button>
-                    </div>
+                </div>
+            </div>
+
+            <div class="folder">
+                <div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندەکان</span><span>▼</span></div>
+                <div class="folder-body theme-grid" id="theme-selector">
+                    <div class="theme-item" style="background-image:url('https://wallpaperaccess.com/full/2977045.jpg')" onclick="changeTheme(this)"></div>
+                    <div class="theme-item" style="background-image:url('https://images8.alphacoders.com/601/601596.jpg')" onclick="changeTheme(this)"></div>
+                    <div class="theme-item" style="background-image:url('https://media.istockphoto.com/id/174766240/photo/domino-effect-with-donimoes-on-a-wooden-table.jpg?s=612x612&w=0&k=20&c=nJukKFDytXlvZ6d4XOycxHy4aRWrg3kiIJZllGWU2ug=')" onclick="changeTheme(this)"></div>
+                    <div class="theme-item" style="background-image:url('https://static.vecteezy.com/system/resources/thumbnails/068/153/133/small/dominoes-on-a-black-background-photo.jpg')" onclick="changeTheme(this)"></div>
                 </div>
             </div>
 
             <div class="folder">
                 <div class="folder-head" onclick="toggleF(this)"><span>👥 جۆری یاری</span><span>▼</span></div>
                 <div class="folder-body">
-                    <button class="btn btn-neon" onclick="setNewGame(2)">٢ نەفەری (تیم) 👥</button>
-                    <button class="btn btn-neon" onclick="setNewGame(3)">٣ نەفەری (یاریزان) 👤</button>
+                    <button class="btn btn-neon" onclick="setNewGame(2)">٢ نەفەری 👥</button>
+                    <button class="btn btn-neon" onclick="setNewGame(3)">٣ نەفەری 👤</button>
                 </div>
             </div>
 
             <div class="folder">
                 <div class="folder-head" onclick="toggleF(this)"><span>📜 مێژووی یارییەکان</span><span>▼</span></div>
-                <div class="folder-body">
-                    <button class="btn btn-red" onclick="askClearHistory()">سڕینەوەی مێژوو 🗑️</button>
-                    <div id="history-content"></div>
-                </div>
-            </div>
-
-            <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>❓ پرسیارە باوەکان</span><span>▼</span></div>
-                <div class="folder-body" style="text-align:right; font-size: 0.9rem; line-height: 2;">
-                    • سڕینەوەی نمرە؟ دەست بنێ بە (×).<br>
-                    • گۆڕینی ناو؟ دەست بنێ دەسڕێتەوە.<br>
-                    • کات؟ ڕایدەگریت سوور دەبێت.<br>
-                    • تۆمار؟ ژمارە بنووسە و Enter.<br>
-                    • ئامانج؟ لێرە هەڵبژێرە.
-                </div>
+                <div class="folder-body"><button class="btn btn-red" onclick="askClearHistory()">سڕینەوەی مێژوو 🗑️</button><div id="history-content"></div></div>
             </div>
 
             <button class="btn btn-red" onclick="closeSettings()">گەڕانەوە</button>
@@ -103,70 +98,33 @@
         <div class="modal-box">
             <h2 style="color:var(--neon);">تۆمارکردن</h2>
             <input type="number" id="points-input" onkeydown="if(event.key==='Enter') validateScore()" style="width:100%; font-size:5rem; background:none; border:none; border-bottom:4px solid var(--neon); color:var(--neon); text-align:center; outline:none; margin:20px 0;" placeholder="0" inputmode="numeric">
-            
-            <div id="confirm-box" style="display:none; margin-bottom:20px; border: 1px dashed var(--red); padding: 15px; border-radius: 20px; background: rgba(255,0,0,0.1);">
-                <p style="color:var(--red); font-weight:900; font-size:1.2rem;">⚠️ ئایا دڵنیایت؟</p>
-                <p style="font-size: 0.85rem; margin-top: 5px; color: #ccc;">ئەم نمرەیە (٤٠ یان زیاترە) و زۆرە، بۆ ئەوەی بە هەڵە نمرە تۆمار نەکەیت تکایە دڵنیا بەرەوە.</p>
-                <div style="display:flex; gap:10px; margin-top:15px;">
-                    <button class="btn btn-neon" onclick="saveScore()">بەڵێ، ڕاستە</button>
-                    <button class="btn btn-red" onclick="closeModal()">نەخێر، پەشیمانم</button>
-                </div>
+            <div id="confirm-box" style="display:none; border: 1px dashed var(--red); padding: 15px; border-radius: 20px; background: rgba(255,0,0,0.1);">
+                <p style="color:var(--red); font-weight:900;">⚠️ ئایا دڵنیایت؟</p>
+                <p style="font-size: 0.8rem; margin-top: 5px;">ئەم نمرەیە (٤٠ یان زیاترە) و زۆرە، تکایە دڵنیا بەرەوە.</p>
+                <div style="display:flex; gap:10px; margin-top:15px;"><button class="btn btn-neon" onclick="saveScore()">بەڵێ</button><button class="btn btn-red" onclick="closeModal()">نەخێر</button></div>
             </div>
-
-            <div id="normal-btns" style="display:flex; gap:12px;">
-                <button class="btn btn-red" onclick="closeModal()">لابردن</button>
-                <button class="btn btn-neon" onclick="validateScore()">تۆمارکردن</button>
-            </div>
+            <div id="normal-btns" style="display:flex; gap:12px;"><button class="btn btn-red" onclick="closeModal()">لابردن</button><button class="btn btn-neon" onclick="validateScore()">تۆمارکردن</button></div>
         </div>
     </div>
 
     <div id="illegal-modal" class="modal">
-        <div class="modal-box" style="border-color: var(--red); border-width: 4px; box-shadow: 0 0 50px var(--red); animation: shake 0.4s ease-in-out; max-width: 90%;">
-            <h1 style="font-size: 6rem; margin-bottom: 10px;">⛔</h1>
-            <h2 id="illegal-text" style="color:var(--red); font-size: 2.2rem; text-shadow: 0 0 10px var(--red);"></h2>
-            <div style="background: rgba(255,0,0,0.1); padding: 20px; border-radius: 25px; margin-top: 20px; text-align: right;">
-                <p style="color: white; line-height: 1.6;">تۆمارکردنی ئەم خاڵە نایاساییە چونکە:<br>
-                ١. لە یەک دەستدا ناتوانرێت ١٠١ یان زیاتر ببرێت.<br>
-                ٢. ئەمە دژی یاسای گشتی دۆمینەیە.<br>
-                ٣. تکایە نمرەکە بە Backspace بسڕەوە و ڕاستی بکەرەوە.</p>
-            </div>
-            <button class="btn btn-red" style="font-size: 1.3rem; margin-top: 25px;" onclick="document.getElementById('illegal-modal').style.display='none'; document.getElementById('points-input').focus();">تێگەیشتم، ڕاستی دەکەمەوە</button>
+        <div class="modal-box" style="border-color: var(--red); animation: shake 0.4s ease-in-out;">
+            <h1 style="font-size: 5rem;">⛔</h1>
+            <h2 id="illegal-text" style="color:var(--red); font-size: 2.2rem;"></h2>
+            <p style="margin-top:15px;">تۆمارکردنی ئەم خاڵە نایاساییە و دژی یاسای دۆمینەیە.</p>
+            <button class="btn btn-red" style="margin-top: 25px;" onclick="document.getElementById('illegal-modal').style.display='none'; document.getElementById('points-input').focus();">ڕاستکردنەوە</button>
         </div>
     </div>
 
-    <div id="win-modal" class="modal">
-        <div class="modal-box" style="border-color: var(--main); box-shadow: 0 0 50px var(--main);">
-            <h1 style="font-size: 5rem;">🏆</h1>
-            <h1 style="color:var(--main); font-size: 3rem; text-shadow: 0 0 15px var(--main);">پیرۆزە!</h1>
-            <h2 id="winner-name" style="font-size: 2rem; margin: 20px 0;"></h2>
-            <button class="btn btn-main" onclick="resetCurrentGame()">یاری نوێ 🔄</button>
-        </div>
-    </div>
-
-    <div id="clear-confirm-modal" class="modal">
-        <div class="modal-box" style="border-color: var(--red);">
-            <h2 style="color:var(--red);">⚠️ سڕینەوەی گشتی</h2>
-            <p style="margin:20px 0;">ئایا دڵنیایت بۆ سڕینەوەی هەموو مێژووەکان؟</p>
-            <div style="display:flex; gap:12px;">
-                <button class="btn btn-red" onclick="executeClearHistory()">بەڵێ</button>
-                <button class="btn btn-neon" onclick="document.getElementById('clear-confirm-modal').style.display='none'">نەخێر</button>
-            </div>
-        </div>
-    </div>
+    <div id="win-modal" class="modal"><div class="modal-box" style="border-color: var(--main);"><h1 style="font-size: 5rem;">🏆</h1><h1 style="color:var(--main);">پیرۆزە!</h1><h2 id="winner-name"></h2><button class="btn btn-main" onclick="resetCurrentGame()">یاری نوێ 🔄</button></div></div>
+    <div id="clear-confirm-modal" class="modal"><div class="modal-box" style="border-color: var(--red);"><h2>⚠️ سڕینەوە</h2><p>ئایا دڵنیایت بۆ سڕینەوەی هەموو مێژووەکان؟</p><div style="display:flex; gap:12px;"><button class="btn btn-red" onclick="executeClearHistory()">بەڵێ</button><button class="btn btn-neon" onclick="document.getElementById('clear-confirm-modal').style.display='none'">نەخێر</button></div></div></div>
 
     <script>
         let players = {}; let curT = 1; let seconds = 0; let timerInterval; let isPaused = false; let targetScore = 101;
-
         function startTimer() { clearInterval(timerInterval); timerInterval = setInterval(() => { if (!isPaused) { seconds++; updateTimerUI(); localStorage.setItem('domino_s', seconds); } }, 1000); }
         function updateTimerUI() { let m = Math.floor(seconds/60); let s = seconds%60; document.getElementById('game-timer').innerText = (m<10?"0"+m:m)+":"+(s<10?"0"+s:s); }
         function toggleTimer() { isPaused = !isPaused; document.getElementById('timer-icon').innerText = isPaused?"▶️":"⏸️"; document.getElementById('timer-container').parentElement.classList.toggle('paused', isPaused); }
-        
-        function setTarget(val) {
-            let n = parseInt(val); if (isNaN(n) || n < 1) return;
-            targetScore = n; localStorage.setItem('domino_target', targetScore);
-            document.getElementById('current-target-display').innerText = targetScore; render();
-        }
-
+        function setTarget(val) { targetScore = parseInt(val) || 101; localStorage.setItem('domino_target', targetScore); document.getElementById('current-target-display').innerText = targetScore; render(); }
         function setMode(n, isNew = false) {
             targetScore = parseInt(localStorage.getItem('domino_target')) || 101;
             document.getElementById('current-target-display').innerText = targetScore;
@@ -175,67 +133,46 @@
             document.getElementById('main-grid').className = (Object.keys(players).length==3?'game-grid grid-3':'game-grid');
             updateTimerUI(); startTimer(); render();
         }
-
         function render() {
             const grid = document.getElementById('main-grid'); grid.innerHTML = "";
             for (let i in players) {
                 grid.innerHTML += `<div class="card"><input type="text" class="player-input" value="${players[i].name}" onfocus="this.value=''" onchange="players[${i}].name=this.value; saveState();">
                 <div class="score-total" onclick="curT=${i}; document.getElementById('score-modal').style.display='flex'; document.getElementById('points-input').value=''; setTimeout(()=>document.getElementById('points-input').focus(),100);">${players[i].score}</div>
-                <div class="rem-pts" style="color:#aaa; font-weight:bold;">ماوە: ${targetScore - players[i].score}</div><div style="display:flex; flex-wrap:wrap; gap:5px; justify-content:center; margin-top:10px;">
+                <div class="rem-pts" style="color:#aaa;">ماوە: ${targetScore - players[i].score}</div><div style="display:flex; flex-wrap:wrap; gap:5px; justify-content:center; margin-top:10px;">
                 ${players[i].history.map((pt, idx) => `<div style="background:var(--neon); color:#000; padding:2px 8px; border-radius:8px; font-weight:bold; font-size:0.8rem;">${pt} <span onclick="event.stopPropagation(); players[${i}].score-=${pt}; players[${i}].history.splice(${idx},1); saveState(); render();" style="color:red">×</span></div>`).join("")}</div></div>`;
             }
         }
-
         function validateScore() {
             let v = parseInt(document.getElementById('points-input').value);
-            if (isNaN(v)) return;
-            if (v >= targetScore) { 
-                document.getElementById('illegal-text').innerText = v + " خاڵ نایاساییە!";
-                document.getElementById('illegal-modal').style.display = 'flex'; 
-                return; 
-            }
-            if (v >= 40) { 
-                document.getElementById('confirm-box').style.display = 'block'; 
-                document.getElementById('normal-btns').style.display = 'none'; 
-            } else saveScore();
+            if (v >= targetScore) { document.getElementById('illegal-text').innerText = v + " خاڵ نایاساییە!"; document.getElementById('illegal-modal').style.display = 'flex'; return; }
+            if (v >= 40) { document.getElementById('confirm-box').style.display = 'block'; document.getElementById('normal-btns').style.display = 'none'; } else saveScore();
         }
-
         function saveScore() {
-            let v = parseInt(document.getElementById('points-input').value);
-            players[curT].score += v; players[curT].history.push(v);
-            saveState(); render(); closeModal();
-            if(players[curT].score >= targetScore) { 
-                confetti({particleCount:500, spread:160, origin:{y:0.6}}); 
-                document.getElementById('winner-name').innerText = "👑 " + players[curT].name;
-                document.getElementById('win-modal').style.display='flex'; saveHist(players); 
-            }
+            let v = parseInt(document.getElementById('points-input').value); players[curT].score += v; players[curT].history.push(v); saveState(); render(); closeModal();
+            if(players[curT].score >= targetScore) { confetti({particleCount:500, spread:160}); document.getElementById('winner-name').innerText = "👑 " + players[curT].name; document.getElementById('win-modal').style.display='flex'; saveHist(players); }
         }
-
         function saveState() { localStorage.setItem('domino_g', JSON.stringify(players)); }
         function saveHist(p) {
-            let now = new Date(); let d = now.toLocaleDateString('ku-IQ'); let t = now.toLocaleTimeString('ku-IQ');
-            let h = JSON.parse(localStorage.getItem('domino_h') || '{}'); if(!h[d]) h[d] = [];
-            h[d].unshift({ winner: p[curT].name, time: t, dur: document.getElementById('game-timer').innerText, ps: Object.values(p).map(x=>`${x.name}: ${x.score}`).join(" | ") });
+            let now = new Date(); let h = JSON.parse(localStorage.getItem('domino_h') || '{}'); let d = now.toLocaleDateString('ku-IQ');
+            if(!h[d]) h[d] = []; h[d].unshift({ winner: p[curT].name, time: now.toLocaleTimeString('ku-IQ'), ps: Object.values(p).map(x=>`${x.name}: ${x.score}`).join(" | ") });
             localStorage.setItem('domino_h', JSON.stringify(h));
         }
-
         function loadHist() {
             let h = JSON.parse(localStorage.getItem('domino_h') || '{}'); let c = document.getElementById('history-content'); c.innerHTML = "";
             for (let d in h) c.innerHTML += `<div class="folder"><div class="folder-head" onclick="toggleF(this)">📅 ${d} <span>▼</span></div><div class="folder-body">${h[d].map(g=>`<div style="border-bottom:1px solid #333; padding:8px">👑 ${g.winner} <small>${g.time}</small><br><small>${g.ps}</small></div>`).join("")}</div></div>`;
         }
-
         function closeModal() { document.getElementById('score-modal').style.display='none'; document.getElementById('confirm-box').style.display='none'; document.getElementById('normal-btns').style.display='flex'; document.activeElement.blur(); }
         function openSettings() { loadHist(); document.getElementById('settings-panel').style.display='flex'; }
         function closeSettings() { document.getElementById('settings-panel').style.display='none'; }
         function toggleF(h) { let b = h.nextElementSibling; b.style.display = (b.style.display=='block'?'none':'block'); }
+        function changeTheme(el) { document.body.style.backgroundImage = el.style.backgroundImage; localStorage.setItem('domino_bg', el.style.backgroundImage); document.querySelectorAll('.theme-item').forEach(i=>i.classList.remove('active')); el.classList.add('active'); }
         function askClearHistory() { document.getElementById('clear-confirm-modal').style.display = 'flex'; }
         function executeClearHistory() { localStorage.removeItem('domino_h'); loadHist(); document.getElementById('clear-confirm-modal').style.display = 'none'; }
         function resetCurrentGame() { localStorage.removeItem('domino_g'); localStorage.removeItem('domino_s'); location.reload(); }
         function setNewGame(n) { localStorage.removeItem('domino_g'); localStorage.removeItem('domino_s'); setMode(n, true); }
-        
         window.onload = () => { 
             let g = localStorage.getItem('domino_g'); let bg = localStorage.getItem('domino_bg'); 
-            if(bg) document.body.style.backgroundImage = bg; 
+            if(bg) { document.body.style.backgroundImage = bg; setTimeout(()=>{document.querySelectorAll('.theme-item').forEach(i=>{if(i.style.backgroundImage===bg)i.classList.add('active')})},100); }
             setMode(g?Object.keys(JSON.parse(g)).length:2); 
         };
     </script>
