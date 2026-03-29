@@ -17,39 +17,59 @@
             height: 100vh; display: flex; flex-direction: column; overflow: hidden;
         }
 
-        /* سەرپەڕە */
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(0, 0, 0, 0.9); border-bottom: 2px solid var(--neon); z-index: 100; }
-        .logo-text { color: var(--neon); font-size: 1.3rem; font-weight: 900; text-shadow: 0 0 10px var(--neon); }
+        /* چاککردنی بەشی سەرەوە بۆ مۆبایل */
+        .header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 45px 20px 15px 20px; /* زیادکردنی مەودا لە سەرەوە */
+            background: rgba(0, 0, 0, 0.9); 
+            border-bottom: 2.5px solid var(--neon); z-index: 100;
+            box-shadow: 0 4px 20px rgba(57, 255, 20, 0.3);
+        }
 
-        .timer-wrapper { display: flex; align-items: center; gap: 8px; background: rgba(57, 255, 20, 0.1); padding: 5px 15px; border-radius: 50px; cursor: pointer; border: 1.5px solid var(--neon); box-shadow: 0 0 15px var(--neon); }
-        #game-timer { font-family: monospace; font-size: 1.4rem; font-weight: 900; color: var(--neon); text-shadow: 0 0 8px var(--neon); }
+        .logo-text { color: var(--neon); font-size: 1.4rem; font-weight: 900; text-shadow: 0 0 12px var(--neon); }
+
+        .timer-wrapper { 
+            display: flex; align-items: center; gap: 8px; 
+            background: rgba(57, 255, 20, 0.1); padding: 6px 18px; border-radius: 50px; 
+            cursor: pointer; border: 1.5px solid var(--neon); box-shadow: 0 0 15px var(--neon); 
+        }
+        #game-timer { font-family: monospace; font-size: 1.5rem; font-weight: 900; color: var(--neon); text-shadow: 0 0 8px var(--neon); }
+
         .paused .timer-wrapper { animation: pulse 1s infinite; border-color: var(--red); box-shadow: 0 0 15px var(--red); }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-        /* کارتەکان */
-        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; flex: 1; align-content: start; overflow-y: auto; }
+        /* یاری و کارتەکان */
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; flex: 1; align-content: start; overflow-y: auto; }
         .grid-3 .card:last-child { grid-column: 1 / span 2; width: 85%; margin: 0 auto; }
-        .card { background: rgba(0, 0, 0, 0.85); border-radius: 25px; border: 2.5px solid var(--neon); padding: 15px; text-align: center; backdrop-filter: blur(10px); box-shadow: 0 0 20px rgba(57, 255, 20, 0.2); }
         
-        .player-input { background: none; border: none; color: var(--neon); text-align: center; width: 100%; font-weight: 900; font-size: 1.2rem; outline: none; }
-        .score-total { font-size: 4rem; font-weight: 900; color: var(--neon); cursor: pointer; line-height: 1; text-shadow: 0 0 15px var(--neon); margin: 5px 0; }
-        .rem-pts { color: #fff; font-size: 0.8rem; margin-bottom: 8px; opacity: 0.8; font-weight: bold; }
+        .card { background: rgba(0, 0, 0, 0.85); border-radius: 25px; border: 2.5px solid var(--neon); padding: 18px; text-align: center; backdrop-filter: blur(15px); box-shadow: 0 0 20px rgba(57, 255, 20, 0.2); }
+        .player-input { background: none; border: none; color: var(--neon); text-align: center; width: 100%; font-weight: 900; font-size: 1.3rem; outline: none; text-shadow: 0 0 5px var(--neon); }
+        .score-total { font-size: 4.2rem; font-weight: 900; color: var(--neon); cursor: pointer; line-height: 1; text-shadow: 0 0 15px var(--neon); margin: 8px 0; }
+        .rem-pts { color: #fff; font-size: 0.85rem; margin-bottom: 10px; opacity: 0.8; font-weight: bold; }
 
-        .history-list { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; border-top: 1px solid rgba(57,255,20,0.3); padding-top: 8px; margin-top: 5px; }
-        .history-item { background: var(--neon); color: #000; padding: 3px 8px; border-radius: 8px; font-size: 0.85rem; font-weight: 900; display: flex; align-items: center; gap: 5px; }
+        .history-list { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; border-top: 1px solid rgba(57,255,20,0.4); padding-top: 10px; margin-top: 5px; }
+        .history-item { background: var(--neon); color: #000; padding: 4px 10px; border-radius: 10px; font-size: 0.9rem; font-weight: 900; display: flex; align-items: center; gap: 6px; }
 
-        /* مۆداڵەکان */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
-        .modal-box { background: #000; width: 100%; max-width: 400px; padding: 30px; border-radius: 35px; border: 2px solid var(--neon); text-align: center; }
+        /* شاشەی پیرۆزبایی و کۆنفێتی */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
+        .win-box { 
+            background: #000; border: 4px solid var(--main); padding: 40px 20px; border-radius: 40px; 
+            text-align: center; width: 90%; max-width: 400px; color: #fff;
+            box-shadow: 0 0 60px rgba(239, 191, 59, 0.7);
+            animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        @keyframes bounceIn { from { transform: scale(0.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .trophy { font-size: 6rem; display: block; filter: drop-shadow(0 0 20px var(--main)); animation: float 2s infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
-        .btn { padding: 15px; border-radius: 15px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.1rem; margin-top: 15px; }
+        /* ئاگاداری ١٠١ نایاسایی */
+        .illegal-box { background: #000; border: 5px solid var(--red); padding: 40px 20px; border-radius: 40px; text-align: center; width: 90%; box-shadow: 0 0 40px var(--red); animation: shake 0.5s ease-in-out; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-12px); } 80% { transform: translateX(12px); } }
+
+        .btn { padding: 15px; border-radius: 18px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.2rem; margin-top: 15px; }
         .btn-neon { background: var(--neon); color: #000; box-shadow: 0 0 15px var(--neon); }
         .btn-red { background: var(--red); color: #fff; box-shadow: 0 0 15px var(--red); }
-
-        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px 0; }
-        .theme-item { height: 80px; border-radius: 10px; background-size: cover; background-position: center; border: 1px solid #444; cursor: pointer; }
-
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        .btn-main { background: var(--main); color: #000; box-shadow: 0 0 20px var(--main); }
     </style>
 </head>
 <body>
@@ -63,20 +83,30 @@
         <div class="logo-text">AWEZA PC</div>
     </div>
 
-    <div style="display:flex; justify-content:center; gap:12px; padding:15px;">
+    <div style="display:flex; justify-content:center; gap:12px; padding:15px; z-index: 50;">
         <button onclick="setMode(2)" style="background:var(--neon); color:#000; border:none; padding:8px 25px; border-radius:12px; font-weight:900;">٢ نەفەری</button>
         <button onclick="setMode(3)" style="background:rgba(57, 255, 20, 0.1); color:var(--neon); border:1px solid var(--neon); padding:8px 25px; border-radius:12px; font-weight:900;">٣ نەفەری</button>
     </div>
 
     <div id="main-grid" class="game-grid"></div>
 
+    <div id="win-modal" class="modal">
+        <div class="win-box">
+            <span class="trophy">🏆</span>
+            <h1 style="color:var(--main); font-size: 2.6rem; text-shadow: 0 0 20px var(--main);">پیرۆزە!</h1>
+            <h2 id="winner-name" style="font-size: 2rem; margin: 15px 0;"></h2>
+            <p id="winner-stats" style="color:#aaa; font-size: 1.2rem; margin-bottom: 20px;"></p>
+            <button class="btn btn-main" onclick="location.reload()">یاری نوێ 🔄</button>
+        </div>
+    </div>
+
     <div id="score-modal" class="modal">
-        <div class="modal-box">
-            <h2 id="modal-title" style="color:var(--neon);">تۆمارکردن</h2>
-            <input type="number" id="points-input" style="width:100%; font-size:4.5rem; background:none; border:none; border-bottom:4px solid var(--neon); color:var(--neon); text-align:center; outline:none; margin:20px 0;" placeholder="0" inputmode="numeric">
+        <div class="modal-box" style="background: #000; border: 2.5px solid var(--neon); padding: 30px; border-radius: 35px; width: 100%; max-width: 400px; text-align: center;">
+            <h2 style="color:var(--neon); font-size: 1.8rem;">تۆمارکردن</h2>
+            <input type="number" id="points-input" style="width:100%; font-size:5rem; background:none; border:none; border-bottom:4px solid var(--neon); color:var(--neon); text-align:center; outline:none; margin:20px 0;" placeholder="0" inputmode="numeric">
             
             <div id="confirm-box" style="display:none; margin-bottom:20px;">
-                <p style="color:var(--red); font-weight:bold; font-size:1.2rem;">⚠️ ئەم خاڵە زۆرە، ئایا دڵنیایت؟</p>
+                <p style="color:var(--red); font-weight:bold; font-size:1.3rem;">⚠️ ئەم خاڵە زۆرە، دڵنیایت؟</p>
                 <div style="display:flex; gap:12px; margin-top:15px;">
                     <button class="btn btn-neon" onclick="saveScore()">بەڵێ</button>
                     <button class="btn btn-red" onclick="closeModal()">نەخێر</button>
@@ -91,28 +121,23 @@
     </div>
 
     <div id="illegal-modal" class="modal">
-        <div class="modal-box" style="border-color: var(--red); animation: shake 0.4s ease-in-out;">
-            <h1 style="font-size: 5rem;">⛔</h1>
-            <h2 style="color:var(--red); font-size: 2.2rem;">نایاساییە!</h2>
-            <p style="margin-top:10px;">تۆمارکردنی ١٠١ و سەرووتر قەدەغەیە لە ئاوێزە PC.</p>
+        <div class="illegal-box">
+            <h1 style="font-size: 5.5rem;">⛔</h1>
+            <h2 style="color:var(--red); font-size: 2.4rem;">نایاساییە!</h2>
+            <p style="margin-top:10px; font-size: 1.1rem;">تۆمارکردنی ١٠١ و سەرووتر لە ئاوێزە PC قەدەغەیە.</p>
             <button class="btn btn-red" onclick="document.getElementById('illegal-modal').style.display='none'">تێگەیشتم</button>
         </div>
     </div>
 
     <div id="settings-panel" class="modal" style="justify-content: flex-start;">
-        <div class="modal-box">
-            <h2 style="color:var(--neon); margin-bottom:15px;">ڕێکخستنی ئاوێزە</h2>
-            <p style="text-align:right; font-size:0.9rem;">🎨 گۆڕینی باکگراوند:</p>
-            <div class="theme-grid">
-                <div class="theme-item" style="background-image:url('https://blog.tmlirp.org/hs-fs/hubfs/abstract%20dominoes%20background.jpeg?width=900')" onclick="changeTheme(this.style.backgroundImage)"></div>
-                <div class="theme-item" style="background-image:url('https://images.unsplash.com/photo-1769029174092-d26bc1a51efc?fm=jpg&q=60&w=3000')" onclick="changeTheme(this.style.backgroundImage)"></div>
-                <div class="theme-item" style="background-image:url('https://img.goodfon.com/wallpaper/big/6/2c/domino-makro-igra.webp')" onclick="changeTheme(this.style.backgroundImage)"></div>
-                <div class="theme-item" style="background-image:url('https://w0.peakpx.com/wallpaper/744/807/HD-wallpaper-dominos-reflection-dominos.jpg')" onclick="changeTheme(this.style.backgroundImage)"></div>
+        <div class="modal-box" style="background:#000; border: 2px solid var(--neon); padding: 25px; border-radius: 30px; width: 100%;">
+            <h2 style="color:var(--neon); margin-bottom:20px;">ڕێکخستنی ئاوێزە</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                <div style="height:80px; border-radius:10px; border:1px solid #444; background-image:url('https://blog.tmlirp.org/hs-fs/hubfs/abstract%20dominoes%20background.jpeg?width=900'); background-size:cover;" onclick="changeTheme(this.style.backgroundImage)"></div>
+                <div style="height:80px; border-radius:10px; border:1px solid #444; background-image:url('https://w0.peakpx.com/wallpaper/744/807/HD-wallpaper-dominos-reflection-dominos.jpg'); background-size:cover;" onclick="changeTheme(this.style.backgroundImage)"></div>
             </div>
-            <div style="margin-top:20px;">
-                <a href="https://www.facebook.com/4116161-sketch" target="_blank" style="color:var(--neon); display:block; margin-bottom:10px; text-decoration:none; font-weight:bold;">🔵 Facebook: Aweza PC</a>
-                <a href="https://www.tiktok.com/@4116161-sketch" target="_blank" style="color:var(--neon); display:block; text-decoration:none; font-weight:bold;">⚫ TikTok: @Aweza_PC</a>
-            </div>
+            <a href="https://www.facebook.com/4116161-sketch" target="_blank" style="color:var(--neon); display:block; margin-bottom:12px; text-decoration:none; font-weight:bold;">🔵 Facebook</a>
+            <a href="https://www.tiktok.com/@4116161-sketch" target="_blank" style="color:var(--neon); display:block; text-decoration:none; font-weight:bold;">⚫ TikTok</a>
             <button class="btn btn-red" onclick="closeSettings()">گەڕانەوە</button>
         </div>
     </div>
@@ -175,9 +200,10 @@
             players[curT].score += v; players[curT].history.push(v);
             render(); closeModal();
             if(players[curT].score >= 101) {
-                confetti({ particleCount: 300, spread: 100, origin: { y: 0.6 } });
-                alert("🏆 پیرۆزە " + players[curT].name + " بردییەوە!");
-                setMode(Object.keys(players).length);
+                confetti({ particleCount: 500, spread: 150, origin: { y: 0.6 }, colors: ['#efbf3b', '#39ff14', '#ffffff', '#ff0000'] });
+                document.getElementById('winner-name').innerText = players[curT].name;
+                document.getElementById('winner-stats').innerText = "کات: " + document.getElementById('game-timer').innerText;
+                document.getElementById('win-modal').style.display = 'flex';
             }
         }
 
