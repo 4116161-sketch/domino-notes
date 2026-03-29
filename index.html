@@ -15,7 +15,6 @@
             background-size: cover; background-position: center; background-attachment: fixed;
             color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; 
             height: 100vh; display: flex; flex-direction: column; overflow: hidden;
-            transition: 0.5s ease;
         }
 
         .header { 
@@ -54,7 +53,12 @@
         .folder-body { display: none; padding: 15px; background: #050505; color: #eee; }
 
         .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .theme-item { height: 75px; border-radius: 12px; border: 1.5px solid #444; background-size: cover; cursor: pointer; }
+        .theme-item { height: 75px; border-radius: 12px; border: 2.5px solid #444; background-size: cover; cursor: pointer; position: relative; }
+        .theme-item.active { border-color: var(--neon); box-shadow: 0 0 15px var(--neon); }
+        .theme-item.active::after { content: '✅'; position: absolute; top: 5px; right: 5px; font-size: 0.8rem; }
+
+        .history-record { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; margin-bottom: 10px; border-right: 4px solid var(--neon); text-align: right; font-size: 0.85rem; }
+        .history-detail { color: var(--main); font-size: 0.8rem; margin-top: 5px; border-top: 1px solid #333; padding-top: 5px; }
 
         .btn { padding: 15px; border-radius: 18px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.1rem; margin-top: 15px; }
         .btn-neon { background: var(--neon); color: #000; }
@@ -65,7 +69,7 @@
 </head>
 <body>
 
-    <div class="header">
+    <div class="header" id="header-area">
         <div onclick="openSettings()" style="font-size:1.8rem; cursor:pointer; color:var(--neon);">⚙️</div>
         <div class="timer-wrapper" id="timer-container" onclick="toggleTimer()">
             <span id="timer-icon" style="color:white;">⏸️</span>
@@ -76,7 +80,7 @@
 
     <div id="main-grid" class="game-grid"></div>
 
-    <div id="settings-panel" class="modal" style="justify-content: flex-start;">
+    <div id="settings-panel" class="modal" style="justify-content: flex-start; overflow-y: auto;">
         <div class="modal-box" style="max-width:100%;">
             <h2 style="color:var(--neon); margin-bottom:20px;">ڕێکخستنەکان</h2>
             
@@ -90,33 +94,32 @@
 
             <div class="folder">
                 <div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندەکان</span><span>▼</span></div>
-                <div class="folder-body theme-grid">
-                    <div class="theme-item" style="background-image:url('https://wallpaperaccess.com/full/2977045.jpg')" onclick="changeTheme(this.style.backgroundImage)"></div>
-                    <div class="theme-item" style="background-image:url('https://images8.alphacoders.com/601/601596.jpg')" onclick="changeTheme(this.style.backgroundImage)"></div>
-                    <div class="theme-item" style="background-image:url('https://media.istockphoto.com/id/174766240/photo/domino-effect-with-donimoes-on-a-wooden-table.jpg?s=612x612&w=0&k=20&c=nJukKFDytXlvZ6d4XOycxHy4aRWrg3kiIJZllGWU2ug=')" onclick="changeTheme(this.style.backgroundImage)"></div>
-                    <div class="theme-item" style="background-image:url('https://static.vecteezy.com/system/resources/thumbnails/068/153/133/small/dominoes-on-a-black-background-photo.jpg')" onclick="changeTheme(this.style.backgroundImage)"></div>
+                <div class="folder-body theme-grid" id="theme-selector">
+                    <div class="theme-item" style="background-image:url('https://wallpaperaccess.com/full/2977045.jpg')" onclick="changeTheme(this)"></div>
+                    <div class="theme-item" style="background-image:url('https://images8.alphacoders.com/601/601596.jpg')" onclick="changeTheme(this)"></div>
+                    <div class="theme-item" style="background-image:url('https://media.istockphoto.com/id/174766240/photo/domino-effect-with-donimoes-on-a-wooden-table.jpg?s=612x612&w=0&k=20&c=nJukKFDytXlvZ6d4XOycxHy4aRWrg3kiIJZllGWU2ug=')" onclick="changeTheme(this)"></div>
+                    <div class="theme-item" style="background-image:url('https://static.vecteezy.com/system/resources/thumbnails/068/153/133/small/dominoes-on-a-black-background-photo.jpg')" onclick="changeTheme(this)"></div>
                 </div>
             </div>
 
             <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>📜 مێژووی یارییەکان</span><span>▼</span></div>
+                <div class="folder-head" onclick="toggleF(this)"><span>📜 مێژووی ورد</span><span>▼</span></div>
                 <div id="history-content" class="folder-body"></div>
             </div>
 
             <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>❓ پرسیارە باوەکان</span><span>▼</span></div>
-                <div class="folder-body" style="line-height:1.8;">
-                    ١. سڕینەوەی خاڵ: دەست بنێ بە (×) تەنیشت نمرەکە.<br>
-                    ٢. گۆڕینی ناو: دەست بنێ بە ناوەکە، ناوە کۆنەکە ئۆتۆماتیکی دەسڕێتەوە.<br>
-                    ٣. ڕاگرتنی کات: دەست بنێ بە کاتژمێرەکە، سوور دەبێت و دەوەستێت.
-                </div>
-            </div>
-
-            <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>📱 سۆشیال میدیا</span><span>▼</span></div>
-                <div class="folder-body">
-                    <a href="https://facebook.com" style="color:var(--neon); text-decoration:none; display:block; margin-bottom:12px;">🔵 Facebook Page</a>
-                    <a href="https://tiktok.com" style="color:var(--neon); text-decoration:none; display:block;">⚫ TikTok Channel</a>
+                <div class="folder-head" onclick="toggleF(this)"><span>❓ پرسیارە باوەکان (١٠)</span><span>▼</span></div>
+                <div class="folder-body" style="line-height:2;">
+                    ١. چۆن یاری نوێ بکەم؟ بە کلیک لەسەر یاری نوێ لە شاشەی بردنەوە.<br>
+                    ٢. سڕینەوەی نمرە؟ تەنها دەست بنێ بە (×) تەنیشت نمرە بچووکەکان.<br>
+                    ٣. گۆڕینی ناو؟ دەست بنێ بە ناوەکە، خۆکارانە دەسڕێتەوە.<br>
+                    ٤. ڕاگرتنی کات؟ دەست بنێ بە کاتژمێرەکە تا سوور دەبێت.<br>
+                    ٥. مێژوو دەسڕێتەوە؟ نەخێر، هەموو بردنەوەکان پارێزراون.<br>
+                    ٦. خاڵی نایاسایی؟ تۆمارکردنی ١٠١ و سەرووتر ڕێگری لێ دەکرێت.<br>
+                    ٧. باکگراوند؟ لێرە هەڵبژاردەکە بە نیشانەی ✅ دیاری دەکرێت.<br>
+                    ٨. جیاوازی نمرە؟ لە مێژوودا دەردەکەوێت چەند بە چەند بردووتەتەوە.<br>
+                    ٩. نمرەی گەورە؟ لە نێوان ٤٠-١٠٠ دوگمەی دڵنیایی دێتە بەردەمت.<br>
+                    ١٠. ئیمۆجی؟ ئیمۆجی 👨 بۆ هەموو یاریزانەکان جێگیر کراوە.
                 </div>
             </div>
 
@@ -152,7 +155,7 @@
     </div>
 
     <div id="win-modal" class="modal">
-        <div class="modal-box" style="background: #000; border: 4px solid var(--main); padding: 40px 20px; border-radius: 40px; box-shadow: 0 0 60px rgba(239,191,59,0.5);">
+        <div class="modal-box" style="background: #000; border: 4px solid var(--main); padding: 40px 20px; border-radius: 40px;">
             <h1 style="font-size: 5rem;">🏆</h1>
             <h1 style="color:var(--main); font-size: 2.6rem;">پیرۆزە!</h1>
             <h2 id="winner-name" style="font-size: 2rem; margin: 15px 0;"></h2>
@@ -230,24 +233,38 @@
                 document.getElementById('winner-name').innerText = players[curT].name;
                 document.getElementById('winner-stats').innerText = "کات: " + document.getElementById('game-timer').innerText;
                 document.getElementById('win-modal').style.display = 'flex';
-                saveHistory(players[curT]);
+                saveHistory(players);
             }
         }
 
-        function saveHistory(w) {
+        function saveHistory(allPlayers) {
             let now = new Date();
             let dateKey = now.toLocaleDateString('ku-IQ');
-            let history = JSON.parse(localStorage.getItem('domino_final_hist') || '{}');
+            let history = JSON.parse(localStorage.getItem('domino_v20_hist') || '{}');
             if(!history[dateKey]) history[dateKey] = [];
-            history[dateKey].unshift({ name: w.name, score: w.score, time: document.getElementById('game-timer').innerText });
-            localStorage.setItem('domino_final_hist', JSON.stringify(history));
+            
+            let gameDetails = Object.values(allPlayers).map(p => `${p.name}: ${p.score}`).join(" | ");
+            let scores = Object.values(allPlayers).map(p => p.score);
+            let diff = Math.max(...scores) - Math.min(...scores);
+
+            history[dateKey].unshift({ 
+                winner: allPlayers[curT].name, 
+                details: gameDetails, 
+                diff: diff,
+                time: document.getElementById('game-timer').innerText 
+            });
+            localStorage.setItem('domino_v20_hist', JSON.stringify(history));
         }
 
         function loadHistory() {
-            let history = JSON.parse(localStorage.getItem('domino_final_hist') || '{}');
+            let history = JSON.parse(localStorage.getItem('domino_v20_hist') || '{}');
             let content = document.getElementById('history-content'); content.innerHTML = "";
             for (let date in history) {
-                content.innerHTML += `<div class="folder"><div class="folder-head" onclick="toggleF(this)">📅 ${date} <span>▼</span></div><div class="folder-body">${history[date].map(g=>`<div style="display:flex; justify-content:space-between; padding:5px; border-bottom:1px solid #333"><span>👑 ${g.name}</span><span>${g.score} | ${g.time}</span></div>`).join("")}</div></div>`;
+                content.innerHTML += `<div class="folder"><div class="folder-head" onclick="toggleF(this)">📅 ${date} <span>▼</span></div><div class="folder-body">
+                    ${history[date].map(g=>`<div class="history-record">
+                        <span>👑 ${g.winner}</span> <span>${g.time}</span>
+                        <div class="history-detail">${g.details} <br> <span style="color:var(--neon)">جیاوازی: ${g.diff} خاڵ</span></div>
+                    </div>`).join("")}</div></div>`;
             }
         }
 
@@ -257,9 +274,25 @@
         function openSettings() { loadHistory(); document.getElementById('settings-panel').style.display = 'flex'; }
         function closeSettings() { document.getElementById('settings-panel').style.display = 'none'; }
         function toggleF(h) { let b = h.nextElementSibling; b.style.display = (b.style.display === 'block' ? 'none' : 'block'); }
-        function changeTheme(img) { document.body.style.backgroundImage = img; localStorage.setItem('domino_bg', img); }
+        
+        function changeTheme(el) {
+            let img = el.style.backgroundImage;
+            document.body.style.backgroundImage = img;
+            localStorage.setItem('domino_bg', img);
+            document.querySelectorAll('.theme-item').forEach(item => item.classList.remove('active'));
+            el.classList.add('active');
+        }
 
-        window.onload = () => { setMode(2); let bg = localStorage.getItem('domino_bg'); if(bg) document.body.style.backgroundImage = bg; };
+        window.onload = () => { 
+            setMode(2); 
+            let bg = localStorage.getItem('domino_bg'); 
+            if(bg) {
+                document.body.style.backgroundImage = bg;
+                document.querySelectorAll('.theme-item').forEach(item => {
+                    if(item.style.backgroundImage === bg) item.classList.add('active');
+                });
+            }
+        };
     </script>
 </body>
 </html>
