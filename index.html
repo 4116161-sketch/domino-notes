@@ -15,12 +15,13 @@
             background-size: cover; background-position: center; background-attachment: fixed;
             color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; 
             height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+            transition: 0.5s ease;
         }
 
         .header { 
             display: flex; justify-content: space-between; align-items: center; 
             padding: 45px 20px 15px 20px; background: rgba(0, 0, 0, 0.9); 
-            border-bottom: 2.5px solid var(--neon); z-index: 100;
+            border-bottom: 3px solid var(--neon); z-index: 100;
         }
 
         .timer-wrapper { 
@@ -52,6 +53,10 @@
         .folder-head { padding: 15px; background: var(--neon); color: #000; font-weight: 900; display: flex; justify-content: space-between; cursor: pointer; }
         .folder-body { display: none; padding: 15px; background: #050505; color: #eee; }
 
+        .btn { padding: 15px; border-radius: 18px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.1rem; margin-top: 15px; }
+        .btn-neon { background: var(--neon); color: #000; }
+        .btn-red { background: var(--red); color: #fff; }
+
         .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .theme-item { height: 75px; border-radius: 12px; border: 2.5px solid #444; background-size: cover; cursor: pointer; position: relative; }
         .theme-item.active { border-color: var(--neon); box-shadow: 0 0 15px var(--neon); }
@@ -59,10 +64,6 @@
 
         .history-record { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px; margin-bottom: 12px; border-right: 4px solid var(--neon); text-align: right; }
         .points-log { font-size: 0.75rem; color: #aaa; margin-top: 5px; line-height: 1.4; border-top: 1px solid #333; padding-top: 5px; }
-
-        .btn { padding: 15px; border-radius: 18px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.1rem; margin-top: 15px; }
-        .btn-neon { background: var(--neon); color: #000; }
-        .btn-red { background: var(--red); color: #fff; }
 
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-15px); } 75% { transform: translateX(15px); } }
     </style>
@@ -85,16 +86,16 @@
             <h2 style="color:var(--neon); margin-bottom:20px;">ڕێکخستنەکان</h2>
             
             <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>👥 جۆری یاری (نەفەری)</span><span>▼</span></div>
+                <div class="folder-head" onclick="toggleF(this)"><span>👥 جۆری یاری</span><span>▼</span></div>
                 <div class="folder-body">
-                    <button class="btn btn-neon" onclick="setMode(2); closeSettings();">٢ نەفەری (تیم) 👥</button>
-                    <button class="btn btn-neon" onclick="setMode(3); closeSettings();">٣ نەفەری (یاریزان) 👤</button>
+                    <button class="btn btn-neon" onclick="setMode(2); closeSettings();">٢ نەفەری (تیم)</button>
+                    <button class="btn btn-neon" onclick="setMode(3); closeSettings();">٣ نەفەری (یاریزان)</button>
                 </div>
             </div>
 
             <div class="folder">
                 <div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندەکان</span><span>▼</span></div>
-                <div class="folder-body theme-grid" id="theme-selector">
+                <div class="folder-body theme-grid">
                     <div class="theme-item" style="background-image:url('https://wallpaperaccess.com/full/2977045.jpg')" onclick="changeTheme(this)"></div>
                     <div class="theme-item" style="background-image:url('https://images8.alphacoders.com/601/601596.jpg')" onclick="changeTheme(this)"></div>
                     <div class="theme-item" style="background-image:url('https://media.istockphoto.com/id/174766240/photo/domino-effect-with-donimoes-on-a-wooden-table.jpg?s=612x612&w=0&k=20&c=nJukKFDytXlvZ6d4XOycxHy4aRWrg3kiIJZllGWU2ug=')" onclick="changeTheme(this)"></div>
@@ -103,46 +104,35 @@
             </div>
 
             <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>📜 مێژووی ورد</span><span>▼</span></div>
-                <div id="history-content" class="folder-body"></div>
-                <button class="btn btn-red" id="clear-hist-btn" onclick="clearHistory()" style="margin:10px; width:calc(100% - 20px); font-size:0.9rem; display:none;">پاککردنەوەی مێژوو 🗑️</button>
+                <div class="folder-head" onclick="toggleF(this)"><span>📜 مێژووی یارییەکان</span><span>▼</span></div>
+                <div class="folder-body">
+                    <button class="btn btn-red" id="clear-hist-btn" onclick="askClearHistory()" style="margin-bottom:15px; font-size:0.9rem;">پاککردنەوەی هەموو مێژووەکان 🗑️</button>
+                    <div id="history-content"></div>
+                </div>
             </div>
 
             <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>❓ پرسیارە باوەکان (٢٠)</span><span>▼</span></div>
-                <div class="folder-body" style="line-height:1.8; font-size:0.9rem;">
-                    <b>• بەشی یەکەم:</b><br>
-                    ١. چۆن یاری دەستپێبکەم؟ لە مۆدی ٢ یان ٣ نەفەری.<br>
-                    ٢. گۆڕینی ناو؟ دەست بنێ بە ناوەکە، خۆکار دەسڕێتەوە.<br>
-                    ٣. خاڵ چۆن تۆمار بکەم؟ دەست بنێ بە نمرە گەورەکە.<br>
-                    ٤. سڕینەوەی خاڵ؟ تەنها دەست بنێ بە (×).<br>
-                    ٥. مێژوو دەسڕێتەوە؟ تەنها بە دوگمەی "پاککردنەوە".<br>
-                    <b>• بەشی دووەم:</b><br>
-                    ٦. ڕاگرتنی کات؟ دەست بنێ بە کاتژمێرەکە تا سوور دەبێت.<br>
-                    ٧. خاڵی نایاسایی؟ ١٠١ و سەرووتر تۆمار ناکرێت.<br>
-                    ٨. ئایا مێژوو وردە؟ بەڵێ، هەموو نمرەکان نیشان دەدات.<br>
-                    ٩. باکگراوند؟ لێرە بە ✅ دیاری دەکرێت.<br>
-                    ١٠. دڵنیایی؟ لە نێوان ٤٠-١٠٠ دوگمەی دڵنیایی دێت.<br>
-                    <b>• بەشی سێیەم:</b><br>
-                    ١١. ئیمۆجی یاریزان؟ ئیمۆجی 👨 جێگیر کراوە.<br>
-                    ١٢. جیاوازی نمرە؟ لە مێژوودا بە جوانی دەردەکەوێت.<br>
-                    ١٣. چاککردنی هەڵە؟ بە سڕینەوەی نمرە وردەکان.<br>
-                    ١٤. بەرواری یاری؟ لە سەرەوەی مێژووەکە نووسراوە.<br>
-                    ١٥. بردنەوە؟ بە گەیشتن بە ١٠١ باران دەبارێت.<br>
-                    <b>• بەشی چوارەم:</b><br>
-                    ١٦. دەنگی کات؟ تەنها بە شێوەی بینراو (سوور) پرتە دەکات.<br>
-                    ١٧. گۆڕینی تیم؟ دەتوانیت ناوەکان بە ئارەزوو بگۆڕیت.<br>
-                    ١٨. چەند یاری پاشەکەوت دەبێت؟ بێ سنوور.<br>
-                    ١٩. ئەی پرسیاری تر؟ لێرە هەموو وەڵامەکان هەن.<br>
-                    ٢٠. مۆدی تاریک؟ ئەپەکە بە شێوەی جێگیر تاریک و فسفۆڕییە.
+                <div class="folder-head" onclick="toggleF(this)"><span>❓ ٢٠ پرسیاری باو</span><span>▼</span></div>
+                <div class="folder-body" style="line-height:1.8; font-size:0.85rem; text-align:right;">
+                    ١. سڕینەوەی نمرە؟ دەست بنێ بە (×).<br>
+                    ٢. گۆڕینی ناو؟ دەست بنێ بە ناوەکە خۆی دەسڕێتەوە.<br>
+                    ٣. ڕاگرتنی کات؟ دەست بنێ بە کاتژمێرەکە تا سوور دەبێت.<br>
+                    ٤. خاڵ چۆن تۆمار بکەم؟ نمرەکە بنووسە و <b>Enter</b> دابگرە.<br>
+                    ٥. مێژوو دەسڕێتەوە؟ تەنها بە دوگمەی ناو مێژوو.<br>
+                    ٦. خاڵی نایاسایی؟ ١٠١ و سەرووتر تۆمار ناکرێت.<br>
+                    ٧. باکگراوند؟ لێرە بە ✅ دیاری کراوە.<br>
+                    ٨. بردنەوە؟ گەیشتن بە ١٠١ یاری تەواو دەکات.<br>
+                    ٩. تیمەکان؟ لە ٢ نەفەریدا دوو تیم و لە ٣دا سێ یاریزان.<br>
+                    ١٠. ئیمۆجی؟ ئیمۆجی 👨 جێگیر کراوە.<br>
+                    (تێبینی: ١٠ پرسیاری تر لە فێرکاری ناو ئەپەکەدا هەیە).
                 </div>
             </div>
 
             <div class="folder">
                 <div class="folder-head" onclick="toggleF(this)"><span>📱 سۆشیال میدیا</span><span>▼</span></div>
                 <div class="folder-body">
-                    <button class="btn btn-neon" onclick="window.open('https://facebook.com', '_blank')">Facebook Page 🔵</button>
-                    <button class="btn btn-neon" onclick="window.open('https://tiktok.com', '_blank')">TikTok Channel ⚫</button>
+                    <button class="btn btn-neon" onclick="window.open('https://facebook.com', '_blank')">Facebook</button>
+                    <button class="btn btn-neon" onclick="window.open('https://tiktok.com', '_blank')">TikTok</button>
                 </div>
             </div>
 
@@ -153,7 +143,7 @@
     <div id="score-modal" class="modal">
         <div class="modal-box">
             <h2 style="color:var(--neon);">تۆمارکردن</h2>
-            <input type="number" id="points-input" style="width:100%; font-size:5rem; background:none; border:none; border-bottom:4px solid var(--neon); color:var(--neon); text-align:center; outline:none; margin:20px 0;" placeholder="0" inputmode="numeric">
+            <input type="number" id="points-input" onkeydown="if(event.key==='Enter') validateScore()" style="width:100%; font-size:5rem; background:none; border:none; border-bottom:4px solid var(--neon); color:var(--neon); text-align:center; outline:none; margin:20px 0;" placeholder="0" inputmode="numeric">
             <div id="confirm-box" style="display:none; margin-bottom:20px;">
                 <p style="color:var(--red); font-weight:900; font-size:1.4rem;">⚠️ ئەم خاڵە زۆرە، ئایا دڵنیایت؟</p>
                 <div style="display:flex; gap:12px; margin-top:20px;">
@@ -164,6 +154,17 @@
             <div id="normal-btns" style="display:flex; gap:12px;">
                 <button class="btn btn-red" onclick="closeModal()">لابردن</button>
                 <button class="btn btn-neon" onclick="validateScore()">تۆمارکردن</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="clear-confirm-modal" class="modal">
+        <div class="modal-box" style="border-color: var(--red);">
+            <h2 style="color:var(--red);">⚠️ ئاگاداری</h2>
+            <p style="margin:20px 0; font-size:1.1rem;">ئایا دڵنیایت بۆ سڕینەوەی هەموو مێژووەکان؟ ئەم کارە ناگەڕێتەوە.</p>
+            <div style="display:flex; gap:12px;">
+                <button class="btn btn-red" onclick="executeClearHistory()">بەڵێ، بیسڕەوە</button>
+                <button class="btn btn-neon" onclick="document.getElementById('clear-confirm-modal').style.display='none'">نەخێر، پەشیمانم</button>
             </div>
         </div>
     </div>
@@ -239,8 +240,10 @@
                 document.getElementById('illegal-text').innerText = v + " خاڵ نایاساییە!";
                 document.getElementById('illegal-modal').style.display = 'flex'; return; 
             }
-            if (v >= 40) { document.getElementById('confirm-box').style.display = 'block'; document.getElementById('normal-btns').style.display = 'none'; }
-            else { saveScore(); }
+            if (v >= 40) { 
+                document.getElementById('confirm-box').style.display = 'block'; 
+                document.getElementById('normal-btns').style.display = 'none'; 
+            } else { saveScore(); }
         }
 
         function saveScore() {
@@ -258,31 +261,31 @@
         function saveHistory(allP) {
             let now = new Date();
             let dateKey = now.toLocaleDateString('ku-IQ');
-            let history = JSON.parse(localStorage.getItem('domino_v40_hist') || '{}');
+            let history = JSON.parse(localStorage.getItem('domino_vfinal_hist') || '{}');
             if(!history[dateKey]) history[dateKey] = [];
             let gameData = Object.values(allP).map(p => ({ name: p.name, score: p.score, log: p.history.join(", ") }));
             history[dateKey].unshift({ winner: allP[curT].name, time: document.getElementById('game-timer').innerText, players: gameData });
-            localStorage.setItem('domino_v40_hist', JSON.stringify(history));
+            localStorage.setItem('domino_vfinal_hist', JSON.stringify(history));
         }
 
         function loadHistory() {
-            let history = JSON.parse(localStorage.getItem('domino_v40_hist') || '{}');
+            let history = JSON.parse(localStorage.getItem('domino_vfinal_hist') || '{}');
             let content = document.getElementById('history-content');
-            let clearBtn = document.getElementById('clear-hist-btn');
             content.innerHTML = "";
             let dates = Object.keys(history);
             if (dates.length > 0) {
-                clearBtn.style.display = 'block';
                 for (let date of dates) {
                     content.innerHTML += `<div class="folder"><div class="folder-head" onclick="toggleF(this)">📅 ${date} <span>▼</span></div><div class="folder-body">
                         ${history[date].map(g => `<div class="history-record">👑 <b>${g.winner}</b> <span style="float:left">${g.time}</span><div class="points-log">${g.players.map(p => `<div>• ${p.name}: <b>${p.score}</b> [${p.log}]</div>`).join("")}</div></div>`).join("")}</div></div>`;
                 }
-            } else { content.innerHTML = "<p style='padding:20px'>مێژوو بەتاڵە</p>"; clearBtn.style.display = 'none'; }
+            } else { content.innerHTML = "<p style='padding:20px'>مێژوو بەتاڵە</p>"; }
         }
 
-        function clearHistory() { if(confirm("ئایا دڵنیایت لە سڕینەوەی مێژوو؟")) { localStorage.removeItem('domino_v40_hist'); loadHistory(); } }
+        function askClearHistory() { document.getElementById('clear-confirm-modal').style.display = 'flex'; }
+        function executeClearHistory() { localStorage.removeItem('domino_vfinal_hist'); loadHistory(); document.getElementById('clear-confirm-modal').style.display = 'none'; }
+        
         function deletePoint(p, h) { event.stopPropagation(); players[p].score -= players[p].history[h]; players[p].history.splice(h, 1); render(); }
-        function openModal(t) { curT = t; document.getElementById('score-modal').style.display = 'flex'; document.getElementById('confirm-box').style.display = 'none'; document.getElementById('normal-btns').style.display = 'flex'; document.getElementById('points-input').value = ""; }
+        function openModal(t) { curT = t; document.getElementById('score-modal').style.display = 'flex'; document.getElementById('confirm-box').style.display = 'none'; document.getElementById('normal-btns').style.display = 'flex'; document.getElementById('points-input').value = ""; document.getElementById('points-input').focus(); }
         function closeModal() { document.getElementById('score-modal').style.display = 'none'; }
         function openSettings() { loadHistory(); document.getElementById('settings-panel').style.display = 'flex'; }
         function closeSettings() { document.getElementById('settings-panel').style.display = 'none'; }
@@ -301,9 +304,7 @@
             let bg = localStorage.getItem('domino_bg'); 
             if(bg) {
                 document.body.style.backgroundImage = bg;
-                document.querySelectorAll('.theme-item').forEach(item => {
-                    if(item.style.backgroundImage === bg) item.classList.add('active');
-                });
+                document.querySelectorAll('.theme-item').forEach(item => { if(item.style.backgroundImage === bg) item.classList.add('active'); });
             }
         };
     </script>
