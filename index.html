@@ -16,7 +16,6 @@
         }
         .header { display: flex; justify-content: space-between; align-items: center; padding: 45px 20px 15px 20px; background: rgba(0, 0, 0, 0.9); border-bottom: 3px solid var(--neon); z-index: 100; }
         
-        /* ستایلی کاتژمێر */
         .timer-wrapper { 
             display: flex; align-items: center; gap: 8px; 
             background: rgba(255, 255, 255, 0.05); padding: 6px 18px; border-radius: 50px; 
@@ -25,7 +24,6 @@
         }
         #game-timer { font-family: monospace; font-size: 1.5rem; font-weight: 900; color: var(--neon); text-shadow: 0 0 8px var(--neon); transition: 0.4s all; }
         
-        /* ڕاگرتنی کاتژمێر */
         .paused .timer-wrapper { border-color: var(--red) !important; box-shadow: 0 0 20px var(--red) !important; animation: blinker 1s linear infinite; }
         .paused #game-timer { color: var(--red) !important; text-shadow: 0 0 10px var(--red) !important; }
         @keyframes blinker { 50% { opacity: 0.3; } }
@@ -42,14 +40,15 @@
         .folder-head { padding: 15px; background: var(--neon); color: #000; font-weight: 900; display: flex; justify-content: space-between; cursor: pointer; }
         .folder-body { display: none; padding: 15px; background: #050505; color: #eee; }
         
+        /* ستایلی گشتی بۆ دوگمە هەڵبژێردراوەکان */
+        .select-btn { padding: 12px; border-radius: 15px; border: 2px solid #444; background: #111; color: #fff; font-weight: bold; cursor: pointer; position: relative; transition: 0.3s; margin-bottom: 5px; width: 100%; text-align: center; }
+        .select-btn.active { border-color: var(--neon); color: var(--neon); box-shadow: 0 0 10px var(--neon); }
+        .select-btn.active::after { content: '✅'; position: absolute; top: 2px; right: 8px; font-size: 0.8rem; }
+
         .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .theme-item { height: 75px; border-radius: 12px; border: 2.5px solid #444; background-size: cover; cursor: pointer; position: relative; }
         .theme-item.active { border-color: var(--neon); box-shadow: 0 0 15px var(--neon); }
         .theme-item.active::after { content: '✅'; position: absolute; top: 5px; right: 5px; }
-
-        .target-btn { padding: 12px; border-radius: 15px; border: 2px solid #444; background: #111; color: #fff; font-weight: bold; cursor: pointer; position: relative; transition: 0.3s; }
-        .target-btn.active { border-color: var(--neon); color: var(--neon); box-shadow: 0 0 10px var(--neon); }
-        .target-btn.active::after { content: '✅'; position: absolute; top: 2px; right: 5px; font-size: 0.8rem; }
 
         .btn { padding: 15px; border-radius: 18px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.1rem; margin-top: 10px; }
         .btn-neon { background: var(--neon); color: #000; }
@@ -75,13 +74,21 @@
             <h2 style="color:var(--neon); margin-bottom:20px;">ڕێکخستنەکان</h2>
             
             <div class="folder">
+                <div class="folder-head" onclick="toggleF(this)"><span>👥 جۆری یاری</span><span>▼</span></div>
+                <div class="folder-body" id="mode-selectors">
+                    <div class="select-btn" id="btn-mode-2" onclick="setNewGame(2)">٢ نەفەری (تیم) 👥</div>
+                    <div class="select-btn" id="btn-mode-3" onclick="setNewGame(3)">٣ نەفەری (یاریزان) 👤</div>
+                </div>
+            </div>
+
+            <div class="folder">
                 <div class="folder-head" onclick="toggleF(this)"><span>🎯 ئامانجی بردنەوە (<span id="current-target-display">101</span>)</span><span>▼</span></div>
                 <div class="folder-body" style="text-align:center;">
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;" id="target-selectors">
-                        <div class="target-btn" data-val="100" onclick="setTarget(100, this)">100</div>
-                        <div class="target-btn" data-val="101" onclick="setTarget(101, this)">101</div>
-                        <div class="target-btn" data-val="150" onclick="setTarget(150, this)">150</div>
-                        <div class="target-btn" data-val="200" onclick="setTarget(200, this)">200</div>
+                        <div class="select-btn target-item" data-val="100" onclick="setTarget(100, this)">100</div>
+                        <div class="select-btn target-item" data-val="101" onclick="setTarget(101, this)">101</div>
+                        <div class="select-btn target-item" data-val="150" onclick="setTarget(150, this)">150</div>
+                        <div class="select-btn target-item" data-val="200" onclick="setTarget(200, this)">200</div>
                     </div>
                 </div>
             </div>
@@ -93,14 +100,6 @@
                     <div class="theme-item" style="background-image:url('https://images8.alphacoders.com/601/601596.jpg')" onclick="changeTheme(this)"></div>
                     <div class="theme-item" style="background-image:url('https://media.istockphoto.com/id/174766240/photo/domino-effect-with-donimoes-on-a-wooden-table.jpg?s=612x612&w=0&k=20&c=nJukKFDytXlvZ6d4XOycxHy4aRWrg3kiIJZllGWU2ug=')" onclick="changeTheme(this)"></div>
                     <div class="theme-item" style="background-image:url('https://static.vecteezy.com/system/resources/thumbnails/068/153/133/small/dominoes-on-a-black-background-photo.jpg')" onclick="changeTheme(this)"></div>
-                </div>
-            </div>
-
-            <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>👥 جۆری یاری</span><span>▼</span></div>
-                <div class="folder-body">
-                    <button class="btn btn-neon" onclick="setNewGame(2)">٢ نەفەری 👥</button>
-                    <button class="btn btn-neon" onclick="setNewGame(3)">٣ نەفەری 👤</button>
                 </div>
             </div>
 
@@ -142,39 +141,21 @@
 
         function startTimer() { 
             clearInterval(timerInterval); 
-            timerInterval = setInterval(() => { 
-                if (!isPaused) { 
-                    seconds++; 
-                    updateTimerUI(); 
-                    localStorage.setItem('domino_s', seconds); 
-                } 
-            }, 1000); 
+            timerInterval = setInterval(() => { if (!isPaused) { seconds++; updateTimerUI(); localStorage.setItem('domino_s', seconds); } }, 1000); 
         }
 
         function updateTimerUI() { 
-            let m = Math.floor(seconds / 60); 
-            let s = seconds % 60; 
+            let m = Math.floor(seconds / 60); let s = seconds % 60; 
             const timerText = document.getElementById('game-timer');
             const timerWrap = document.getElementById('timer-container');
-            
             timerText.innerText = (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s); 
 
-            // گۆڕینی ڕەنگەکان بەپێی خولەک
-            if (m >= 5) {
-                updateColor("#ff0000"); // سوور
-                timerText.style.fontSize = "1.8rem";
-            } else if (m >= 4) {
-                updateColor("#a020f0"); // مۆر
-            } else if (m >= 3) {
-                updateColor("#ff69b4"); // پەمەیی گەش
-            } else if (m >= 2) {
-                updateColor("#ff8c00"); // پرتەقاڵی
-            } else if (m >= 1) {
-                updateColor("#ffff00"); // زەرد
-            } else {
-                updateColor("#39ff14"); // ڕەنگی نیۆنی سەرەکی
-                timerText.style.fontSize = "1.5rem";
-            }
+            if (m >= 5) updateColor("#ff0000");
+            else if (m >= 4) updateColor("#a020f0");
+            else if (m >= 3) updateColor("#ff69b4");
+            else if (m >= 2) updateColor("#ff8c00");
+            else if (m >= 1) updateColor("#ffff00");
+            else updateColor("#39ff14");
         }
 
         function updateColor(color) {
@@ -187,16 +168,33 @@
         }
 
         function toggleTimer() { isPaused = !isPaused; document.getElementById('timer-icon').innerText = isPaused ? "▶️" : "⏸️"; document.getElementById('timer-container').parentElement.classList.toggle('paused', isPaused); }
-        function setTarget(val, el = null) { targetScore = parseInt(val) || 101; localStorage.setItem('domino_target', targetScore); document.getElementById('current-target-display').innerText = targetScore; document.querySelectorAll('.target-btn').forEach(btn => btn.classList.remove('active')); if (el) el.classList.add('active'); render(); }
         
+        function setTarget(val, el = null) { 
+            targetScore = parseInt(val) || 101; localStorage.setItem('domino_target', targetScore); 
+            document.getElementById('current-target-display').innerText = targetScore; 
+            document.querySelectorAll('.target-item').forEach(btn => btn.classList.remove('active')); 
+            if (el) el.classList.add('active'); render(); 
+        }
+
         function setMode(n, isNew = false) {
             targetScore = parseInt(localStorage.getItem('domino_target')) || 101;
             document.getElementById('current-target-display').innerText = targetScore;
-            if (isNew) { players = {}; seconds = 0; for(let i=1; i<=n; i++) players[i] = { name: (n==2?`تیمی ${i} 👨`:`یاریزان ${i} 👨`), score: 0, history: [] }; saveState(); } 
-            else { let s = JSON.parse(localStorage.getItem('domino_g')); if(s && Object.keys(s).length==n) { players=s; seconds=parseInt(localStorage.getItem('domino_s'))||0; } else return setMode(n, true); }
+            
+            if (isNew) { 
+                players = {}; seconds = 0; for(let i=1; i<=n; i++) players[i] = { name: (n==2?`تیمی ${i} 👨`:`یاریزان ${i} 👨`), score: 0, history: [] }; saveState(); 
+            } else { 
+                let s = JSON.parse(localStorage.getItem('domino_g')); 
+                if(s && Object.keys(s).length==n) { players=s; seconds=parseInt(localStorage.getItem('domino_s'))||0; } else return setMode(n, true); 
+            }
+            
             document.getElementById('main-grid').className = (Object.keys(players).length==3?'game-grid grid-3':'game-grid');
+            
+            // چالاککردنی نیشانەی ✅ بۆ جۆری یاری
+            document.querySelectorAll('#mode-selectors .select-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-mode-${Object.keys(players).length}`).classList.add('active');
+
             updateTimerUI(); startTimer(); render();
-            setTimeout(() => { document.querySelectorAll('.target-btn').forEach(btn => { if (btn.getAttribute('data-val') == targetScore) btn.classList.add('active'); }); }, 100);
+            setTimeout(() => { document.querySelectorAll('.target-item').forEach(btn => { if (btn.getAttribute('data-val') == targetScore) btn.classList.add('active'); }); }, 100);
         }
 
         function render() {
@@ -238,9 +236,9 @@
         function toggleF(h) { let b = h.nextElementSibling; b.style.display = (b.style.display=='block'?'none':'block'); }
         function changeTheme(el) { document.body.style.backgroundImage = el.style.backgroundImage; localStorage.setItem('domino_bg', el.style.backgroundImage); document.querySelectorAll('.theme-item').forEach(i=>i.classList.remove('active')); el.classList.add('active'); }
         function askClearHistory() { document.getElementById('clear-confirm-modal').style.display = 'flex'; }
-        function executeClearHistory() { localStorage.removeItem('domino_h'); loadHist(); document.getElementById('clear-confirm-modal').style.none; }
+        function executeClearHistory() { localStorage.removeItem('domino_h'); loadHist(); document.getElementById('clear-confirm-modal').style.display = 'none'; }
         function resetCurrentGame() { localStorage.removeItem('domino_g'); localStorage.removeItem('domino_s'); location.reload(); }
-        function setNewGame(n) { localStorage.removeItem('domino_g'); localStorage.removeItem('domino_s'); setMode(n, true); }
+        function setNewGame(n) { if(confirm("ئایا دڵنیایت لە دەستپێکردنی یارییەکی نوێ؟")) { localStorage.removeItem('domino_g'); localStorage.removeItem('domino_s'); setMode(n, true); closeSettings(); } }
         
         window.onload = () => { 
             let g = localStorage.getItem('domino_g'); let bg = localStorage.getItem('domino_bg'); 
