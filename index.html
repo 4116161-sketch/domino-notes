@@ -11,95 +11,87 @@
         body { 
             background-color: #000; background-image: url('https://images.pexels.com/photos/1393972/pexels-photo-1393972.jpeg?fm=jpg');
             background-size: cover; background-position: center; background-attachment: fixed;
-            color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+            color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; 
+            height: 100vh; width: 100vw; display: flex; flex-direction: column; overflow: hidden;
         }
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 45px 20px 15px 20px; background: rgba(0, 0, 0, 0.9); border-bottom: 2px solid var(--neon); z-index: 100; backdrop-filter: blur(10px); }
-        .timer-wrapper { display: flex; align-items: center; gap: 8px; background: rgba(57, 255, 20, 0.1); padding: 8px 18px; border-radius: 50px; cursor: pointer; border: 1.5px solid var(--neon); box-shadow: 0 0 15px rgba(57, 255, 20, 0.3); }
-        #game-timer { font-family: monospace; font-size: 1.5rem; font-weight: 900; color: var(--neon); }
-        .paused .timer-wrapper { border-color: var(--red); box-shadow: 0 0 20px rgba(255, 77, 77, 0.4); animation: blinker 1.5s linear infinite; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 40px 15px 15px 15px; background: rgba(0, 0, 0, 0.8); border-bottom: 2px solid var(--neon); z-index: 100; flex-shrink: 0; }
+        
+        .timer-wrapper { display: flex; align-items: center; gap: 8px; background: rgba(57, 255, 20, 0.1); padding: 6px 15px; border-radius: 50px; cursor: pointer; border: 1.5px solid var(--neon); box-shadow: 0 0 10px var(--neon); }
+        #game-timer { font-family: monospace; font-size: 1.3rem; font-weight: 900; color: var(--neon); }
+        .paused .timer-wrapper { border-color: var(--red); box-shadow: 0 0 15px var(--red); animation: blinker 1.5s linear infinite; }
         @keyframes blinker { 50% { opacity: 0.5; } }
 
-        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; flex: 1; align-content: start; overflow-y: auto; }
-        .grid-3 .card:last-child { grid-column: 1 / span 2; width: 90%; margin: 0 auto; }
-        .card { background: rgba(15, 15, 15, 0.9); border-radius: 25px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); position: relative; }
-        
-        .player-input { background: #003087; border: none; color: #fff; text-align: center; width: 100%; font-weight: bold; font-size: 1.1rem; padding: 10px; border-radius: 12px; margin-bottom: 10px; }
-        .score-total { font-size: 4rem; font-weight: 900; color: #fff; cursor: pointer; margin: 5px 0; }
-        
-        .history-list { margin-top: 15px; max-height: 200px; overflow-y: auto; }
-        .history-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 2px solid var(--blue-line); margin-bottom: 5px; background: rgba(255,255,255,0.05); border-radius: 10px; }
-        .history-item .val { font-size: 1.3rem; font-weight: bold; flex: 1; text-align: center; }
-        .history-item .del { color: var(--red); font-weight: bold; cursor: pointer; padding: 0 10px; }
+        /* لێرە کێشەکە چاککراوە - ڕێکخستنی شوێنی کارتەکان */
+        .game-grid { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px; 
+            flex: 1; overflow-y: auto; align-content: start; 
+            -webkit-overflow-scrolling: touch;
+        }
+        .grid-3 .card:last-child { grid-column: 1 / span 2; width: 85%; margin: 0 auto; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-box { background: #111; width: 100%; max-width: 400px; padding: 25px; border-radius: 35px; border: 2px solid var(--neon); text-align: center; color: #fff; max-height: 85vh; overflow-y: auto; }
+        .card { 
+            background: rgba(15, 15, 15, 0.92); border-radius: 20px; padding: 15px; 
+            text-align: center; border: 1px solid rgba(255,255,255,0.1); 
+            backdrop-filter: blur(10px); position: relative; min-height: 200px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+        
+        .player-input { background: #003087; border: none; color: #fff; text-align: center; width: 100%; font-weight: bold; font-size: 1rem; padding: 8px; border-radius: 10px; margin-bottom: 8px; }
+        .score-total { font-size: 3.5rem; font-weight: 900; color: #fff; cursor: pointer; margin: 0; line-height: 1.2; }
+        
+        /* ڕیزبەندی خاڵەکان وەک وێنەکە */
+        .history-list { margin-top: 10px; max-height: 150px; overflow-y: auto; }
+        .history-item { display: flex; align-items: center; justify-content: space-between; padding: 8px; border-bottom: 2px solid var(--blue-line); margin-bottom: 5px; }
+        .history-item .val { font-size: 1.2rem; font-weight: bold; flex: 1; text-align: center; }
+        .history-item .del { color: var(--red); font-weight: bold; cursor: pointer; padding: 0 10px; font-size: 1rem; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-box { background: #111; width: 100%; max-width: 400px; padding: 25px; border-radius: 30px; border: 2px solid var(--neon); text-align: center; color: #fff; max-height: 85vh; overflow-y: auto; }
         
         .select-btn { padding: 12px; border-radius: 15px; border: 1px solid #333; background: #1a1a1a; color: #fff; font-weight: bold; cursor: pointer; position: relative; margin-bottom: 5px; width: 100%; }
         .select-btn.active { border-color: var(--neon); color: var(--neon); }
         .select-btn.active::after { content: '✅'; position: absolute; right: 15px; }
 
-        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .theme-item { height: 70px; border-radius: 12px; border: 2px solid #333; background-size: cover; background-position: center; cursor: pointer; position: relative; }
-        .theme-item.active { border-color: var(--neon); }
+        .folder { background: #161616; border-radius: 15px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; text-align: right; }
+        .folder-head { padding: 12px; background: var(--neon); color: #000; font-weight: 900; display: flex; justify-content: space-between; cursor: pointer; }
+        .folder-body { display: none; padding: 12px; }
 
-        .folder { background: #161616; border-radius: 15px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; text-align: right; }
-        .folder-head { padding: 15px; background: var(--neon); color: #000; font-weight: 900; display: flex; justify-content: space-between; cursor: pointer; }
-        .folder-body { display: none; padding: 15px; }
-
-        .btn { padding: 15px; border-radius: 15px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.1rem; margin-top: 10px; }
+        .btn { padding: 14px; border-radius: 15px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.1rem; margin-top: 10px; }
         .btn-neon { background: var(--neon); color: #000; }
         .btn-red { background: var(--red); color: #fff; }
         
-        #alert-msg { position: fixed; top: 110px; left: 50%; transform: translateX(-50%); background: var(--red); color: #fff; padding: 10px 20px; border-radius: 10px; z-index: 1000; display: none; font-weight: bold; box-shadow: 0 0 20px rgba(255,0,0,0.5); }
+        #alert-msg { position: fixed; top: 110px; left: 50%; transform: translateX(-50%); background: var(--red); color: #fff; padding: 10px 20px; border-radius: 10px; z-index: 1000; display: none; font-weight: bold; box-shadow: 0 0 20px rgba(255,0,0,0.5); text-align: center; width: 80%; }
     </style>
 </head>
 <body>
 
-    <div id="alert-msg">تکایە کاتەکە کار پێ بکە بۆ دەستپێکردنی یاری ⚠️</div>
+    <div id="alert-msg">تکایە کاتەکە کار پێ بکە ⚠️</div>
 
     <div class="header">
-        <div onclick="openSettings()" style="font-size:1.8rem; cursor:pointer; color:var(--neon);">⚙️</div>
+        <div onclick="openSettings()" style="font-size:1.5rem; cursor:pointer; color:var(--neon);">⚙️</div>
         <div class="timer-wrapper" id="timer-container" onclick="toggleTimer()">
             <span id="timer-icon">▶️</span>
             <span id="game-timer">00:00</span>
         </div>
-        <div style="color:var(--neon); font-weight:900;">خاڵ ژمێری ئاوێزە</div>
+        <div style="color:var(--neon); font-weight:900; font-size: 0.9rem;">خاڵ ژمێری ئاوێزە</div>
     </div>
 
     <div id="main-grid" class="game-grid"></div>
 
     <div id="settings-panel" class="modal" style="justify-content: flex-start; overflow-y: auto;">
-        <div class="modal-box" style="max-width:100%;">
+        <div class="modal-box" style="max-width:100%; border-radius: 0;">
             <h2 style="color:var(--neon); margin-bottom:20px;">ڕێکخستنەکان</h2>
-            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>👥 جۆری یاری</span><span>▼</span></div><div class="folder-body" id="mode-selectors">
-                <div class="select-btn mode-item" id="btn-mode-2" onclick="confirmNewGame(2)">٢ نەفەری 👥</div>
-                <div class="select-btn mode-item" id="btn-mode-3" onclick="confirmNewGame(3)">٣ نەفەری 👤</div>
-            </div></div>
-            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>🎯 ئامانج (<span id="current-target-display">101</span>)</span><span>▼</span></div><div class="folder-body" style="text-align:center;">
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                    <div class="select-btn target-item" data-val="100" onclick="setTarget(100, this)">100</div>
-                    <div class="select-btn target-item" data-val="101" onclick="setTarget(101, this)">101</div>
-                    <div class="select-btn target-item" data-val="150" onclick="setTarget(150, this)">150</div>
-                    <div class="select-btn target-item" data-val="200" onclick="setTarget(200, this)">200</div>
-                </div>
-            </div></div>
-            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندەکان</span><span>▼</span></div><div class="folder-body theme-grid">
-                <div class="theme-item" style="background-image:url('https://images.pexels.com/photos/1393972/pexels-photo-1393972.jpeg?fm=jpg')" onclick="changeTheme(this)"></div>
-                <div class="theme-item" style="background-image:url('https://wallpapers.com/images/hd/ongoing-domino-game-mcerg8h2hzc7389q.jpg')" onclick="changeTheme(this)"></div>
-                <div class="theme-item" style="background-image:url('https://images.unsplash.com/photo-1768839722117-da92d4acc9ef?fm=jpg')" onclick="changeTheme(this)"></div>
-                <div class="theme-item" style="background-image:url('https://static.vecteezy.com/system/resources/thumbnails/068/153/133/small/dominoes-on-a-black-background-photo.jpg')" onclick="changeTheme(this)"></div>
-            </div></div>
-            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>📜 مێژووی یارییەکان</span><span>▼</span></div><div class="folder-body">
-                <div id="history-content"></div>
-                <button class="btn btn-red" onclick="askClearHistory()" style="margin-top:20px;">سڕینەوەی هەموو مێژوو 🗑️</button>
-            </div></div>
-            <button class="btn btn-red" onclick="closeSettings()">گەڕانەوە بۆ یاری</button>
+            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>👥 جۆری یاری</span><span>▼</span></div><div class="folder-body" id="mode-selectors"><div class="select-btn mode-item" id="btn-mode-2" onclick="confirmNewGame(2)">٢ نەفەری 👥</div><div class="select-btn mode-item" id="btn-mode-3" onclick="confirmNewGame(3)">٣ نەفەری 👤</div></div></div>
+            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>🎯 ئامانج</span><span>▼</span></div><div class="folder-body"><div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;"><div class="select-btn target-item" data-val="101" onclick="setTarget(101, this)">101</div><div class="select-btn target-item" data-val="150" onclick="setTarget(150, this)">150</div></div></div></div>
+            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>📜 مێژوو</span><span>▼</span></div><div class="folder-body"><div id="history-content"></div><button class="btn btn-red" onclick="askClearHistory()" style="margin-top:20px;">سڕینەوەی مێژوو 🗑️</button></div></div>
+            <button class="btn btn-red" onclick="closeSettings()">گەڕانەوە</button>
         </div>
     </div>
 
-    <div id="score-modal" class="modal"><div class="modal-box"><h2>تۆمارکردن</h2><input type="number" id="points-input" style="width:100%; font-size:5rem; background:none; border:none; border-bottom:3px solid var(--neon); color:var(--neon); text-align:center; outline:none; margin:20px 0;" placeholder="0" inputmode="numeric"><div style="display:flex; gap:12px;"><button class="btn btn-red" onclick="closeModal()">لابردن</button><button class="btn btn-neon" onclick="validateScore()">تۆمارکردن</button></div></div></div>
-    <div id="win-modal" class="modal"><div class="modal-box" style="border-color: var(--main);"><h1>🏆</h1><h1 id="winner-display" style="color:var(--main);"></h1><button class="btn btn-neon" onclick="resetCurrentGame()">یاری نوێ 🔄</button></div></div>
+    <div id="score-modal" class="modal"><div class="modal-box"><h2>تۆمارکردن</h2><input type="number" id="points-input" style="width:100%; font-size:4rem; background:none; border:none; border-bottom:3px solid var(--neon); color:var(--neon); text-align:center; outline:none; margin:20px 0;" placeholder="0" inputmode="numeric"><div style="display:flex; gap:12px;"><button class="btn btn-red" onclick="closeModal()">لابردن</button><button class="btn btn-neon" onclick="validateScore()">تۆمارکردن</button></div></div></div>
     <div id="new-game-modal" class="modal"><div class="modal-box" style="border-color: var(--main);"><h1>🎮</h1><h2>یاری نوێ؟</h2><div style="display:flex; gap:12px;"><button class="btn btn-neon" id="confirm-new-btn">بەڵێ</button><button class="btn btn-red" onclick="document.getElementById('new-game-modal').style.display='none'">نەخێر</button></div></div></div>
+    <div id="win-modal" class="modal"><div class="modal-box" style="border-color: var(--main);"><h1>🏆</h1><h1 id="winner-display" style="color:var(--main);"></h1><button class="btn btn-neon" onclick="resetCurrentGame()">یاری نوێ 🔄</button></div></div>
 
     <script>
         let players = {}; let curT = 1; let seconds = 0; let timerInterval; let isPaused = true; let targetScore = 101;
@@ -123,7 +115,7 @@
             return true;
         }
 
-        function setTarget(v, el) { targetScore=parseInt(v); localStorage.setItem('domino_target',v); document.getElementById('current-target-display').innerText=v; render(); }
+        function setTarget(v, el) { targetScore=parseInt(v); localStorage.setItem('domino_target',v); render(); }
         
         function setMode(n, isNew = false) {
             targetScore = parseInt(localStorage.getItem('domino_target')) || 101;
@@ -131,11 +123,6 @@
             else { players=JSON.parse(localStorage.getItem('domino_g')) || {}; seconds=parseInt(localStorage.getItem('domino_s'))||0; }
             document.getElementById('main-grid').className = (Object.keys(players).length==3?'game-grid grid-3':'game-grid');
             updateTimerUI(); startTimer(); render();
-            // ✅ نوێکردنەوەی نیشانەکان
-            setTimeout(() => {
-                document.querySelectorAll('.mode-item').forEach(b => { if(b.id == `btn-mode-${Object.keys(players).length}`) b.classList.add('active'); else b.classList.remove('active'); });
-                document.querySelectorAll('.target-item').forEach(b => { if(b.getAttribute('data-val') == targetScore) b.classList.add('active'); else b.classList.remove('active'); });
-            }, 100);
         }
 
         function render() {
@@ -146,7 +133,7 @@
                     onfocus="if(!checkTimerActive()){this.blur(); return;} this.value='';" 
                     onchange="players[${i}].name=this.value; saveState(); render();">
                 <div class="score-total" onclick="if(checkTimerActive()){ curT=${i}; document.getElementById('score-modal').style.display='flex'; }">${players[i].score}</div>
-                <div style="font-size:0.8rem; color:#aaa;">ماوە: ${targetScore - players[i].score}</div>
+                <div style="font-size:0.7rem; color:#aaa;">ماوە: ${targetScore - players[i].score}</div>
                 <div class="history-list">
                 ${players[i].history.slice().reverse().map((pt, j) => {
                     let revIdx = players[i].history.length - 1 - j;
@@ -158,21 +145,9 @@
             }
         }
 
-        function changeTheme(el) {
-            let url = el.style.backgroundImage;
-            document.body.style.backgroundImage = url;
-            localStorage.setItem('domino_bg', url);
-            document.querySelectorAll('.theme-item').forEach(i => i.classList.remove('active'));
-            el.classList.add('active');
-        }
-
         function validateScore() { 
             let v=parseInt(document.getElementById('points-input').value) || 0; 
             if(v >= targetScore) { alert("خاڵ نایاساییە!"); return; }
-            saveScore(v); 
-        }
-
-        function saveScore(v) {
             players[curT].score+=v; players[curT].history.push(v);
             saveState(); render(); closeModal();
             if(players[curT].score>=targetScore) { 
@@ -189,7 +164,7 @@
 
         function loadHist() {
             let h=JSON.parse(localStorage.getItem('domino_h')||'{}'), c=document.getElementById('history-content'); c.innerHTML="";
-            for(let d in h) c.innerHTML+=`<div class="folder"><div class="folder-head" onclick="toggleF(this)">📅 ${d} <span>▼</span></div><div class="folder-body">${h[d].map(g=>`<div style="border-bottom:1px solid #333; padding:10px; display:flex; justify-content:space-between;"><span>👑 ${g.winner}</span><span>${g.dur}</span></div>`).join("")}</div></div>`;
+            for(let d in h) c.innerHTML+=`<div class="folder"><div class="folder-head" onclick="toggleF(this)">📅 ${d} <span>▼</span></div><div class="folder-body">${h[d].map(g=>`<div style="border-bottom:1px solid #333; padding:8px; display:flex; justify-content:space-between;"><span>👑 ${g.winner}</span><span>${g.dur}</span></div>`).join("")}</div></div>`;
         }
 
         function resetCurrentGame() { localStorage.removeItem('domino_g'); localStorage.removeItem('domino_s'); location.reload(); }
@@ -198,11 +173,9 @@
         function openSettings() { loadHist(); document.getElementById('settings-panel').style.display='flex'; }
         function closeSettings() { document.getElementById('settings-panel').style.display='none'; }
         function toggleF(h) { let b=h.nextElementSibling; b.style.display=(b.style.display=='block'?'none':'block'); }
-        function askClearHistory() { if(confirm("ئایا دڵنیایت لە سڕینەوەی هەموو مێژوو؟")) { localStorage.removeItem('domino_h'); loadHist(); } }
+        function askClearHistory() { if(confirm("ئایا دڵنیایت؟")) { localStorage.removeItem('domino_h'); loadHist(); } }
 
         window.onload = () => { 
-            let bg=localStorage.getItem('domino_bg'); 
-            if(bg){ document.body.style.backgroundImage=bg; setTimeout(()=>{document.querySelectorAll('.theme-item').forEach(i=>{if(i.style.backgroundImage===bg) i.classList.add('active')})},100);}
             setMode(localStorage.getItem('domino_g')?Object.keys(JSON.parse(localStorage.getItem('domino_g'))).length:2); 
             document.getElementById('timer-container').parentElement.classList.add('paused');
         };
