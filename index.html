@@ -24,40 +24,22 @@
         }
         .splash-title { font-size: 3.5rem; font-weight: 900; color: var(--neon); text-shadow: 0 0 20px var(--neon); margin-bottom: 10px; }
         .splash-subtitle { font-size: 1.5rem; color: #fff; letter-spacing: 1px; }
-        .splash-footer {
-            position: absolute; bottom: 40px; font-size: 1rem; color: #aaa;
-            font-weight: bold; border-top: 1px solid #333; padding-top: 15px; width: 80%; text-align: center; line-height: 1.5;
-        }
+        .splash-footer { position: absolute; bottom: 40px; font-size: 1rem; color: #aaa; font-weight: bold; border-top: 1px solid #333; padding-top: 15px; width: 80%; text-align: center; line-height: 1.5; }
 
-        .header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 40px 15px 15px 15px; background: rgba(0, 0, 0, 0.85); 
-            border-bottom: 2px solid var(--neon); z-index: 100; flex-shrink: 0; backdrop-filter: blur(10px);
-        }
-        
-        .timer-wrapper { 
-            display: flex; align-items: center; gap: 8px; background: rgba(57, 255, 20, 0.1); 
-            padding: 6px 15px; border-radius: 50px; cursor: pointer; border: 1.5px solid var(--neon); box-shadow: 0 0 10px var(--neon); 
-        }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 40px 15px 15px 15px; background: rgba(0, 0, 0, 0.85); border-bottom: 2px solid var(--neon); z-index: 100; flex-shrink: 0; backdrop-filter: blur(10px); }
+        .timer-wrapper { display: flex; align-items: center; gap: 8px; background: rgba(57, 255, 20, 0.1); padding: 6px 15px; border-radius: 50px; cursor: pointer; border: 1.5px solid var(--neon); box-shadow: 0 0 10px var(--neon); }
         #game-timer { font-family: monospace; font-size: 1.3rem; font-weight: 900; color: var(--neon); }
         .paused .timer-wrapper { border-color: var(--red); box-shadow: 0 0 15px var(--red); animation: blinker 1.5s linear infinite; }
         @keyframes blinker { 50% { opacity: 0.5; } }
 
-        .game-container { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; }
+        .game-container { flex: 1; overflow-y: auto; padding: 15px 10px; display: flex; flex-direction: column; }
         .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .grid-3 .card:last-child { grid-column: 1 / span 2; width: 85%; margin: 0 auto; }
 
-        .card { 
-            background: rgba(15, 15, 15, 0.92); border-radius: 20px; padding: 15px; 
-            text-align: center; border: 1px solid rgba(255,255,255,0.1); 
-            backdrop-filter: blur(10px); position: relative; min-height: 220px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-        }
+        .card { background: rgba(15, 15, 15, 0.92); border-radius: 20px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); position: relative; min-height: 220px; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+        .player-input { background: #003087; border: none; color: #fff; text-align: center; width: 100%; font-weight: bold; font-size: 1rem; padding: 10px; border-radius: 10px; margin-bottom: 8px; outline: none; }
+        .score-total { font-size: 3.5rem; font-weight: 900; color: #fff; cursor: pointer; margin: 0; line-height: 1.2; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         
-        .player-input { background: #003087; border: none; color: #fff; text-align: center; width: 100%; font-weight: bold; font-size: 1rem; padding: 10px; border-radius: 10px; margin-bottom: 8px; }
-        .score-total { font-size: 3.5rem; font-weight: 900; color: #fff; cursor: pointer; margin: 0; line-height: 1.2; }
-        
-        /* پێوەری نزیکبوونەوە (Progress Bar) */
         .progress-bg { background: rgba(255,255,255,0.1); border-radius: 10px; height: 8px; width: 100%; margin: 12px 0; overflow: hidden; position: relative; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); }
         .progress-fill { background: linear-gradient(90deg, var(--blue), var(--neon)); height: 100%; width: 0%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 10px; box-shadow: 0 0 10px var(--neon); }
 
@@ -65,6 +47,21 @@
         .history-item { display: flex; align-items: center; justify-content: space-between; padding: 8px; border-bottom: 2px solid var(--blue); margin-bottom: 5px; }
         .history-item .val { font-size: 1.2rem; font-weight: bold; flex: 1; text-align: center; }
         .history-item .del { color: var(--red); font-weight: bold; cursor: pointer; padding: 0 10px; font-size: 1rem; }
+
+        /* ✨ بەشی نوێ: داشبۆردی خوارەوەی شاشەکە بۆ پڕکردنەوەی بۆشاییەکە */
+        .bottom-status-bar {
+            background: rgba(10, 10, 10, 0.9); border-top: 2px solid var(--blue);
+            backdrop-filter: blur(15px); padding: 15px 20px 25px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-radius: 30px 30px 0 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.7);
+            flex-shrink: 0; z-index: 50;
+        }
+        .status-item { text-align: center; flex: 1; }
+        .center-status { flex: 2; border-left: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1); }
+        .status-title { display: block; font-size: 0.75rem; color: #aaa; margin-bottom: 3px; font-weight: bold; }
+        .status-val { display: block; font-size: 1.2rem; font-weight: 900; color: #fff; }
+        .status-val.neon { color: var(--neon); }
+        .status-sub { display: block; font-size: 0.8rem; color: var(--red); margin-top: 2px; font-weight: bold; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
         .modal-box { background: #111; width: 100%; max-width: 400px; padding: 25px; border-radius: 30px; border: 2px solid var(--neon); text-align: center; color: #fff; max-height: 85vh; overflow-y: auto; }
@@ -96,9 +93,7 @@
     <div id="splash-screen">
         <div class="splash-title">دۆمینە</div>
         <div class="splash-subtitle">خاڵ ژمێری پڕۆفیشناڵ</div>
-        <div class="splash-footer">
-            گەشەپێدراوە لەلایەن :<br>محەمەد حەیدەر - کۆمپیوتەری ئاوێزە
-        </div>
+        <div class="splash-footer">گەشەپێدراوە لەلایەن :<br>محەمەد حەیدەر - کۆمپیوتەری ئاوێزە</div>
     </div>
 
     <div id="alert-msg">تکایە کاتەکە کار پێ بکە ⚠️</div>
@@ -116,34 +111,29 @@
         <div id="main-grid" class="game-grid"></div>
     </div>
 
+    <div class="bottom-status-bar">
+        <div class="status-item" onclick="undoLastAction()" style="cursor:pointer;">
+            <span class="status-title">گەڕانەوە</span>
+            <span class="status-val" style="font-size:1.8rem; margin-top:2px;">↩️</span>
+        </div>
+        <div class="status-item center-status">
+            <span class="status-title">پێشەنگ 👑</span>
+            <span class="status-val" id="leader-name">--</span>
+            <span class="status-sub" id="leader-gap">یاری نوێ</span>
+        </div>
+        <div class="status-item">
+            <span class="status-title">ئامانج 🎯</span>
+            <span class="status-val neon" id="bottom-target">101</span>
+        </div>
+    </div>
+
     <div id="settings-panel" class="modal" style="justify-content: flex-start; align-items: flex-start;">
         <div class="modal-box" style="max-width:100%; border-radius: 0; min-height: 100vh;">
             <h2 style="color:var(--neon); margin-bottom:20px;">ڕێکخستنەکان</h2>
-            
-            <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>📊 داشبۆردی ئامارەکان</span><span>▼</span></div>
-                <div class="folder-body">
-                    <div class="dash-box">
-                        <p style="color:#aaa; font-weight:bold;">کۆی یارییە ئەنجامدراوەکان</p>
-                        <div class="dash-num" id="dash-total-games">0</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>👥 جۆری یاری</span><span>▼</span></div><div class="folder-body">
-                <div class="select-btn mode-item" id="btn-mode-2" onclick="confirmNewGame(2)">٢ نەفەری 👥</div>
-                <div class="select-btn mode-item" id="btn-mode-3" onclick="confirmNewGame(3)">٣ نەفەری 👤</div>
-            </div></div>
-            
-            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>🎯 ئامانج (<span id="current-target-display">101</span>)</span><span>▼</span></div><div class="folder-body">
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="select-btn target-item" data-val="101" onclick="setTarget(101, this)">101</div>
-                    <div class="select-btn target-item" data-val="150" onclick="setTarget(150, this)">150</div>
-                </div>
-            </div></div>
-
-            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندەکان</span><span>▼</span></div>
-            <div class="folder-body theme-grid">
+            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>📊 داشبۆردی ئامارەکان</span><span>▼</span></div><div class="folder-body"><div class="dash-box"><p style="color:#aaa; font-weight:bold;">کۆی یارییە ئەنجامدراوەکان</p><div class="dash-num" id="dash-total-games">0</div></div></div></div>
+            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>👥 جۆری یاری</span><span>▼</span></div><div class="folder-body"><div class="select-btn mode-item" id="btn-mode-2" onclick="confirmNewGame(2)">٢ نەفەری 👥</div><div class="select-btn mode-item" id="btn-mode-3" onclick="confirmNewGame(3)">٣ نەفەری 👤</div></div></div>
+            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>🎯 ئامانج (<span id="current-target-display">101</span>)</span><span>▼</span></div><div class="folder-body"><div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;"><div class="select-btn target-item" data-val="101" onclick="setTarget(101, this)">101</div><div class="select-btn target-item" data-val="150" onclick="setTarget(150, this)">150</div></div></div></div>
+            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندەکان</span><span>▼</span></div><div class="folder-body theme-grid">
                 <div class="theme-item" style="background-image:url('https://images.pexels.com/photos/1393972/pexels-photo-1393972.jpeg?fm=jpg')" onclick="changeTheme(this)"></div>
                 <div class="theme-item" style="background-image:url('https://wallpapers.com/images/hd/ongoing-domino-game-mcerg8h2hzc7389q.jpg')" onclick="changeTheme(this)"></div>
                 <div class="theme-item" style="background-image:url('https://images.unsplash.com/photo-1768839722117-da92d4acc9ef?fm=jpg')" onclick="changeTheme(this)"></div>
@@ -153,12 +143,7 @@
                 <div class="theme-item" style="background-image:url('https://wallpapercave.com/wp/wp4164401.jpg')" onclick="changeTheme(this)"></div>
                 <div class="theme-item" style="background-image:url('https://st4.depositphotos.com/18527288/23801/i/450/depositphotos_238017684-stock-photo-line-dominoes-wood.jpg')" onclick="changeTheme(this)"></div>
             </div></div>
-
-            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>📜 مێژووی یارییەکان</span><span>▼</span></div><div class="folder-body">
-                <div id="history-content"></div>
-                <button class="btn btn-red" onclick="askClearHistory()" style="margin-top:20px;">سڕینەوەی گشتی مێژوو 🗑️</button>
-            </div></div>
-
+            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>📜 مێژووی یارییەکان</span><span>▼</span></div><div class="folder-body"><div id="history-content"></div><button class="btn btn-red" onclick="askClearHistory()" style="margin-top:20px;">سڕینەوەی گشتی مێژوو 🗑️</button></div></div>
             <button class="btn btn-red" onclick="closeSettings()" style="margin-top: 20px;">گەڕانەوە بۆ یاری</button>
         </div>
     </div>
@@ -170,14 +155,14 @@
         <div class="modal-box" style="border-color: var(--main); box-shadow: 0 0 30px var(--main);">
             <h1 style="font-size: 4rem; margin-bottom:10px;">🏆</h1>
             <h1 id="winner-display" style="color:var(--main); margin-bottom: 15px;"></h1>
-            <div id="win-stats" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; margin-bottom: 20px;">
-            </div>
+            <div id="win-stats" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; margin-bottom: 20px;"></div>
             <button class="btn btn-neon" onclick="resetCurrentGame()">یاری نوێ 🔄</button>
         </div>
     </div>
 
     <script>
         let players = {}; let curT = 1; let seconds = 0; let timerInterval; let isPaused = true; let targetScore = 101;
+        let lastAction = null; // بۆ گەڕانەوە (Undo)
 
         setTimeout(() => {
             let splash = document.getElementById('splash-screen');
@@ -186,16 +171,11 @@
         }, 2000);
 
         function fireWorksAnimation() {
-            var duration = 3 * 1000;
-            var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100000 };
-
+            var duration = 3 * 1000; var animationEnd = Date.now() + duration; var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100000 };
             function randomInRange(min, max) { return Math.random() * (max - min) + min; }
-
             var interval = setInterval(function() {
                 var timeLeft = animationEnd - Date.now();
                 if (timeLeft <= 0) return clearInterval(interval);
-
                 var particleCount = 50 * (timeLeft / duration);
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
@@ -221,7 +201,7 @@
             return true;
         }
 
-        function setTarget(v, el) { targetScore=parseInt(v); localStorage.setItem('domino_target',v); document.getElementById('current-target-display').innerText=v; render(); }
+        function setTarget(v, el) { targetScore=parseInt(v); localStorage.setItem('domino_target',v); document.getElementById('current-target-display').innerText=v; document.getElementById('bottom-target').innerText=v; render(); }
         
         function changeTheme(el) {
             let url = el.style.backgroundImage;
@@ -233,6 +213,9 @@
 
         function setMode(n, isNew = false) {
             targetScore = parseInt(localStorage.getItem('domino_target')) || 101;
+            document.getElementById('bottom-target').innerText = targetScore;
+            lastAction = null;
+            
             if(isNew) { players={}; seconds=0; localStorage.setItem('domino_s', 0); for(let i=1; i<=n; i++) players[i] = { name:(n==2?`تیمی ${i}`:`یاریزان ${i}`), score:0, history:[] }; saveState(); }
             else { players=JSON.parse(localStorage.getItem('domino_g')) || {1:{name:"تیمی 1",score:0,history:[]},2:{name:"تیمی 2",score:0,history:[]}}; seconds=parseInt(localStorage.getItem('domino_s'))||0; }
             document.getElementById('main-grid').className = (Object.keys(players).length==3?'game-grid grid-3':'game-grid');
@@ -241,6 +224,30 @@
                 document.querySelectorAll('.mode-item').forEach(b => { if(b.id == `btn-mode-${Object.keys(players).length}`) b.classList.add('active'); else b.classList.remove('active'); });
                 document.querySelectorAll('.target-item').forEach(b => { if(b.getAttribute('data-val') == targetScore) b.classList.add('active'); else b.classList.remove('active'); });
             }, 100);
+        }
+
+        function updateBottomDashboard() {
+            let sorted = Object.values(players).sort((a,b) => b.score - a.score);
+            let leaderName = document.getElementById('leader-name');
+            let leaderGap = document.getElementById('leader-gap');
+            
+            if (sorted[0].score === 0 && sorted[1].score === 0) {
+                leaderName.innerText = "--"; leaderGap.innerText = "یاری نوێ";
+            } else if (sorted[0].score === sorted[1].score) {
+                leaderName.innerText = "یەکسانن 🤝"; leaderGap.innerText = "جیاوازی نییە";
+            } else {
+                leaderName.innerText = sorted[0].name;
+                leaderGap.innerText = `+${sorted[0].score - sorted[1].score} لە پێشە`;
+            }
+        }
+
+        function undoLastAction() {
+            if(!lastAction || !checkTimerActive()) return;
+            let pIdx = lastAction.playerIndex;
+            players[pIdx].score -= lastAction.points;
+            players[pIdx].history.pop();
+            lastAction = null; // تەنها یەکجار گەڕانەوە
+            saveState(); render();
         }
 
         function render() {
@@ -268,17 +275,20 @@
                     </div>`}).join("")}
                 </div></div>`;
             }
+            updateBottomDashboard();
         }
 
         function validateScore() { 
             let v=parseInt(document.getElementById('points-input').value) || 0; 
             if(v >= targetScore) { alert("خاڵ نایاساییە!"); return; }
+            
             players[curT].score+=v; players[curT].history.push(v);
+            lastAction = { playerIndex: curT, points: v }; // سەیڤکردن بۆ گەڕانەوە
+            
             saveState(); render(); closeModal();
             
             if(players[curT].score >= targetScore) { 
-                isPaused = true;
-                clearInterval(timerInterval);
+                isPaused = true; clearInterval(timerInterval);
                 document.getElementById('timer-icon').innerText = "▶️";
                 document.getElementById('timer-container').parentElement.classList.add('paused');
                 
@@ -310,8 +320,7 @@
 
         function loadHist() {
             let h=JSON.parse(localStorage.getItem('domino_h')||'{}'), c=document.getElementById('history-content'); 
-            c.innerHTML="";
-            let totalGamesCount = 0;
+            c.innerHTML=""; let totalGamesCount = 0;
             
             for(let d in h) {
                 totalGamesCount += h[d].length;
@@ -319,12 +328,8 @@
                 <div class="folder" style="background:#222;">
                     <div class="folder-head" style="background:#333; color:var(--neon);" onclick="toggleF(this)">📅 ${d} <span>▼</span></div>
                     <div class="folder-body" style="background:#111;">
-                        ${h[d].map(g=>`
-                        <div style="border-bottom:1px solid #444; padding:12px; display:flex; justify-content:space-between; align-items:center;">
-                            <div style="text-align:right;">
-                                <span style="font-weight:bold; color:#fff; font-size:1.1rem;">👑 ${g.winner}</span><br>
-                                <span style="color:#aaa; font-size:0.85rem;">بە جیاوازی: ${g.gap} خاڵ</span>
-                            </div>
+                        ${h[d].map(g=>`<div style="border-bottom:1px solid #444; padding:12px; display:flex; justify-content:space-between; align-items:center;">
+                            <div style="text-align:right;"><span style="font-weight:bold; color:#fff; font-size:1.1rem;">👑 ${g.winner}</span><br><span style="color:#aaa; font-size:0.85rem;">بە جیاوازی: ${g.gap} خاڵ</span></div>
                             <span style="color:var(--neon); font-size:1rem; font-weight:bold;">⏱️ ${g.dur}</span>
                         </div>`).join("")}
                     </div>
@@ -335,11 +340,8 @@
 
         function resetCurrentGame() { 
             let lastMode = Object.keys(players).length;
-            localStorage.removeItem('domino_g'); 
-            localStorage.removeItem('domino_s'); 
-            seconds = 0;
-            setMode(lastMode, true); 
-            document.getElementById('win-modal').style.display='none';
+            localStorage.removeItem('domino_g'); localStorage.removeItem('domino_s'); 
+            seconds = 0; setMode(lastMode, true); document.getElementById('win-modal').style.display='none';
         }
 
         function confirmNewGame(n) { document.getElementById('new-game-modal').style.display='flex'; document.getElementById('confirm-new-btn').onclick=()=>{ setMode(n, true); document.getElementById('new-game-modal').style.display='none'; closeSettings(); }; }
