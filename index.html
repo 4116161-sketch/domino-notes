@@ -3,430 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>خاڵ ژمێری دۆمینە ئاوێزە PRO - Ultimate Edition</title>
+    <title>خاڵ ژمێری دۆمینە - وەشانی کوردەواری VIP</title>
     
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     
     <style>
         /* ==========================================================================
-           ١. گۆڕاوە سەرەکییەکان و ڕێکخستنی بنەڕەتی (CSS Variables & Reset)
+           ١. گۆڕاوە سەرەکییەکان (ڕەنگە کوردەوارییەکان)
            ========================================================================== */
         :root { 
-            --main: #efbf3b; 
-            --red: #ff3333; 
-            --neon: #39ff14; 
-            --blue: #007aff;
-            --bg-dark: rgba(10, 10, 10, 0.85);
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --card-gradient: linear-gradient(145deg, rgba(25,25,25,0.95), rgba(5,5,5,0.98));
+            --gold: #FFC000;      /* زەردی زێڕین (وەک ڕۆژی ئاڵا) */
+            --red: #ED2939;       /* سووری ڕەسەن */
+            --green: #009E60;     /* سەوزی سروشت */
+            --wood-dark: rgba(30, 15, 5, 0.95); /* قاوەیی تاریک وەک تەختەی دار */
+            --glass-border: rgba(255, 192, 0, 0.2); /* سنووری زێڕین */
+            --card-gradient: linear-gradient(145deg, rgba(45, 25, 15, 0.95), rgba(20, 10, 5, 0.98)); /* ڕەنگی مێزی چایخانە */
         }
 
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            margin: 0; 
-            padding: 0; 
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
         body { 
-            background-color: #000; 
+            background-color: #1a0f0a; 
+            /* باکگراوندەکەی خۆت ماوە، بەڵام کەشەکە گەرم کراوە */
             background-image: url('https://images.pexels.com/photos/1393972/pexels-photo-1393972.jpeg?fm=jpg');
-            background-size: cover; 
-            background-position: center; 
-            background-attachment: fixed;
-            color: #fff; 
-            font-family: 'Segoe UI', Tahoma, sans-serif; 
-            height: 100vh; 
-            width: 100vw; 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden;
-            perspective: 1200px; /* بۆ ئەنیمەیشنە سێ دوورییەکان (3D) */
+            background-size: cover; background-position: center; background-attachment: fixed;
+            color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; 
+            height: 100vh; width: 100vw; display: flex; flex-direction: column; overflow: hidden;
+            perspective: 1200px;
         }
 
         /* ==========================================================================
-           ٢. پەردەی تاریکی بۆ پشتەوەی مۆداڵەکان (Blur Iris Feature)
-           کاتێک مۆداڵێک دەکرێتەوە، ئەم بەشە زووم دەبێتە دەرەوە و تەڵخ دەبێت
+           ٢. پەردەی تاریکی (Blur Iris) بۆ مۆداڵەکان
            ========================================================================== */
         #app-content {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            width: 100vw;
+            display: flex; flex-direction: column; height: 100vh; width: 100vw;
             transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), filter 0.5s ease, border-radius 0.5s ease;
-            transform-origin: center center;
-            background: rgba(0,0,0,0.3); /* بۆ جوانترکردنی باکگراوندەکە */
+            transform-origin: center center; background: rgba(20, 10, 0, 0.4); /* تۆنێکی گەرمی قاوەیی */
         }
 
-        /* کڵاسی چالاک بۆ کاتی کردنەوەی مۆداڵ */
         #app-content.iris-active {
-            transform: scale(0.92); /* زووم دەبێتە دەرەوە */
-            filter: blur(12px) brightness(0.5); /* تەڵخ و تاریک دەبێت */
-            border-radius: 30px;
-            pointer-events: none; /* ڕێگری لە دەستلێدان دەکات لە کاتی مۆداڵ */
-            box-shadow: 0 0 50px rgba(0,0,0,1); /* سێبەری قووڵ */
+            transform: scale(0.92); filter: blur(12px) brightness(0.6) sepia(0.3); /* sepia بۆ هەستی کلاسیک */
+            border-radius: 30px; pointer-events: none; box-shadow: 0 0 50px rgba(0,0,0,1); 
         }
 
         /* ==========================================================================
-           ٣. شاشەی دەستپێک (Splash Screen)
-           پێشاندانی لۆگۆ و ناوی گەشەپێدەر لە سەرەتادا
+           ٣. شاشەی دەستپێک (Splash Screen) - کوردەواری
            ========================================================================== */
         #splash-screen {
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%;
-            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%); 
-            z-index: 999999; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #2c1a0f 0%, #000 100%); 
+            z-index: 999999; display: flex; flex-direction: column; justify-content: center; align-items: center; 
             transition: opacity 0.6s ease-in-out, transform 0.6s ease;
         }
 
         .splash-title { 
-            font-size: 4.5rem; 
-            font-weight: 900; 
-            color: var(--neon); 
-            text-shadow: 0 0 40px var(--neon); 
-            margin-bottom: 15px; 
-            letter-spacing: 3px;
-            animation: pulseGlow 2s infinite alternate; 
+            font-size: 3.5rem; font-weight: 900; color: var(--gold); 
+            text-shadow: 0 0 30px rgba(255, 192, 0, 0.6); margin-bottom: 12px; letter-spacing: 2px;
+            animation: pulseGold 2s infinite alternate; 
         }
 
         .splash-subtitle { 
-            font-size: 1.8rem; 
-            color: #fff; 
-            letter-spacing: 1px; 
-            opacity: 0; 
+            font-size: 1.4rem; color: #fff; letter-spacing: 1px; opacity: 0; 
             animation: slideUp 1s ease-out 0.3s forwards; 
         }
 
         .splash-footer { 
-            position: absolute; 
-            bottom: 50px; 
-            font-size: 1.2rem; 
-            color: #aaa; 
-            font-weight: bold; 
-            border-top: 1px solid #333; 
-            padding-top: 20px; 
-            width: 80%; 
-            text-align: center; 
-            line-height: 1.8; 
-            opacity: 0;
+            position: absolute; bottom: 40px; font-size: 1rem; color: #ccc; 
+            font-weight: bold; border-top: 1px solid var(--gold); padding-top: 15px; 
+            width: 80%; text-align: center; line-height: 1.6; opacity: 0;
             animation: fadeIn 1.5s ease-in 0.8s forwards; 
         }
 
-        /* ئەنیمەیشنەکانی شاشەی دەستپێک */
-        @keyframes pulseGlow { 
-            from { text-shadow: 0 0 20px var(--neon); transform: scale(1); } 
-            to { text-shadow: 0 0 60px var(--neon), 0 0 80px rgba(57, 255, 20, 0.5); transform: scale(1.05); } 
-        }
-        @keyframes slideUp { 
-            from { transform: translateY(30px); opacity: 0; } 
-            to { transform: translateY(0); opacity: 0.9; } 
-        }
-        @keyframes fadeIn { 
-            from { opacity: 0; } 
-            to { opacity: 1; } 
-        }
+        @keyframes pulseGold { from { text-shadow: 0 0 15px var(--gold); transform: scale(1); } to { text-shadow: 0 0 40px var(--gold), 0 0 60px rgba(255, 192, 0, 0.4); transform: scale(1.05); } }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 0.9; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* ==========================================================================
-           ٤. بەشی سەرەوە (Header) و کاتژمێر
+           ٤. بەشی سەرەوە (Header) - دار و زێڕین
            ========================================================================== */
         .header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 35px 20px 15px 20px; 
-            background: rgba(0, 0, 0, 0.8); 
-            border-bottom: 1px solid rgba(57,255,20,0.3); 
-            z-index: 100; 
-            flex-shrink: 0; 
-            backdrop-filter: blur(15px);
-            box-shadow: 0 5px 25px rgba(0,0,0,0.8);
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 30px 15px 12px 15px; background: rgba(20, 10, 5, 0.85); 
+            border-bottom: 1px solid var(--glass-border); z-index: 100; flex-shrink: 0; 
+            backdrop-filter: blur(15px); box-shadow: 0 5px 20px rgba(0,0,0,0.8);
         }
 
         .timer-wrapper { 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            background: rgba(57, 255, 20, 0.08); 
-            padding: 8px 25px; 
-            border-radius: 50px; 
-            cursor: pointer; 
-            border: 2px solid var(--neon); 
-            box-shadow: 0 0 15px rgba(57, 255, 20, 0.5); 
-            transition: all 0.3s ease; 
+            display: flex; align-items: center; gap: 8px; background: rgba(255, 192, 0, 0.1); 
+            padding: 6px 18px; border-radius: 50px; cursor: pointer; border: 2px solid var(--gold); 
+            box-shadow: 0 0 12px rgba(255, 192, 0, 0.4); transition: all 0.3s ease; 
         }
 
         #game-timer { 
-            font-family: monospace; 
-            font-size: 1.6rem; 
-            font-weight: 900; 
-            color: var(--neon); 
-            transition: color 0.5s ease, text-shadow 0.5s ease; 
-            letter-spacing: 2px;
+            font-family: monospace; font-size: 1.2rem; font-weight: 900; 
+            color: var(--gold); transition: color 0.5s ease, text-shadow 0.5s ease; letter-spacing: 1px;
         }
 
         .paused .timer-wrapper { 
-            border-color: var(--red); 
-            background: rgba(255, 51, 51, 0.08);
-            box-shadow: 0 0 25px rgba(255, 51, 51, 0.6); 
-            animation: blinker 1.5s linear infinite; 
+            border-color: var(--red); background: rgba(237, 41, 57, 0.1);
+            box-shadow: 0 0 20px rgba(237, 41, 57, 0.6); animation: blinker 1.5s linear infinite; 
         }
 
-        @keyframes blinker { 
-            0%, 100% { opacity: 1; } 
-            50% { opacity: 0.5; } 
-        }
+        @keyframes blinker { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
         /* ==========================================================================
            ٥. داشبۆردی پێشبینیکەر و ئاماری P2P (AI HUD)
            ========================================================================== */
         .ai-hud-container {
-            background: linear-gradient(180deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6)); 
-            border-bottom: 1px solid var(--glass-border);
-            padding: 10px 15px; 
-            display: flex; 
-            justify-content: space-between;
-            align-items: center; 
-            flex-shrink: 0;
-            backdrop-filter: blur(10px);
+            background: linear-gradient(180deg, rgba(30, 15, 5, 0.9), rgba(15, 5, 0, 0.8)); 
+            border-bottom: 1px solid var(--glass-border); padding: 8px 12px; 
+            display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; backdrop-filter: blur(10px);
         }
 
-        .ai-hud-item { 
-            text-align: center; 
-            flex: 1; 
-        }
-
-        .ai-hud-title { 
-            font-size: 0.75rem; 
-            color: #bbb; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            margin-bottom: 4px; 
-            letter-spacing: 1px;
-        }
-
-        .ai-hud-value { 
-            font-size: 1rem; 
-            font-weight: 900; 
-            color: #fff; 
-        }
-
-        .ai-hud-value.neon { 
-            color: var(--neon); 
-            text-shadow: 0 0 8px rgba(57, 255, 20, 0.6); 
-        }
-
-        .ai-hud-divider { 
-            width: 1px; 
-            height: 30px; 
-            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.3), transparent); 
-        }
+        .ai-hud-item { text-align: center; flex: 1; }
+        .ai-hud-title { font-size: 0.65rem; color: #d4af37; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; letter-spacing: 0.5px; }
+        .ai-hud-value { font-size: 0.85rem; font-weight: 900; color: #fff; }
+        .ai-hud-value.gold-text { color: var(--gold); text-shadow: 0 0 6px rgba(255, 192, 0, 0.6); }
+        .ai-hud-divider { width: 1px; height: 25px; background: linear-gradient(to bottom, transparent, var(--gold), transparent); opacity: 0.5; }
 
         /* ==========================================================================
-           ٦. ناوچەی سەرەکی یاری (Main Wrapper & Game Grid)
-           چارەسەری کێشەی دیارنەمانی کارتەکان لێرەدایە
+           ٦. ناوچەی سەرەکی یاری (Main Wrapper)
            ========================================================================== */
-        .main-wrapper { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            overflow-y: auto; /* ڕێگە دەدات بە سکڕۆڵکردن ئەگەر شاشە بچووک بوو */
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
-
-        /* بۆ شاردنەوەی شریتی سکڕۆڵ (Scrollbar) لە مۆبایل */
+        .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; }
         .main-wrapper::-webkit-scrollbar { display: none; }
         .main-wrapper { -ms-overflow-style: none; scrollbar-width: none; }
 
-        .game-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 15px; 
-            padding: 15px; 
-            flex-shrink: 0; 
-        }
-
-        /* شێوازی ٣ نەفەری */
-        .grid-3 { 
-            grid-template-columns: 1fr 1fr 1fr; 
-            gap: 10px; 
-            padding: 15px 10px; 
-        }
-        
-        .grid-3 .card { padding: 15px 8px; }
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; flex-shrink: 0; }
+        .grid-3 { grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 12px 6px; }
+        .grid-3 .card { padding: 12px 5px; }
 
         /* ==========================================================================
-           ٧. دیزاینی کارتەکان (Cards)
+           ٧. دیزاینی کارتەکان (کەشی تەختە و دار)
            ========================================================================== */
         .card { 
-            position: relative; 
-            text-align: center; 
-            border-radius: 25px; 
-            overflow: hidden; 
-            z-index: 1;
-            padding: 25px 15px; 
-            background: var(--card-gradient); 
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7), inset 0 2px 10px rgba(255,255,255,0.05);
+            position: relative; text-align: center; border-radius: 20px; overflow: hidden; z-index: 1;
+            padding: 20px 12px; background: var(--card-gradient); border: 1px solid rgba(255,192,0,0.2);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8), inset 0 2px 8px rgba(255,255,255,0.05);
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s; 
-            animation: cardEnter 0.6s both;
-            transform-style: preserve-3d; /* بۆ ئەنیمەیشنی سەردەکەوتنی ژمارەکان */
+            animation: cardEnter 0.6s both; transform-style: preserve-3d; 
         }
 
-        .card:hover { 
-            transform: translateY(-8px); 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.9), inset 0 2px 15px rgba(255,255,255,0.1); 
-        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.95), inset 0 2px 12px rgba(255,192,0,0.15); }
+        @keyframes cardEnter { from { opacity: 0; transform: translateY(40px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-        @keyframes cardEnter { 
-            from { opacity: 0; transform: translateY(50px) scale(0.9); } 
-            to { opacity: 1; transform: translateY(0) scale(1); } 
-        }
-
-        /* باکگراوندی سوڕاوەی دەوری کارت (Neon Border) */
+        /* باکگراوندی سوڕاوەی زێڕین */
         .card::before { 
             content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -2; 
-            background: conic-gradient(transparent, transparent, transparent, var(--neon)); 
-            animation: spin 6s linear infinite; 
+            background: conic-gradient(transparent, transparent, transparent, var(--gold)); animation: spin 8s linear infinite; 
         }
         .card::after { 
             content: ''; position: absolute; top: 2px; left: 2px; right: 2px; bottom: 2px; 
-            background: var(--bg-dark); border-radius: 23px; z-index: -1; backdrop-filter: blur(12px); 
+            background: var(--wood-dark); border-radius: 18px; z-index: -1; backdrop-filter: blur(10px); 
         }
         .card > * { position: relative; z-index: 2; } 
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* ئەنیمەیشنی ئاگر (Streak Fire) */
-        .card.streak-fire::before { 
-            background: conic-gradient(transparent, transparent, transparent, #007aff, #00f0ff, #007aff); 
-            animation: spin 1.2s linear infinite; 
-        }
-        .card.streak-fire::after { 
-            background: rgba(5, 15, 35, 0.95); 
-        }
-        
+        /* ئاگرەکە (بۆ ڕەنگی ئاگرین و گەرم گۆڕدرا) */
+        .card.streak-fire::before { background: conic-gradient(transparent, transparent, transparent, #ff4500, #ff8c00, #ffd700); animation: spin 1s linear infinite; }
+        .card.streak-fire::after { background: rgba(40, 10, 0, 0.95); }
         .streak-badge { 
-            position: absolute; top: 10px; left: 50%; transform: translateX(-50%); 
-            background: linear-gradient(45deg, #007aff, #00f0ff); color: #000; 
-            padding: 5px 18px; border-radius: 12px; font-size: 0.9rem; font-weight: 900; 
-            box-shadow: 0 0 25px rgba(0, 240, 255, 0.8); z-index: 10; display: none; white-space: nowrap;
+            position: absolute; top: 8px; left: 50%; transform: translateX(-50%); 
+            background: linear-gradient(45deg, #ff4500, #ffd700); color: #000; 
+            padding: 4px 14px; border-radius: 10px; font-size: 0.8rem; font-weight: 900; 
+            box-shadow: 0 0 20px rgba(255, 140, 0, 0.8); z-index: 10; display: none; white-space: nowrap;
         }
-        .card.streak-fire .streak-badge { 
-            display: block; 
-            animation: bounceFire 0.5s infinite alternate cubic-bezier(0.5, 0.05, 1, 0.5); 
-        }
-        @keyframes bounceFire { 
-            to { transform: translate(-50%, -5px) scale(1.05); } 
-        }
+        .card.streak-fire .streak-badge { display: block; animation: bounceFire 0.5s infinite alternate cubic-bezier(0.5, 0.05, 1, 0.5); }
+        @keyframes bounceFire { to { transform: translate(-50%, -4px) scale(1.05); } }
 
-        /* ==========================================================================
-           ٨. ئەنیمەیشنی فڕینی ژمارەکان (Floating 3D Numbers)
-           ========================================================================== */
+        /* ئەنیمەیشنی فڕینی ژمارەکان */
         .floating-score {
-            position: absolute; 
-            font-size: 3rem; 
-            font-weight: 900; 
-            color: var(--neon);
-            text-shadow: 0 0 20px var(--neon), 0 0 40px var(--neon); 
-            pointer-events: none; 
-            z-index: 1000;
+            position: absolute; font-size: 2rem; font-weight: 900; color: var(--gold);
+            text-shadow: 0 0 15px var(--gold), 0 0 30px #ff4500; pointer-events: none; z-index: 1000;
             animation: floatUpFade 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
-
         @keyframes floatUpFade {
-            0% { opacity: 0; transform: translateY(20px) scale(0.3) rotateX(45deg); }
-            20% { opacity: 1; transform: translateY(0) scale(1.2) rotateX(0deg); }
-            70% { opacity: 1; transform: translateY(-50px) scale(1.1) rotateX(0deg); }
-            100% { opacity: 0; transform: translateY(-80px) scale(0.5) rotateX(-45deg); }
+            0% { opacity: 0; transform: translateY(15px) scale(0.3) rotateX(45deg); }
+            20% { opacity: 1; transform: translateY(0) scale(1.1) rotateX(0deg); }
+            70% { opacity: 1; transform: translateY(-40px) scale(1) rotateX(0deg); }
+            100% { opacity: 0; transform: translateY(-70px) scale(0.5) rotateX(-45deg); }
         }
 
-        /* ==========================================================================
-           ٩. ئینپوتی ناوەکان و بۆکسی خاڵ
-           ========================================================================== */
+        /* ناوی یاریزان - دیزاینی کلاسیک و جوان */
         .player-input { 
-            background: linear-gradient(135deg, rgba(0, 71, 171, 0.6), rgba(0, 35, 102, 0.9)); 
-            border: 1px solid rgba(0, 122, 255, 0.5); color: #fff; 
-            text-align: center; width: 100%; font-weight: 900; font-size: 1.2rem; 
-            padding: 12px; border-radius: 12px; margin-top: 15px; margin-bottom: 15px; 
-            outline: none; box-shadow: inset 0 2px 10px rgba(0,0,0,0.6); 
+            background: linear-gradient(135deg, rgba(80, 20, 10, 0.7), rgba(40, 10, 0, 0.9)); 
+            border: 1px solid rgba(255, 192, 0, 0.4); color: #fff; 
+            text-align: center; width: 100%; font-weight: 900; font-size: 1.1rem; padding: 10px; border-radius: 10px; 
+            margin-top: 15px; margin-bottom: 15px; outline: none; box-shadow: inset 0 2px 10px rgba(0,0,0,0.8); 
             transition: 0.3s; cursor: pointer; letter-spacing: 1px;
         }
+        .player-input:focus { border-color: var(--gold); box-shadow: inset 0 2px 10px rgba(0,0,0,0.8), 0 0 15px rgba(255,192,0,0.5); }
+        .grid-3 .player-input { font-size: 0.9rem; padding: 8px 4px; }
 
+        /* بۆکسی خاڵەکان */
         .score-display-box { 
-            background: rgba(0,0,0,0.5); border-radius: 20px; padding: 15px 5px; 
-            margin: 15px 0; border: 1px solid rgba(57,255,20,0.15); 
-            cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.4); border-radius: 15px; padding: 15px 5px; margin: 10px 0; 
+            border: 1px solid rgba(255,192,0,0.15); cursor: pointer; transition: 0.2s; position: relative; 
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.7); 
         }
-        .score-display-box:active { 
-            transform: scale(0.92); background: rgba(57,255,20,0.1); 
-            box-shadow: inset 0 0 30px rgba(57,255,20,0.3); 
-        }
-        
-        .score-total { 
-            font-size: 4.5rem; font-weight: 900; color: #fff; margin: 0; 
-            line-height: 1; text-shadow: 0 5px 20px rgba(0,0,0,0.8); 
-        }
-        .score-label { 
-            font-size: 1.1rem; color: var(--neon); font-weight: bold; 
-            margin-top: 8px; letter-spacing: 2px; text-shadow: 0 0 10px rgba(57,255,20,0.5);
-        }
+        .score-display-box:active { transform: scale(0.92); background: rgba(255,192,0,0.1); }
+        .score-total { font-size: 4rem; font-weight: 900; color: #fff; margin: 0; line-height: 1; text-shadow: 0 5px 15px rgba(0,0,0,0.8); }
+        .score-label { font-size: 1rem; color: var(--gold); font-weight: bold; margin-top: 5px; letter-spacing: 1px; }
+        .grid-3 .score-total { font-size: 2.8rem; }
 
-        /* پێوەری نزیکبوونەوە (Progress Bar) */
-        .progress-bg { 
-            background: rgba(255,255,255,0.05); border-radius: 10px; height: 12px; 
-            width: 100%; margin: 20px 0 10px 0; overflow: hidden; position: relative; 
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.6); 
-        }
+        /* پێوەری نزیکبوونەوە - بە ڕەنگی ئاڵای کوردستان (سوور، سپی/زەرد، سەوز) */
+        .progress-bg { background: rgba(0,0,0,0.5); border-radius: 10px; height: 10px; width: 100%; margin: 15px 0; overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.05); }
         .progress-fill { 
-            background: linear-gradient(90deg, var(--blue), var(--neon)); height: 100%; 
-            width: 0%; transition: width 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            border-radius: 10px; box-shadow: 0 0 20px var(--neon); 
+            background: linear-gradient(90deg, var(--red), var(--gold), var(--green)); 
+            height: 100%; width: 0%; transition: width 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            border-radius: 10px; box-shadow: 0 0 10px rgba(255,255,255,0.2); 
         }
-        .rem-text { font-size: 1rem; color: #ddd; font-weight: bold; letter-spacing: 1px; }
+        .rem-text { font-size: 0.85rem; color: #ccc; font-weight: bold; letter-spacing: 1px; }
 
         /* ==========================================================================
-           ١٠. مێژووی خاڵەکان لە خوارەوە (Unified History)
+           ٨. مێژووی خاڵەکان (بۆشایی خوارەوە) و ئەنیمەیشنی توانەوە (Collapse)
            ========================================================================== */
         .unified-history-container {
-            margin: 0 15px 20px 15px; 
-            background: rgba(15, 15, 15, 0.85); border-radius: 25px;
-            padding: 20px 15px; border: 1px solid var(--glass-border); 
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8); 
-            display: flex; flex-direction: column; flex-shrink: 0;
-            backdrop-filter: blur(15px);
+            margin: 0 15px 20px 15px; background: rgba(25, 10, 5, 0.8); border-radius: 20px;
+            padding: 15px; border: 1px solid rgba(255,192,0,0.2); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9); 
+            display: flex; flex-direction: column; flex-shrink: 0; backdrop-filter: blur(15px);
         }
 
-        .history-title-bar { 
-            text-align: center; color: var(--neon); font-weight: 900; 
-            font-size: 1.2rem; margin-bottom: 15px; 
-            border-bottom: 2px dashed rgba(255,255,255,0.15); 
-            padding-bottom: 12px; letter-spacing: 1px; 
-        }
-
+        .history-title-bar { text-align: center; color: var(--gold); font-weight: 900; font-size: 1.1rem; margin-bottom: 12px; border-bottom: 1px dashed rgba(255,192,0,0.3); padding-bottom: 10px; letter-spacing: 1px; }
         .history-grid { display: grid; gap: 15px; flex: 1; align-content: start; }
-        .history-column { display: flex; flex-direction: column; border-left: 2px dashed rgba(255, 255, 255, 0.1); padding-left: 10px; }
-        .history-column:last-child { border-left: none; padding-left: 0; padding-right: 10px; }
+        .history-column { display: flex; flex-direction: column; border-left: 1px dashed rgba(255, 192, 0, 0.2); padding-left: 8px; }
+        .history-column:last-child { border-left: none; padding-left: 0; padding-right: 8px; }
 
-        /* پێکهاتەی خاڵی مێژوو و ئەنیمەیشنی هاتنە ناوەوە */
-        .hist-item-wrapper { position: relative; margin-bottom: 10px; perspective: 500px; }
+        .hist-item-wrapper { position: relative; margin-bottom: 6px; transition: all 0.4s ease-out; overflow: hidden; }
         
         .hist-item { 
-            display: flex; align-items: center; justify-content: space-between; 
-            padding: 10px 12px; border-bottom: 2px solid rgba(0, 122, 255, 0.5); 
-            background: linear-gradient(90deg, rgba(0,0,0,0.8), rgba(20,20,20,0.6)); 
-            border-radius: 12px; transition: all 0.2s; position: relative; z-index: 2;
-            animation: flipInX 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            transform-origin: center left; opacity: 0;
+            display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; 
+            border-bottom: 1px solid var(--gold); background: linear-gradient(90deg, rgba(40,10,0,0.8), rgba(20,5,0,0.6)); 
+            border-radius: 10px; transition: all 0.3s; position: relative; z-index: 2;
+            animation: flipInX 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: top center; opacity: 0;
         }
         
+        /* ئەنیمەیشنی توانەوە و داخران (Smooth Collapse) بۆ کاتی سڕینەوە */
+        .collapsing {
+            opacity: 0;
+            transform: scale(0.9) translateY(-10px);
+            max-height: 0 !important;
+            margin-bottom: 0 !important;
+            padding: 0 !important;
+            border-bottom: none !important;
+        }
+
         @keyframes flipInX {
             0% { transform: perspective(400px) rotateX(90deg); opacity: 0; }
             40% { transform: perspective(400px) rotateX(-10deg); }
@@ -434,216 +254,83 @@
             100% { transform: perspective(400px) rotateX(0deg); opacity: 1; }
         }
 
-        /* فۆنتی خاڵەکان بچووک کرایەوە بەپێی داواکاری */
-        .hist-val { 
-            font-size: 1.2rem; /* فۆنت بچووک کرایەوە لێرە */
-            font-weight: 900; color: var(--neon); 
-            text-shadow: 0 0 5px rgba(57,255,20,0.5); 
-            flex: 1; text-align: left; padding-left: 10px; letter-spacing: 1px;
-        }
-
-        .del-btn { 
-            color: var(--red); font-size: 1.2rem; cursor: pointer; 
-            padding: 5px 12px; background: rgba(255, 51, 51, 0.15); 
-            border-radius: 8px; border: 1px solid rgba(255, 51, 51, 0.3); 
-            transition: all 0.2s; display: flex; align-items: center; justify-content: center;
-        }
-        .del-btn:active { transform: scale(0.85); background: rgba(255, 51, 51, 0.5); }
+        .hist-val { font-size: 1.1rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 5px rgba(255,192,0,0.4); flex: 1; text-align: left; padding-left: 10px; }
+        .del-btn { color: var(--red); font-size: 1.1rem; cursor: pointer; padding: 4px 10px; background: rgba(237, 41, 57, 0.15); border-radius: 6px; border: 1px solid rgba(237, 41, 57, 0.3); transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .del-btn:active { transform: scale(0.85); background: rgba(237, 41, 57, 0.5); }
 
         /* ==========================================================================
-           ١١. ئەنیمەیشنی درزبردن و پارچەبوونی شووشە (Shatter Effect)
-           ========================================================================== */
-        
-        /* کڵاسی درزبردن (پێش شکاندن) */
-        .cracked {
-            transform: scale(1.02) skewX(-2deg);
-            filter: brightness(1.5) contrast(1.2);
-            border-color: #fff !important;
-            box-shadow: 0 0 15px rgba(255,255,255,0.8);
-        }
-
-        /* هێڵەکانی درزەکە */
-        .cracked::before {
-            content: ''; position: absolute; top: 30%; left: -10%; width: 120%; height: 2px;
-            background: #fff; transform: rotate(8deg); 
-            box-shadow: 0 0 10px #fff, 0 0 20px var(--neon); z-index: 10;
-        }
-        .cracked::after {
-            content: ''; position: absolute; top: 70%; left: -5%; width: 110%; height: 1px;
-            background: #fff; transform: rotate(-5deg); 
-            box-shadow: 0 0 8px #fff; z-index: 10;
-        }
-
-        /* پارچەکانی شووشە بۆ کاتی کەوتنە خوارەوە (Shards) */
-        .shard {
-            position: absolute;
-            background: linear-gradient(135deg, rgba(255,51,51,0.9), rgba(200,0,0,0.7));
-            box-shadow: 0 0 15px rgba(255, 51, 51, 0.8), inset 0 0 5px rgba(255,255,255,0.5);
-            border-radius: 2px;
-            pointer-events: none;
-            z-index: 5;
-            opacity: 1;
-        }
-
-        /* ==========================================================================
-           ١٢. شریتی هەواڵی خێرا (News Ticker)
+           ٩. شریتی هەواڵی خێرا (News Ticker) - ڕەنگی زێڕین
            ========================================================================== */
         .news-ticker-container { 
-            width: 100%; background: rgba(5, 5, 5, 0.98); 
-            border-top: 2px solid var(--neon); padding: 14px 0; 
-            overflow: hidden; white-space: nowrap; flex-shrink: 0; 
-            box-shadow: 0 -5px 25px rgba(57, 255, 20, 0.2);
+            width: 100%; background: rgba(15, 5, 0, 0.98); border-top: 1px solid var(--gold); 
+            padding: 10px 0; overflow: hidden; white-space: nowrap; flex-shrink: 0; box-shadow: 0 -5px 20px rgba(255, 192, 0, 0.1);
         }
-        .news-ticker-content { 
-            display: inline-block; white-space: nowrap; 
-            animation: scrollTicker 22s linear infinite; 
-            font-size: 1.2rem; font-weight: bold; color: var(--main); 
-            text-shadow: 0 0 15px rgba(239, 191, 59, 0.6); padding-left: 100%; 
-            letter-spacing: 1px;
-        }
+        .news-ticker-content { display: inline-block; white-space: nowrap; animation: scrollTicker 22s linear infinite; font-size: 1rem; font-weight: bold; color: var(--gold); text-shadow: 0 0 10px rgba(255, 192, 0, 0.4); padding-left: 100%; letter-spacing: 1px; }
         @keyframes scrollTicker { 0% { transform: translateX(100vw); } 100% { transform: translateX(-150%); } }
 
         /* ==========================================================================
-           ١٣. مۆداڵەکان و ڕێکخستنەکان (Settings & Overlays)
+           ١٠. مۆداڵەکان و ڕێکخستنەکان (Kurdewari Modals)
            ========================================================================== */
-        .modal { 
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.4); /* ڕوون کرایەوە چونکە پشتەوە بلور دەبێت */
-            z-index: 10000; align-items: center; justify-content: center; padding: 20px; 
-            perspective: 1000px; /* بۆ ئەنیمەیشنی 3D ی ناو مۆداڵ */
-        }
-
-        .modal.active { display: flex; animation: modalFadeIn 0.4s ease forwards; }
-        .modal.active .modal-box { animation: modalSlideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center; padding: 20px; perspective: 1000px; }
+        .modal.active { display: flex; animation: modalFadeIn 0.3s ease forwards; }
+        .modal.active .modal-box { animation: modalSlideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes modalSlideUp { 
-            from { transform: translateY(100px) rotateX(-10deg) scale(0.9); opacity: 0; } 
-            to { transform: translateY(0) rotateX(0) scale(1); opacity: 1; } 
-        }
+        @keyframes modalSlideUp { from { transform: translateY(80px) rotateX(-5deg) scale(0.95); opacity: 0; } to { transform: translateY(0) rotateX(0) scale(1); opacity: 1; } }
 
-        .modal-box { 
-            background: linear-gradient(145deg, #151515, #0a0a0a); width: 100%; max-width: 480px; 
-            padding: 30px; border-radius: 35px; border: 2px solid var(--glass-border); 
-            text-align: center; color: #fff; max-height: 85vh; overflow-y: auto; 
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95); position: relative;
-        }
-
-        /* شاردنەوەی شریتی سکڕۆڵ لەناو مۆداڵ */
+        .modal-box { background: linear-gradient(145deg, #2a1610, #140a05); width: 100%; max-width: 480px; padding: 25px; border-radius: 30px; border: 1px solid var(--gold); text-align: center; color: #fff; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95); position: relative; }
         .modal-box::-webkit-scrollbar { display: none; }
         .modal-box { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* دیزاینی نوێی دوگمەکانی هەڵبژاردن (بەپێی وێنەکە) */
-        .select-btn { 
-            padding: 16px 20px; border-radius: 15px; border: 1px solid #444; 
-            background: rgba(30,30,30,0.8); color: #fff; font-weight: bold; 
-            font-size: 1.1rem; cursor: pointer; position: relative; margin-bottom: 10px; 
-            width: 100%; transition: all 0.3s ease; text-align: right; padding-right: 55px; 
-        }
-        .select-btn:hover { background: rgba(50,50,50,0.8); }
-        .select-btn.active { 
-            border-color: var(--neon); color: var(--neon); 
-            background: rgba(57, 255, 20, 0.08); box-shadow: inset 0 0 15px rgba(57,255,20,0.1);
-        }
-        .select-btn.active::after { 
-            content: '✔'; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); 
-            background: var(--neon); color: #000; width: 24px; height: 24px; border-radius: 4px; 
-            display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 900; 
-            box-shadow: 0 0 10px var(--neon);
-        }
+        .select-btn { padding: 14px 18px; border-radius: 12px; border: 1px solid #5c3a21; background: rgba(40,20,10,0.8); color: #fff; font-weight: bold; font-size: 1rem; cursor: pointer; position: relative; margin-bottom: 8px; width: 100%; transition: all 0.3s ease; text-align: right; padding-right: 50px; }
+        .select-btn:hover { background: rgba(60,30,15,0.8); }
+        .select-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(255, 192, 0, 0.1); box-shadow: inset 0 0 15px rgba(255,192,0,0.15); }
+        .select-btn.active::after { content: '✔'; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: var(--gold); color: #000; width: 22px; height: 22px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 900; box-shadow: 0 0 8px var(--gold); }
 
-        /* دیزاینی ناوە کۆنەکان لە مۆداڵی ناو (ستوونی) */
-        .saved-name-chip { 
-            display: block; background: rgba(0, 122, 255, 0.15); border: 1px solid var(--blue); 
-            color: #fff; padding: 12px; border-radius: 15px; margin-bottom: 10px; 
-            font-weight: bold; cursor: pointer; transition: 0.2s; width: 100%; 
-            text-align: center; font-size: 1.2rem; letter-spacing: 1px;
-        }
-        .saved-name-chip:hover { background: rgba(0, 122, 255, 0.3); }
-        .saved-name-chip:active { transform: scale(0.95); background: var(--blue); color: #fff; }
+        .saved-name-chip { display: block; background: rgba(255, 192, 0, 0.1); border: 1px solid var(--gold); color: var(--gold); padding: 10px; border-radius: 12px; margin-bottom: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; width: 100%; text-align: center; font-size: 1.1rem; letter-spacing: 1px; }
+        .saved-name-chip:hover { background: rgba(255, 192, 0, 0.25); }
+        .saved-name-chip:active { transform: scale(0.95); background: var(--gold); color: #000; }
 
-        /* وێنەکانی باکگراوند */
-        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .theme-item { height: 85px; border-radius: 15px; border: 2px solid #333; background-size: cover; background-position: center; cursor: pointer; transition: 0.2s; }
-        .theme-item.active { border-color: var(--neon); box-shadow: 0 0 20px var(--neon); transform: scale(1.05); z-index: 2; }
+        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .theme-item { height: 75px; border-radius: 12px; border: 2px solid #4a2e1b; background-size: cover; background-position: center; cursor: pointer; transition: 0.2s; }
+        .theme-item.active { border-color: var(--gold); box-shadow: 0 0 15px var(--gold); transform: scale(1.03); z-index: 2; }
 
-        /* فۆڵدەرەکانی ڕێکخستن */
-        .folder { background: rgba(0,0,0,0.4); border-radius: 18px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; text-align: right; }
-        .folder-head { padding: 20px; background: linear-gradient(90deg, rgba(20,20,20,0.9), rgba(40,40,40,0.9)); border-bottom: 1px solid var(--glass-border); color: var(--neon); font-weight: 900; font-size: 1.1rem; display: flex; justify-content: space-between; cursor: pointer; transition: background 0.3s; }
-        .folder-head:hover { background: linear-gradient(90deg, rgba(30,30,30,0.9), rgba(50,50,50,0.9)); }
-        .folder-body { display: none; padding: 20px; background: rgba(0,0,0,0.6); }
+        .folder { background: rgba(0,0,0,0.4); border-radius: 15px; margin-bottom: 12px; border: 1px solid rgba(255,192,0,0.1); overflow: hidden; text-align: right; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        .folder-head { padding: 16px; background: linear-gradient(90deg, rgba(40,20,10,0.9), rgba(60,30,15,0.9)); border-bottom: 1px solid rgba(255,192,0,0.2); color: var(--gold); font-weight: 900; font-size: 1rem; display: flex; justify-content: space-between; cursor: pointer; transition: background 0.3s; }
+        .folder-body { display: none; padding: 15px; background: rgba(0,0,0,0.7); }
 
-        /* داشبۆردی ئامار لە ناو ڕێکخستن */
-        .dash-box { background: rgba(0,0,0,0.8); border: 1px solid var(--neon); padding: 20px; border-radius: 18px; text-align: center; margin-bottom: 5px; box-shadow: inset 0 0 25px rgba(57, 255, 20, 0.08); }
-        .dash-num { font-size: 4rem; color: var(--neon); font-weight: 900; margin: 15px 0; text-shadow: 0 0 15px rgba(57,255,20,0.5); }
+        .dash-box { background: rgba(20,10,5,0.9); border: 1px solid var(--gold); padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 5px; box-shadow: inset 0 0 20px rgba(255, 192, 0, 0.1); }
+        .dash-num { font-size: 3rem; color: var(--gold); font-weight: 900; margin: 10px 0; text-shadow: 0 0 15px rgba(255,192,0,0.4); }
 
-        /* دوگمەی گشتی */
-        .btn { padding: 18px; border-radius: 15px; border: none; font-weight: 900; width: 100%; cursor: pointer; font-size: 1.2rem; margin-top: 15px; transition: transform 0.2s, box-shadow 0.2s; letter-spacing: 1px; }
+        .btn { padding: 15px; border-radius: 12px; border: none; font-weight: 900; width: 100%; cursor: pointer; font-size: 1.1rem; margin-top: 12px; transition: transform 0.2s, box-shadow 0.2s; letter-spacing: 1px; }
         .btn:active { transform: scale(0.95); }
-        .btn-neon { background: linear-gradient(45deg, var(--neon), #2bcf0d); color: #000; box-shadow: 0 8px 20px rgba(57, 255, 20, 0.4); }
-        .btn-red { background: linear-gradient(45deg, var(--red), #cc0000); color: #fff; box-shadow: 0 8px 20px rgba(255, 51, 51, 0.4); }
+        .btn-gold { background: linear-gradient(45deg, #FFC000, #F2994A); color: #000; box-shadow: 0 6px 15px rgba(255, 192, 0, 0.4); }
+        .btn-red { background: linear-gradient(45deg, #8B0000, #b30000); color: #fff; box-shadow: 0 6px 15px rgba(139, 0, 0, 0.5); }
         
-        #alert-msg { position: fixed; top: 120px; left: 50%; transform: translateX(-50%); background: var(--red); color: #fff; padding: 14px 25px; border-radius: 12px; z-index: 2000; display: none; font-weight: bold; font-size: 1.1rem; box-shadow: 0 10px 30px rgba(255,0,0,0.6); text-align: center; width: 85%; }
+        #alert-msg { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); background: var(--red); color: #fff; padding: 12px 20px; border-radius: 10px; z-index: 2000; display: none; font-weight: bold; font-size: 1rem; box-shadow: 0 8px 20px rgba(237,41,57,0.6); text-align: center; width: 80%; }
 
         /* ==========================================================================
-           ١٤. ئەنیمەیشنی 3D دۆمینە بۆ بردنەوە (Domino Fall Feature)
+           ١١. ئەنیمەیشنی 3D دۆمینە بۆ بردنەوە
            ========================================================================== */
-        .domino-stage { 
-            display: flex; justify-content: center; align-items: flex-end; 
-            height: 140px; margin-bottom: 25px; perspective: 800px; 
-            overflow: visible; padding-bottom: 10px; border-bottom: 2px solid rgba(255,255,255,0.1);
-        }
-        
-        .domino-piece { 
-            width: 35px; height: 80px; background: linear-gradient(to bottom, #fff, #ddd); 
-            border-radius: 4px; margin: 0 6px; position: relative; 
-            transform-origin: bottom right; 
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.2), -3px 8px 10px rgba(0,0,0,0.6); 
-            border: 1px solid #aaa; transform: rotateZ(0deg); 
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .domino-piece::after { 
-            content: ''; position: absolute; top: 50%; left: 10%; width: 80%; height: 2px; 
-            background: #222; transform: translateY(-50%); box-shadow: 0 1px 1px rgba(255,255,255,0.8);
-        }
-
-        .domino-piece .dot { 
-            width: 7px; height: 7px; background: radial-gradient(circle, #333, #000); 
-            border-radius: 50%; position: absolute; box-shadow: inset 0 1px 2px rgba(255,255,255,0.5);
-        }
-
-        /* ئەنیمەیشنی کەوتن بۆ خوارەوە */
-        @keyframes dominoFall { 
-            0% { transform: rotateZ(0deg); } 
-            100% { transform: rotateZ(68deg); } 
-        }
+        .domino-stage { display: flex; justify-content: center; align-items: flex-end; height: 120px; margin-bottom: 20px; perspective: 800px; overflow: visible; padding-bottom: 5px; border-bottom: 1px solid rgba(255,192,0,0.3); }
+        .domino-piece { width: 30px; height: 70px; background: linear-gradient(to bottom, #f5deb3, #d2b48c); border-radius: 4px; margin: 0 5px; position: relative; transform-origin: bottom right; box-shadow: inset 0 0 10px rgba(139,69,19,0.3), -3px 5px 8px rgba(0,0,0,0.8); border: 1px solid #8b4513; transform: rotateZ(0deg); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .domino-piece::after { content: ''; position: absolute; top: 50%; left: 10%; width: 80%; height: 2px; background: #3e2723; transform: translateY(-50%); box-shadow: 0 1px 1px rgba(255,255,255,0.4); }
+        .domino-piece .dot { width: 6px; height: 6px; background: radial-gradient(circle, #3e2723, #000); border-radius: 50%; position: absolute; box-shadow: inset 0 1px 2px rgba(255,255,255,0.3); }
+        @keyframes dominoFall { 0% { transform: rotateZ(0deg); } 100% { transform: rotateZ(68deg); } }
         .falling { animation: dominoFall 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
 
         /* مۆداڵی خاڵی نایاسایی */
-        #invalid-score-modal .modal-box { 
-            border-color: var(--red); 
-            background: radial-gradient(circle at center, #4a0000, #110000); 
-            box-shadow: 0 0 60px rgba(255, 51, 51, 0.7); 
-        }
-
-        /* مۆداڵی سڕینەوەی مێژوو */
-        #clear-history-modal .modal-box { 
-            border-color: var(--red); 
-            background: linear-gradient(145deg, #2a0000, #0a0000);
-            box-shadow: 0 0 50px rgba(255, 0, 0, 0.5); 
-        }
+        #invalid-score-modal .modal-box { border-color: var(--red); background: radial-gradient(circle at center, #550000, #1a0000); box-shadow: 0 0 50px rgba(237, 41, 57, 0.5); }
+        #clear-history-modal .modal-box { border-color: var(--red); background: linear-gradient(145deg, #3a0000, #110000); box-shadow: 0 0 40px rgba(237, 41, 57, 0.5); }
 
         /* ==========================================================================
-           ١٥. ڕێکخستنی (Responsive) بۆ شاشەی ئاسۆیی (Landscape)
-           ئەمە کێشەی دیارنەمانی کارتەکان لە شاشەی کورت چارەسەر دەکات
+           ١٢. Responsive Design بۆ شاشەی ئاسۆیی
            ========================================================================== */
         @media (orientation: landscape) and (max-height: 600px) {
             .main-wrapper { flex-direction: row; }
             .game-grid { width: 55%; overflow-y: auto; }
             .unified-history-container { width: 45%; margin: 15px 15px 15px 0; }
-            .header { padding: 20px 15px 10px 15px; }
-            .splash-title { font-size: 3rem; }
+            .header { padding: 15px 15px 10px 15px; }
+            .splash-title { font-size: 2.5rem; }
         }
     </style>
 </head>
@@ -653,26 +340,26 @@
 
     <div id="splash-screen">
         <div class="splash-title">دۆمینە</div>
-        <div class="splash-subtitle">خاڵ ژمێری پڕۆفیشناڵ</div>
-        <div class="splash-footer">گەشەپێدراوە لەلایەن :<br><span style="color:var(--neon)">محەمەد حەیدەر - ئاوێزە</span></div>
+        <div class="splash-subtitle">دیزاینی ڕەسەنی کوردەواری</div>
+        <div class="splash-footer">گەشەپێدراوە لەلایەن :<br><span style="color:var(--gold)">محەمەد حەیدەر - ئاوێزە</span></div>
     </div>
 
     <div id="alert-msg">تکایە کاتەکە کار پێ بکە ⚠️</div>
 
     <div id="app-content">
         <div class="header">
-            <div onclick="openSettings()" style="font-size:2.2rem; cursor:pointer; text-shadow: 0 0 20px var(--neon);">⚙️</div>
+            <div onclick="openSettings()" style="font-size:1.8rem; cursor:pointer; text-shadow: 0 0 12px var(--gold);">⚙️</div>
             <div class="timer-wrapper" id="timer-container" onclick="toggleTimer()">
-                <span id="timer-icon" style="font-size: 1.4rem;">▶️</span>
+                <span id="timer-icon" style="font-size: 1.2rem;">▶️</span>
                 <span id="game-timer">00:00</span>
             </div>
-            <div style="color:var(--neon); font-weight:900; font-size: 1.2rem; letter-spacing: 2px;">ئاوێزە PRO</div>
+            <div style="color:var(--gold); font-weight:900; font-size: 1rem; letter-spacing: 1px;">ئاوێزە VIP</div>
         </div>
 
         <div class="ai-hud-container" id="ai-hud">
             <div class="ai-hud-item">
                 <div class="ai-hud-title">🤖 پێشبینی AI</div>
-                <div class="ai-hud-value neon" id="ai-prob">٥٠٪ بەرامبەر ٥٠٪</div>
+                <div class="ai-hud-value gold-text" id="ai-prob">٥٠٪ بەرامبەر ٥٠٪</div>
             </div>
             <div class="ai-hud-divider"></div>
             <div class="ai-hud-item">
@@ -687,249 +374,168 @@
         </div>
 
         <div class="news-ticker-container">
-            <div class="news-ticker-content" id="ticker-text">بەخێربێیت بۆ خاڵ ژمێری دۆمینە گەشەپێدراوە لەلایەن:محەمەد حەیدەر - ئاوێزە</div>
+            <div class="news-ticker-content" id="ticker-text">بەخێربێیت بۆ خاڵ ژمێری دۆمینە گەشەپێدراوە لەلایەن: محەمەد حەیدەر - ئاوێزە</div>
         </div>
     </div>
+
     <div id="name-modal" class="modal">
-        <div class="modal-box" style="border-color: var(--blue);">
-            <h2 style="color:var(--blue); margin-bottom:25px; font-size: 2.2rem; text-shadow: 0 0 15px rgba(0,122,255,0.5);">گۆڕینی ناو</h2>
-            <input type="text" id="edit-name-input" placeholder="ناو بنووسە..." style="width:100%; font-size:2rem; background:rgba(0,0,0,0.8); border:2px solid var(--blue); color:#fff; text-align:center; padding:18px; border-radius:18px; outline:none; margin-bottom: 25px; font-weight:900; box-shadow: inset 0 0 15px rgba(0,122,255,0.3);">
-            
-            <div style="text-align: right; margin-bottom: 15px; color: #aaa; font-size: 1rem; font-weight: bold;">ناوە کۆنەکان:</div>
-            <div id="saved-names-chips" style="display:flex; flex-direction:column; align-items:center; max-height: 220px; overflow-y:auto; margin-bottom:25px; width:100%; padding-right: 5px;"></div>
-            
-            <div style="display:flex; gap:15px;">
+        <div class="modal-box" style="border-color: var(--gold);">
+            <h2 style="color:var(--gold); margin-bottom:20px; font-size: 1.8rem; text-shadow: 0 0 10px rgba(255,192,0,0.5);">گۆڕینی ناو</h2>
+            <input type="text" id="edit-name-input" placeholder="ناو بنووسە..." style="width:100%; font-size:1.5rem; background:rgba(0,0,0,0.8); border:2px solid var(--gold); color:#fff; text-align:center; padding:12px; border-radius:12px; outline:none; margin-bottom: 20px; font-weight:900; box-shadow: inset 0 0 10px rgba(255,192,0,0.2);">
+            <div style="text-align: right; margin-bottom: 10px; color: #aaa; font-size: 0.9rem; font-weight: bold;">ناوە کۆنەکان:</div>
+            <div id="saved-names-chips" style="display:flex; flex-direction:column; align-items:center; max-height: 180px; overflow-y:auto; margin-bottom:20px; width:100%; padding-right: 5px;"></div>
+            <div style="display:flex; gap:12px;">
                 <button class="btn btn-red" onclick="closeModal('name-modal')">لابردن</button>
-                <button class="btn btn-neon" style="background: linear-gradient(45deg, var(--blue), #00f0ff); box-shadow: 0 5px 20px rgba(0, 122, 255, 0.5);" onclick="saveNameFromModal()">پاشەکەوت</button>
+                <button class="btn btn-gold" onclick="saveNameFromModal()">پاشەکەوت</button>
             </div>
         </div>
     </div>
 
     <div id="settings-panel" class="modal">
         <div class="modal-box" style="max-width:100%; border-radius: 0; min-height: 100vh;">
-            <h2 style="color:var(--neon); margin-bottom:30px; font-size: 2.8rem; text-shadow: 0 0 25px var(--neon);">ڕێکخستنەکان</h2>
+            <h2 style="color:var(--gold); margin-bottom:25px; font-size: 2.2rem; text-shadow: 0 0 20px var(--gold);">ڕێکخستنەکان</h2>
             
-            <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>📊 داشبۆردی ئامارەکان</span><span>▼</span></div>
-                <div class="folder-body"><div class="dash-box"><p style="color:#aaa; font-weight:bold; font-size: 1.2rem;">کۆی یارییە ئەنجامدراوەکان</p><div class="dash-num" id="dash-total-games">0</div></div></div>
-            </div>
-
-            <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>👥 جۆری یاری</span><span>▼</span></div>
-                <div class="folder-body">
-                    <div class="select-btn mode-item" id="btn-mode-2" onclick="confirmNewGame(2)">٢ نەفەری 👥</div>
-                    <div class="select-btn mode-item" id="btn-mode-3" onclick="confirmNewGame(3)">٣ نەفەری 👤</div>
-                </div>
-            </div>
+            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>📊 داشبۆردی ئامارەکان</span><span>▼</span></div><div class="folder-body"><div class="dash-box"><p style="color:#aaa; font-weight:bold; font-size: 1rem;">کۆی یارییە ئەنجامدراوەکان</p><div class="dash-num" id="dash-total-games">0</div></div></div></div>
+            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>👥 جۆری یاری</span><span>▼</span></div><div class="folder-body"><div class="select-btn mode-item" id="btn-mode-2" onclick="confirmNewGame(2)">٢ نەفەری 👥</div><div class="select-btn mode-item" id="btn-mode-3" onclick="confirmNewGame(3)">٣ نەفەری 👤</div></div></div>
             
             <div class="folder">
                 <div class="folder-head" onclick="toggleF(this)"><span>🎯 ئامانج (گۆڕین)</span><span>▼</span></div>
                 <div class="folder-body">
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                         <div class="select-btn target-item" data-val="100" onclick="setTarget(100, this)">100</div>
                         <div class="select-btn target-item" data-val="101" onclick="setTarget(101, this)">101</div>
                         <div class="select-btn target-item" data-val="150" onclick="setTarget(150, this)">150</div>
                         <div class="select-btn target-item" data-val="200" onclick="setTarget(200, this)">200</div>
                     </div>
-                    <div style="margin-top: 25px; display: flex; justify-content: center; gap: 15px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.1);">
-                        <input type="number" id="custom-target" placeholder="ئامانج..." style="width: 120px; background: #000; border: 2px solid var(--neon); color: #fff; border-radius: 12px; padding: 12px; text-align: center; font-weight:900; font-size:1.3rem; outline:none; box-shadow: inset 0 0 10px rgba(57,255,20,0.2);">
-                        <button style="background: linear-gradient(45deg, var(--neon), #2bcf0d); color: #000; border-radius: 12px; border: none; padding: 0 25px; cursor: pointer; font-weight: 900; font-size:1.1rem; box-shadow: 0 5px 15px rgba(57,255,20,0.3);" onclick="setCustomTarget()">دانان</button>
+                    <div style="margin-top: 15px; display: flex; justify-content: center; gap: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 12px; border: 1px solid rgba(255,192,0,0.2);">
+                        <input type="number" id="custom-target" placeholder="ئامانج..." style="width: 90px; background: #000; border: 2px solid var(--gold); color: #fff; border-radius: 8px; padding: 8px; text-align: center; font-weight:900; font-size:1rem; outline:none;">
+                        <button class="btn-gold" style="border-radius: 8px; border: none; padding: 0 15px; cursor: pointer; font-weight: 900; font-size:1rem; margin-top:0;" onclick="setCustomTarget()">دانان</button>
                     </div>
                 </div>
             </div>
 
-            <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندەکان</span><span>▼</span></div>
-                <div class="folder-body theme-grid">
-                    <div class="theme-item" style="background-image:url('https://images.pexels.com/photos/1393972/pexels-photo-1393972.jpeg?fm=jpg')" onclick="changeTheme(this)"></div>
-                    <div class="theme-item" style="background-image:url('https://wallpapers.com/images/hd/ongoing-domino-game-mcerg8h2hzc7389q.jpg')" onclick="changeTheme(this)"></div>
-                    <div class="theme-item" style="background-image:url('https://images.unsplash.com/photo-1768839722117-da92d4acc9ef?fm=jpg')" onclick="changeTheme(this)"></div>
-                    <div class="theme-item" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/0/04/Dominoes.jpg')" onclick="changeTheme(this)"></div>
-                    <div class="theme-item" style="background-image:url('https://wallpapers.com/images/featured/domino-background-6e5fpukjpa8so1qw.jpg')" onclick="changeTheme(this)"></div>
-                    <div class="theme-item" style="background-image:url('https://static.vecteezy.com/system/resources/thumbnails/068/153/133/small/dominoes-on-a-black-background-photo.jpg')" onclick="changeTheme(this)"></div>
-                </div>
-            </div>
+            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندەکان</span><span>▼</span></div><div class="folder-body theme-grid">
+                <div class="theme-item" style="background-image:url('https://images.pexels.com/photos/1393972/pexels-photo-1393972.jpeg?fm=jpg')" onclick="changeTheme(this)"></div>
+                <div class="theme-item" style="background-image:url('https://wallpapers.com/images/hd/ongoing-domino-game-mcerg8h2hzc7389q.jpg')" onclick="changeTheme(this)"></div>
+                <div class="theme-item" style="background-image:url('https://images.unsplash.com/photo-1768839722117-da92d4acc9ef?fm=jpg')" onclick="changeTheme(this)"></div>
+                <div class="theme-item" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/0/04/Dominoes.jpg')" onclick="changeTheme(this)"></div>
+                <div class="theme-item" style="background-image:url('https://wallpapers.com/images/featured/domino-background-6e5fpukjpa8so1qw.jpg')" onclick="changeTheme(this)"></div>
+                <div class="theme-item" style="background-image:url('https://static.vecteezy.com/system/resources/thumbnails/068/153/133/small/dominoes-on-a-black-background-photo.jpg')" onclick="changeTheme(this)"></div>
+            </div></div>
 
-            <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>📜 مێژووی یارییەکان</span><span>▼</span></div>
-                <div class="folder-body">
-                    <div id="history-content"></div>
-                    <button class="btn btn-red" onclick="askClearHistory()" style="margin-top:25px;">سڕینەوەی گشتی 🗑️</button>
-                </div>
-            </div>
-
-            <button class="btn btn-red" onclick="closeSettings()" style="margin-top: 35px; font-size: 1.5rem; padding: 20px;">گەڕانەوە بۆ یاری ✖️</button>
+            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>📜 مێژووی یارییەکان</span><span>▼</span></div><div class="folder-body"><div id="history-content"></div><button class="btn btn-red" onclick="askClearHistory()" style="margin-top:20px;">سڕینەوەی گشتی 🗑️</button></div></div>
+            <button class="btn btn-red" onclick="closeSettings()" style="margin-top: 25px; font-size: 1.2rem; padding: 15px;">گەڕانەوە بۆ یاری ✖️</button>
         </div>
     </div>
 
     <div id="score-modal" class="modal">
-        <div class="modal-box">
-            <h2 style="font-size: 2.5rem; color: #fff; margin-bottom: 10px;">تۆمارکردن</h2>
-            <input type="number" id="points-input" style="width:100%; font-size:7rem; background:rgba(0,0,0,0.5); border:none; border-bottom:5px solid var(--neon); color:var(--neon); text-align:center; outline:none; margin:25px 0 40px 0; font-weight:900; border-radius: 20px 20px 0 0; padding: 20px 0; text-shadow: 0 0 20px var(--neon);" placeholder="0" inputmode="numeric">
-            <div style="display:flex; gap:20px;">
+        <div class="modal-box" style="border-color: var(--gold);">
+            <h2 style="font-size: 2rem; color: #fff; margin-bottom: 5px;">تۆمارکردن</h2>
+            <input type="number" id="points-input" style="width:100%; font-size:5.5rem; background:rgba(0,0,0,0.5); border:none; border-bottom:4px solid var(--gold); color:var(--gold); text-align:center; outline:none; margin:20px 0 30px 0; font-weight:900; border-radius: 15px 15px 0 0; padding: 15px 0; text-shadow: 0 0 15px var(--gold);" placeholder="0" inputmode="numeric">
+            <div style="display:flex; gap:15px;">
                 <button class="btn btn-red" onclick="closeModal('score-modal')">لابردن</button>
-                <button class="btn btn-neon" onclick="validateScore()">تۆمارکردن</button>
+                <button class="btn btn-gold" onclick="validateScore()">تۆمارکردن</button>
             </div>
         </div>
     </div>
 
     <div id="invalid-score-modal" class="modal">
-        <div class="modal-box" style="border-color: var(--red); background: radial-gradient(circle at center, #550000, #110000); box-shadow: 0 0 60px rgba(255, 51, 51, 0.8);">
-            <h1 style="font-size: 6rem; color: var(--red); margin-bottom: 15px; animation: pulseGlow 1s infinite alternate;">⚠️</h1>
-            <h2 style="font-size: 2.5rem; color: #fff; margin-bottom: 20px;">خاڵ نایاساییە!</h2>
-            <p id="invalid-subtext" style="font-size: 1.4rem; color: var(--red); margin-bottom: 30px; font-weight: 900; text-shadow: 0 0 10px rgba(255,51,51,0.5);"></p>
-            <button class="btn btn-red" style="font-size: 1.4rem; padding: 18px;" onclick="closeModal('invalid-score-modal'); setTimeout(()=>document.getElementById('points-input').focus(), 100);">تێگەیشتم</button>
+        <div class="modal-box" style="border-color: var(--red); background: radial-gradient(circle at center, #550000, #110000); box-shadow: 0 0 50px rgba(237, 41, 57, 0.6);">
+            <h1 style="font-size: 5rem; color: var(--red); margin-bottom: 10px;">⚠️</h1>
+            <h2 style="font-size: 2rem; color: #fff; margin-bottom: 15px;">خاڵ نایاساییە!</h2>
+            <p id="invalid-subtext" style="font-size: 1.2rem; color: var(--red); margin-bottom: 25px; font-weight: bold;"></p>
+            <button class="btn btn-red" style="font-size: 1.2rem; padding: 15px;" onclick="closeModal('invalid-score-modal'); setTimeout(()=>document.getElementById('points-input').focus(), 100);">تێگەیشتم</button>
         </div>
     </div>
 
     <div id="clear-history-modal" class="modal">
-        <div class="modal-box" style="border-color: var(--red); box-shadow: 0 0 50px rgba(255,51,51,0.6); background: linear-gradient(145deg, #2a0000, #0a0000);">
-            <h1 style="font-size: 5rem; color: var(--red); margin-bottom:15px;">🗑️</h1>
-            <h2 style="font-size: 2rem; color: #fff; margin-bottom: 30px; line-height: 1.5; font-weight: 900;">ئایا دڵنیایت لە سڕینەوەی هەموو مێژووەکان؟</h2>
-            <div style="display:flex; flex-direction: column; gap:15px;">
-                <button class="btn btn-red" style="font-size: 1.3rem;" onclick="executeClearHistory()">بەڵێ، هەمووی بسڕەوە</button>
+        <div class="modal-box" style="border-color: var(--red); box-shadow: 0 0 40px rgba(237,41,57,0.5); background: linear-gradient(145deg, #3a0000, #110000);">
+            <h1 style="font-size: 4rem; color: var(--red); margin-bottom:10px;">🗑️</h1>
+            <h2 style="font-size: 1.6rem; color: #fff; margin-bottom: 25px; line-height: 1.5; font-weight: 900;">ئایا دڵنیایت لە سڕینەوەی هەموو مێژووەکان؟</h2>
+            <div style="display:flex; flex-direction: column; gap:12px;">
+                <button class="btn btn-red" style="font-size: 1.1rem;" onclick="executeClearHistory()">بەڵێ، هەمووی بسڕەوە</button>
                 <button class="btn" style="background:rgba(255,255,255,0.1); color:#fff; border: 1px solid rgba(255,255,255,0.3);" onclick="closeModal('clear-history-modal')">نەخێر، پەشیمان بوومەوە</button>
             </div>
         </div>
     </div>
 
-    <div id="new-game-modal" class="modal">
-        <div class="modal-box" style="border-color: var(--main);">
-            <h1 style="font-size: 5.5rem; text-shadow: 0 0 20px var(--main);">🎮</h1>
-            <h2 style="font-size: 2.5rem; margin: 25px 0;">یاری نوێ دەستپێبکەین؟</h2>
-            <div style="display:flex; gap:20px;">
-                <button class="btn btn-neon" id="confirm-new-btn">بەڵێ</button>
-                <button class="btn btn-red" onclick="closeModal('new-game-modal')">نەخێر</button>
-            </div>
-        </div>
-    </div>
+    <div id="new-game-modal" class="modal"><div class="modal-box" style="border-color: var(--gold);"><h1 style="font-size: 4.5rem; text-shadow: 0 0 15px var(--gold);">🎮</h1><h2 style="font-size: 2rem; margin: 20px 0;">یاری نوێ دەستپێبکەین؟</h2><div style="display:flex; gap:15px;"><button class="btn btn-gold" id="confirm-new-btn">بەڵێ</button><button class="btn btn-red" onclick="closeModal('new-game-modal')">نەخێر</button></div></div></div>
     
     <div id="win-modal" class="modal">
-        <div class="modal-box" style="border-color: var(--main); box-shadow: 0 0 60px rgba(239, 191, 59, 0.6);">
-            <h1 style="font-size: 7rem; margin-bottom:10px; animation: bounce 1s infinite alternate;">🏆</h1>
-            
+        <div class="modal-box" style="border-color: var(--gold); box-shadow: 0 0 50px rgba(255, 192, 0, 0.5);">
+            <h1 style="font-size: 5.5rem; margin-bottom:5px; animation: bounce 1s infinite alternate;">🏆</h1>
             <div id="domino-stage" class="domino-stage"></div>
-
-            <h1 id="winner-display" style="color:var(--main); margin-bottom: 25px; font-size: 3.8rem; text-shadow: 0 0 25px var(--main); opacity: 0; transition: opacity 0.5s;"></h1>
-            <div id="win-stats" style="background: rgba(255,255,255,0.08); padding: 30px; border-radius: 25px; margin-bottom: 35px; border: 1px solid rgba(255,255,255,0.15); opacity: 0; transition: opacity 0.5s;"></div>
-            
-            <button class="btn btn-neon" id="win-reset-btn" style="font-size: 1.8rem; padding: 22px; opacity: 0; transition: opacity 0.5s;" onclick="resetCurrentGame()">دەستپێکردنەوەی یاری 🔄</button>
+            <h1 id="winner-display" style="color:var(--gold); margin-bottom: 20px; font-size: 3rem; text-shadow: 0 0 20px var(--gold); opacity: 0; transition: opacity 0.5s;"></h1>
+            <div id="win-stats" style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 20px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); opacity: 0; transition: opacity 0.5s;"></div>
+            <button class="btn btn-gold" id="win-reset-btn" style="font-size: 1.4rem; padding: 18px; opacity: 0; transition: opacity 0.5s;" onclick="resetCurrentGame()">دەستپێکردنەوەی یاری 🔄</button>
         </div>
     </div>
 
     <script>
-        // داتای سەرەکی یارییەکە
-        let players = {}; 
-        let curT = 1; 
-        let seconds = 0; 
-        let timerInterval; 
-        let isPaused = true; 
-        let targetScore = 101;
+        let players = {}; let curT = 1; let seconds = 0; let timerInterval; let isPaused = true; let targetScore = 101;
         let streakData = { player: null, count: 0 }; 
         let savedNames = JSON.parse(localStorage.getItem('domino_names') || '[]'); 
         let currentEditingPlayer = null;
-        let tickerMessages = ["بەخێربێیت بۆ خاڵ ژمێری دۆمینە گەشەپێدراوە لەلایەن:محەمەد حەیدەر - ئاوێزە"];
+        let tickerMessages = ["بەخێربێیت بۆ خاڵ ژمێری دۆمینە گەشەپێدراوە لەلایەن: محەمەد حەیدەر - ئاوێزە"];
         let allMatchesHistory = JSON.parse(localStorage.getItem('domino_match_history') || '[]');
 
-        /**
-         * لابردنی شاشەی دەستپێک دوای ٢ چرکە
-         */
-        setTimeout(() => { 
-            let splash = document.getElementById('splash-screen'); 
-            splash.style.opacity = '0'; 
-            setTimeout(() => { splash.style.display = 'none'; }, 600); 
-        }, 2000);
+        setTimeout(() => { let splash = document.getElementById('splash-screen'); splash.style.opacity = '0'; setTimeout(() => { splash.style.display = 'none'; }, 600); }, 2000);
 
-        /**
-         * کۆنترۆڵکردنی پەردەی تاریکی (Blur Iris) بۆ مۆداڵەکان
-         */
         function openModal(modalId) {
             document.getElementById(modalId).classList.add('active');
-            // کاتێک مۆداڵێک دەکرێتەوە، باکگراوندەکە تەڵخ و بچووک دەبێتەوە
             document.getElementById('app-content').classList.add('iris-active');
         }
 
         function closeModal(modalId) {
-            if(modalId) { 
-                document.getElementById(modalId).classList.remove('active'); 
-            } else { 
-                document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); 
-            }
+            if(modalId) { document.getElementById(modalId).classList.remove('active'); } 
+            else { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
             
-            // ئەگەر هیچ مۆداڵێک چالاک نەبوو، پەردەکە لابدە
             let anyActive = document.querySelector('.modal.active');
-            if(!anyActive) {
-                document.getElementById('app-content').classList.remove('iris-active');
-            }
-            
-            // پاککردنەوەی ژمارەی ناو مۆداڵی خاڵ
+            if(!anyActive) document.getElementById('app-content').classList.remove('iris-active');
             document.getElementById('points-input').value = '';
         }
 
         function openSettings() { loadHist(); openModal('settings-panel'); }
         function closeSettings() { closeModal('settings-panel'); }
 
-        /**
-         * نوێکردنەوەی ئاماری زیرەکی دەستکرد (AI) و مێژووی دوو یاریزان (P2P)
-         */
         function updateAIandP2P() {
             let keys = Object.keys(players);
             if(keys.length < 2) return;
-
             let scores = keys.map(k => players[k].score);
             let distances = scores.map(s => Math.max(1, targetScore - s)); 
             let totalDist = distances.reduce((a,b) => a+b, 0);
             let isAllZero = scores.every(s => s === 0);
             
-            if(isAllZero) {
-                document.getElementById('ai-prob').innerText = keys.length == 2 ? "٥٠٪ بەرامبەر ٥٠٪" : "یەکسانن";
-            } else if(keys.length == 2) {
+            if(isAllZero) { document.getElementById('ai-prob').innerText = keys.length == 2 ? "٥٠٪ بەرامبەر ٥٠٪" : "یەکسانن"; } 
+            else if(keys.length == 2) {
                 let p1Chance = Math.round((distances[1] / totalDist) * 100);
                 let p2Chance = Math.round((distances[0] / totalDist) * 100);
                 let leadName = players[1].score >= players[2].score ? players[1].name : players[2].name;
-                let leadChance = Math.max(p1Chance, p2Chance);
-                document.getElementById('ai-prob').innerText = `${leadChance}٪ بۆ ${leadName}`;
+                document.getElementById('ai-prob').innerText = `${Math.max(p1Chance, p2Chance)}٪ بۆ ${leadName}`;
             } else {
                 let minIdx = distances.indexOf(Math.min(...distances));
-                let leadName = players[keys[minIdx]].name;
                 let chance = Math.round(((totalDist - distances[minIdx]) / (totalDist * (keys.length-1))) * 100);
-                document.getElementById('ai-prob').innerText = `${chance}٪ بۆ ${leadName}`;
+                document.getElementById('ai-prob').innerText = `${chance}٪ بۆ ${players[keys[minIdx]].name}`;
             }
 
-            // مێژووی P2P
             if(keys.length == 2) {
                 let n1 = players[1].name; let n2 = players[2].name;
-                if(n1 == "تیمی 1" || n2 == "تیمی 2") {
-                    document.getElementById('p2p-stats').innerText = "داتای پێشوو نییە"; return;
-                }
+                if(n1 == "تیمی 1" || n2 == "تیمی 2") { document.getElementById('p2p-stats').innerText = "داتای پێشوو نییە"; return; }
                 let matches = allMatchesHistory.filter(m => (m.p1 == n1 && m.p2 == n2) || (m.p1 == n2 && m.p2 == n1));
                 if(matches.length > 0) {
-                    let w1 = matches.filter(m => m.winner == n1).length;
-                    let w2 = matches.filter(m => m.winner == n2).length;
+                    let w1 = matches.filter(m => m.winner == n1).length; let w2 = matches.filter(m => m.winner == n2).length;
                     document.getElementById('p2p-stats').innerText = `${n1} (${w1}) - (${w2}) ${n2}`;
-                } else {
-                    document.getElementById('p2p-stats').innerText = "یەکەم ڕووبەڕووبوونەوە";
-                }
-            } else {
-                document.getElementById('p2p-stats').innerText = "بۆ ٢ نەفەری کاردەکات";
-            }
+                } else { document.getElementById('p2p-stats').innerText = "یەکەم ڕووبەڕووبوونەوە"; }
+            } else { document.getElementById('p2p-stats').innerText = "بۆ ٢ نەفەری کاردەکات"; }
         }
 
-        /**
-         * مۆداڵی گۆڕینی ناو (Auto-Complete بە شێوەی ستوونی)
-         */
         function openNameModal(playerIndex) {
             if(!checkTimerActive()) return;
             currentEditingPlayer = playerIndex;
             document.getElementById('edit-name-input').value = players[playerIndex].name;
-            
             let chipsContainer = document.getElementById('saved-names-chips');
             chipsContainer.innerHTML = '';
-            // دانانی ناوەکان لەژێر یەکتر بە شێوەی بلۆک
-            savedNames.forEach(n => { 
-                chipsContainer.innerHTML += `<div class="saved-name-chip" onclick="document.getElementById('edit-name-input').value = '${n}'">${n}</div>`; 
-            });
-            
+            savedNames.forEach(n => { chipsContainer.innerHTML += `<div class="saved-name-chip" onclick="document.getElementById('edit-name-input').value = '${n}'">${n}</div>`; });
             openModal('name-modal');
             setTimeout(() => document.getElementById('edit-name-input').focus(), 100);
         }
@@ -938,166 +544,92 @@
             let newName = document.getElementById('edit-name-input').value.trim();
             if(newName && newName.length > 0) {
                 players[currentEditingPlayer].name = newName;
-                if(!savedNames.includes(newName)) { 
-                    savedNames.push(newName); 
-                    localStorage.setItem('domino_names', JSON.stringify(savedNames)); 
-                }
+                if(!savedNames.includes(newName)) { savedNames.push(newName); localStorage.setItem('domino_names', JSON.stringify(savedNames)); }
                 saveState(); render();
             }
             closeModal('name-modal');
         }
 
         function updateDatalist() { document.getElementById('saved-names-list').innerHTML = savedNames.map(n => `<option value="${n}">`).join(""); }
-        
-        /**
-         * شریتی هەواڵی خێرا
-         */
         function updateTickerDisplay() { document.getElementById('ticker-text').innerText = tickerMessages.join(" ✦ "); }
         function addTickerMessage(msg) { tickerMessages.unshift(msg); if(tickerMessages.length > 6) tickerMessages.pop(); updateTickerDisplay(); }
 
-        /**
-         * ئەنیمەیشنی کەوتنی دۆمینەکان لە کاتی بردنەوە
-         */
         function triggerDominoFallSequence() {
-            const stage = document.getElementById('domino-stage'); 
-            stage.innerHTML = ''; // پاککردنەوەی پێشوو
-            
-            // دروستکردنی ٧ بەردی دۆمینە
-            for(let i = 0; i < 7; i++) {
-                let piece = document.createElement('div'); 
-                piece.className = 'domino-piece';
-                piece.innerHTML += `<div class="dot" style="top: 12px; left: 14px;"></div>`;
-                if(i % 2 == 0) piece.innerHTML += `<div class="dot" style="bottom: 12px; left: 14px;"></div>`;
-                if(i % 3 == 0) piece.innerHTML += `<div class="dot" style="bottom: 25px; left: 14px;"></div>`;
+            const stage = document.getElementById('domino-stage'); stage.innerHTML = '';
+            for(let i = 0; i < 6; i++) {
+                let piece = document.createElement('div'); piece.className = 'domino-piece';
+                piece.innerHTML += `<div class="dot" style="top: 10px; left: 12px;"></div>`;
+                if(i % 2 == 0) piece.innerHTML += `<div class="dot" style="bottom: 10px; left: 12px;"></div>`;
                 stage.appendChild(piece);
             }
-            
             const pieces = document.querySelectorAll('.domino-piece');
-            pieces.forEach((p, index) => { 
-                setTimeout(() => { p.classList.add('falling'); }, index * 120); 
-            });
-            
-            // دوای کەوتنی هەموویان، تێکستەکان دەردەکەون و یاری ئاگرین دەست پێ دەکات
+            pieces.forEach((p, index) => { setTimeout(() => { p.classList.add('falling'); }, index * 100); });
             setTimeout(() => {
                 document.getElementById('winner-display').style.opacity = '1';
                 document.getElementById('win-stats').style.opacity = '1';
                 document.getElementById('win-reset-btn').style.opacity = '1';
                 fireWorksAnimation(); 
-            }, pieces.length * 120 + 500);
+            }, pieces.length * 100 + 400);
         }
 
-        /**
-         * ئەنیمەیشنی یاری ئاگرین
-         */
         function fireWorksAnimation() {
-            var duration = 4 * 1000; var animationEnd = Date.now() + duration; var defaults = { startVelocity: 35, spread: 360, ticks: 80, zIndex: 100000 };
+            var duration = 3 * 1000; var animationEnd = Date.now() + duration; var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100000 };
             function randomInRange(min, max) { return Math.random() * (max - min) + min; }
             var interval = setInterval(function() {
                 var timeLeft = animationEnd - Date.now();
                 if (timeLeft <= 0) return clearInterval(interval);
-                var particleCount = 60 * (timeLeft / duration);
+                var particleCount = 50 * (timeLeft / duration);
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
             }, 250);
         }
 
-        /**
-         * ئەنیمەیشنی فڕینی ژمارەکان لەسەر کارت
-         */
         function createFloatingNumber(playerIndex, value) {
             const scoreBox = document.getElementById(`score-box-${playerIndex}`);
             if(!scoreBox) return;
             const rect = scoreBox.getBoundingClientRect();
             const floatDiv = document.createElement('div');
-            floatDiv.className = 'floating-score';
-            floatDiv.innerText = `+${value}`;
-            floatDiv.style.left = `${rect.left + (rect.width / 2) - 30}px`;
-            floatDiv.style.top = `${rect.top - 20}px`;
+            floatDiv.className = 'floating-score'; floatDiv.innerText = `+${value}`;
+            floatDiv.style.left = `${rect.left + (rect.width / 2) - 25}px`; floatDiv.style.top = `${rect.top - 15}px`;
             document.body.appendChild(floatDiv);
-            
-            // سڕینەوەی دیڤەکە دوای تەواوبوونی ئەنیمەیشن
             setTimeout(() => { floatDiv.remove(); }, 1500);
         }
 
-        /**
-         * سیستەمی کاتژمێر و گۆڕینی ڕەنگەکان
-         */
-        function startTimer() { 
-            clearInterval(timerInterval); 
-            timerInterval = setInterval(() => { 
-                if (!isPaused) { seconds++; updateTimerUI(); localStorage.setItem('domino_s', seconds); } 
-            }, 1000); 
-        }
+        function startTimer() { clearInterval(timerInterval); timerInterval = setInterval(() => { if (!isPaused) { seconds++; updateTimerUI(); localStorage.setItem('domino_s', seconds); } }, 1000); }
         
         function updateTimerUI() { 
             let m = Math.floor(seconds / 60); let s = seconds % 60; 
-            let timerEl = document.getElementById('game-timer'); 
-            let wrapperEl = document.getElementById('timer-container');
+            let timerEl = document.getElementById('game-timer'); let wrapperEl = document.getElementById('timer-container');
             timerEl.innerText = (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s); 
             
-            // گۆڕینی ڕەنگەکان
-            let color = '#39ff14'; 
-            if (m === 1) color = '#00ffff'; else if (m === 2) color = '#007aff'; else if (m === 3) color = '#a200ff'; else if (m === 4) color = '#ff00ff'; else if (m === 5) color = '#ff0080'; else if (m === 6) color = '#ff8c00'; else if (m === 7) color = '#ff4500'; else if (m === 8) color = '#ff0000'; else if (m === 9) color = '#b30000'; else if (m >= 10) color = '#ffffff'; 
+            let color = '#FFC000'; // زەردی ئاڵا
+            if (m >= 1 && m < 5) color = '#F2994A'; // پرتەقاڵی
+            else if (m >= 5) color = '#ED2939'; // سووری ئاڵا
             
-            timerEl.style.color = color; timerEl.style.textShadow = `0 0 15px ${color}`;
-            if(!isPaused) { wrapperEl.style.borderColor = color; wrapperEl.style.boxShadow = `0 0 20px ${color}`; }
+            timerEl.style.color = color; timerEl.style.textShadow = `0 0 10px ${color}`;
+            if(!isPaused) { wrapperEl.style.borderColor = color; wrapperEl.style.boxShadow = `0 0 15px ${color}`; }
         }
         
         function toggleTimer() { 
-            isPaused = !isPaused; 
-            document.getElementById('timer-icon').innerText = isPaused ? "▶️" : "⏸️";
+            isPaused = !isPaused; document.getElementById('timer-icon').innerText = isPaused ? "▶️" : "⏸️";
             let wrapperEl = document.getElementById('timer-container');
-            if (isPaused) { 
-                wrapperEl.parentElement.classList.add('paused'); 
-                wrapperEl.style.borderColor = 'var(--red)'; wrapperEl.style.boxShadow = '0 0 30px var(--red)'; 
-            } else { 
-                wrapperEl.parentElement.classList.remove('paused'); 
-                updateTimerUI(); 
-            }
+            if (isPaused) { wrapperEl.parentElement.classList.add('paused'); wrapperEl.style.borderColor = 'var(--red)'; wrapperEl.style.boxShadow = '0 0 20px var(--red)'; } 
+            else { wrapperEl.parentElement.classList.remove('paused'); updateTimerUI(); }
         }
 
         function checkTimerActive() {
             if (isPaused) { 
                 let msg = document.getElementById('alert-msg'); msg.style.display = 'block'; 
-                setTimeout(() => { msg.style.display = 'none'; }, 2500); 
-                return false; 
-            } 
-            return true;
+                setTimeout(() => { msg.style.display = 'none'; }, 2000); return false; 
+            } return true;
         }
 
-        /**
-         * دانانی ئامانجی یاری
-         */
-        function setTarget(v, el) { 
-            targetScore = parseInt(v); localStorage.setItem('domino_target', v); 
-            document.querySelectorAll('.target-item').forEach(i => i.classList.remove('active')); 
-            if(el) el.classList.add('active'); 
-            render(); 
-        }
+        function setTarget(v, el) { targetScore = parseInt(v); localStorage.setItem('domino_target', v); document.querySelectorAll('.target-item').forEach(i => i.classList.remove('active')); if(el) el.classList.add('active'); render(); }
+        function setCustomTarget() { let val = document.getElementById('custom-target').value; if(val && parseInt(val) > 0) { setTarget(parseInt(val), null); document.getElementById('custom-target').value = ''; addTickerMessage(`ئامانجی یاری گۆڕدرا بۆ ${val} 🎯`); } }
+        function changeTheme(el) { let url = el.style.backgroundImage; document.body.style.backgroundImage = url; localStorage.setItem('domino_bg', url); document.querySelectorAll('.theme-item').forEach(i => i.classList.remove('active')); el.classList.add('active'); }
 
-        function setCustomTarget() { 
-            let val = document.getElementById('custom-target').value; 
-            if(val && parseInt(val) > 0) { 
-                setTarget(parseInt(val), null); 
-                document.getElementById('custom-target').value = ''; 
-                addTickerMessage(`ئامانجی یاری گۆڕدرا بۆ ${val} 🎯`);
-            } 
-        }
-
-        function changeTheme(el) { 
-            let url = el.style.backgroundImage; document.body.style.backgroundImage = url; 
-            localStorage.setItem('domino_bg', url); 
-            document.querySelectorAll('.theme-item').forEach(i => i.classList.remove('active')); 
-            el.classList.add('active'); 
-        }
-
-        /**
-         * ڕێکخستنی جۆری یاری و دروستکردنی یاریزانان
-         */
         function setMode(n, isNew = false) {
-            targetScore = parseInt(localStorage.getItem('domino_target')) || 101; 
-            streakData = { player: null, count: 0 };
-            
+            targetScore = parseInt(localStorage.getItem('domino_target')) || 101; streakData = { player: null, count: 0 };
             if(isNew) { 
                 players = {}; seconds = 0; localStorage.setItem('domino_s', 0); 
                 for(let i=1; i<=n; i++) { players[i] = { name: (n==2 ? `تیمی ${i}` : `یاریزان ${i}`), score: 0, history: [] }; } 
@@ -1106,31 +638,18 @@
                 players = JSON.parse(localStorage.getItem('domino_g')) || {1:{name:"تیمی 1",score:0,history:[]}, 2:{name:"تیمی 2",score:0,history:[]}}; 
                 seconds = parseInt(localStorage.getItem('domino_s')) || 0; 
                 streakData = JSON.parse(localStorage.getItem('domino_streak')) || { player: null, count: 0 }; 
-                
-                // ئەگەر هیچ خاڵێک نەبوو، کاتژمێرەکە سفر دەکەینەوە
-                let isFresh = true; 
-                for(let i in players) { if(players[i].score > 0 || players[i].history.length > 0) isFresh = false; }
+                let isFresh = true; for(let i in players) { if(players[i].score > 0 || players[i].history.length > 0) isFresh = false; }
                 if(isFresh) { seconds = 0; localStorage.setItem('domino_s', 0); }
             }
-            
             document.getElementById('main-grid').className = (Object.keys(players).length == 3 ? 'game-grid grid-3' : 'game-grid');
             updateTimerUI(); startTimer(); render();
-            
-            setTimeout(() => { 
-                document.querySelectorAll('.mode-item').forEach(b => { b.classList.toggle('active', b.id == `btn-mode-${Object.keys(players).length}`); }); 
-                document.querySelectorAll('.target-item').forEach(b => { b.classList.toggle('active', b.getAttribute('data-val') == targetScore); }); 
-            }, 100);
+            setTimeout(() => { document.querySelectorAll('.mode-item').forEach(b => { b.classList.toggle('active', b.id == `btn-mode-${Object.keys(players).length}`); }); document.querySelectorAll('.target-item').forEach(b => { b.classList.toggle('active', b.getAttribute('data-val') == targetScore); }); }, 100);
         }
 
-        /**
-         * دروستکردنی ڕووکاری کارتەکان و مێژوو
-         */
         function render() {
-            const grid = document.getElementById('main-grid'); 
-            const historyContainer = document.getElementById('unified-history');
-            grid.innerHTML = ""; 
+            const grid = document.getElementById('main-grid'); const historyContainer = document.getElementById('unified-history');
+            grid.innerHTML = ""; let historyHTML = `<div class="history-title-bar">تۆماری خاڵەکان (ئامانج: ${targetScore})</div>`;
             
-            let historyHTML = `<div class="history-title-bar">تۆماری خاڵەکان (ئامانج: ${targetScore})</div>`;
             let pCount = Object.keys(players).length;
             historyHTML += `<div class="history-grid" style="grid-template-columns: repeat(${pCount}, 1fr);">`;
             
@@ -1139,17 +658,10 @@
                 let isStreak = (streakData.player == i && streakData.count >= 3);
                 let cardClass = isStreak ? "card streak-fire" : "card";
                 
-                // سیستەمی ٣ نەفەری (١ ڕاست، ٣ ناوەڕاست، ٢ چەپ)
-                let orderStyle = ""; 
-                if (pCount === 3) { 
-                    if (i == 1) orderStyle = "order: 1;"; 
-                    if (i == 3) orderStyle = "order: 2;"; 
-                    if (i == 2) orderStyle = "order: 3;"; 
-                }
+                let orderStyle = ""; if (pCount === 3) { if (i == 1) orderStyle = "order: 1;"; if (i == 3) orderStyle = "order: 2;"; if (i == 2) orderStyle = "order: 3;"; }
 
-                // دروستکردنی کارتەکان
                 grid.innerHTML += `
-                <div class="${cardClass}" style="${orderStyle} animation-delay: ${i * 0.15}s;">
+                <div class="${cardClass}" style="${orderStyle} animation-delay: ${i * 0.1}s;">
                     <div class="streak-badge">🔥 لەسەریەکە!</div>
                     <div class="player-input" onclick="openNameModal(${i})">${players[i].name}</div>
                     
@@ -1162,14 +674,13 @@
                     <div class="rem-text">ماوە: ${targetScore - players[i].score}</div>
                 </div>`;
                 
-                // دروستکردنی مێژووی خوارەوە بۆ هەر یاریزانێک
                 historyHTML += `<div class="history-column" style="${orderStyle}">`;
                 players[i].history.slice().reverse().forEach((pt, j) => {
                     let revIdx = players[i].history.length - 1 - j;
                     historyHTML += `
                     <div class="hist-item-wrapper" id="hist-item-${i}-${revIdx}">
                         <div class="hist-item">
-                            <span class="del-btn" onclick="shatterAndRemove(${i}, ${revIdx}, ${pt})">✖</span>
+                            <span class="del-btn" onclick="smoothRemove(${i}, ${revIdx}, ${pt})">✖</span>
                             <span class="hist-val">${pt}</span>
                         </div>
                     </div>`;
@@ -1180,83 +691,38 @@
             updateAIandP2P(); 
         }
 
-        /**
-         * ئەنیمەیشنی درزبردن و پارچەبوونی شووشە لە کاتی سڕینەوە
-         */
-        function shatterAndRemove(playerIndex, historyIndex, points) {
+        // ئەنیمەیشنی توانەوە و داخرانی نەرم (Smooth Collapse) بۆ کاتی سڕینەوەی خاڵ
+        function smoothRemove(playerIndex, historyIndex, points) {
             if(!checkTimerActive()) return;
 
             const itemWrapper = document.getElementById(`hist-item-${playerIndex}-${historyIndex}`);
-            const item = itemWrapper.querySelector('.hist-item');
             
-            // هەنگاوی یەکەم: درز بردن
-            item.classList.add('cracked');
-
-            // هەنگاوی دووەم: پارچەپارچەبوون
+            // دروستکردنی ئەنیمەیشنی داخستن
+            itemWrapper.style.maxHeight = itemWrapper.offsetHeight + 'px';
+            itemWrapper.style.transition = 'all 0.4s ease-out';
+            
+            // دواخستنێکی زۆر بچووک بۆ ئەوەی بڕوانێت
             setTimeout(() => {
-                const rect = item.getBoundingClientRect();
-                item.style.visibility = 'hidden'; // شاردنەوەی ئەسڵییەکە
+                itemWrapper.classList.add('collapsing');
+                itemWrapper.style.opacity = '0';
+                itemWrapper.style.transform = 'scale(0.9) translateY(-10px)';
+                itemWrapper.style.maxHeight = '0';
+            }, 10);
 
-                const numShards = 12; // ژمارەی پارچەکان
-                for(let i=0; i<numShards; i++) {
-                    let shard = document.createElement('div');
-                    shard.className = 'shard';
-                    let w = Math.random() * 25 + 10; 
-                    let h = Math.random() * 15 + 5;
-                    shard.style.width = `${w}px`; 
-                    shard.style.height = `${h}px`;
-                    shard.style.left = `${Math.random() * rect.width}px`; 
-                    shard.style.top = `${Math.random() * rect.height}px`;
-                    itemWrapper.appendChild(shard);
-
-                    // فیزیا بۆ کەوتنە خوارەوە
-                    let angle = Math.random() * Math.PI * 2; 
-                    let velocity = Math.random() * 20 + 5;
-                    let vx = Math.cos(angle) * velocity; 
-                    let vy = Math.sin(angle) * velocity - 15; 
-                    let rot = Math.random() * 360; 
-                    let rotSpeed = Math.random() * 30 - 15;
-
-                    let start = null;
-                    function animateShard(timestamp) {
-                        if (!start) start = timestamp;
-                        let progress = timestamp - start;
-                        vy += 1.2; // هێزی کێشکردن (Gravity)
-                        let px = parseFloat(shard.style.left) + vx; 
-                        let py = parseFloat(shard.style.top) + vy;
-                        rot += rotSpeed;
-                        
-                        shard.style.left = `${px}px`; 
-                        shard.style.top = `${py}px`;
-                        shard.style.transform = `rotate(${rot}deg)`;
-                        shard.style.opacity = 1 - (progress / 500);
-                        
-                        if (progress < 500) requestAnimationFrame(animateShard);
-                    }
-                    requestAnimationFrame(animateShard);
-                }
-
-                // سڕینەوە لە داتا پاش تەواوبوونی ئەنیمەیشن
-                setTimeout(() => {
-                    players[playerIndex].score -= points; 
-                    players[playerIndex].history.splice(historyIndex, 1); 
-                    streakData = { player: null, count: 0 }; 
-                    localStorage.setItem('domino_streak', JSON.stringify(streakData));
-                    addTickerMessage(`خاڵێکی ${players[playerIndex].name} سڕایەوە ⚠️`);
-                    saveState(); render();
-                }, 500);
-
-            }, 350); // دواکەوتنی درزەکە بۆ ٣٥٠ مللی چرکە
+            // دوای تەواوبوونی ئەنیمەیشنەکە (٤٠٠ مللی چرکە)، داتاکە بسڕەوە
+            setTimeout(() => {
+                players[playerIndex].score -= points; 
+                players[playerIndex].history.splice(historyIndex, 1); 
+                streakData = { player: null, count: 0 }; 
+                localStorage.setItem('domino_streak', JSON.stringify(streakData));
+                addTickerMessage(`خاڵێکی ${players[playerIndex].name} سڕایەوە ⚠️`);
+                saveState(); render();
+            }, 400);
         }
 
-        /**
-         * تۆمارکردنی خاڵ و پشکنینی بردنەوە و نایاسایی
-         */
         function validateScore() { 
-            let inputEl = document.getElementById('points-input'); 
-            let v = parseInt(inputEl.value) || 0; 
+            let inputEl = document.getElementById('points-input'); let v = parseInt(inputEl.value) || 0; 
             
-            // ئەگەر خاڵەکە لە ئامانج زیاتر بوو (خاڵی نایاسایی - بێ تەڵخبوون)
             if(v >= targetScore) { 
                 closeModal('score-modal'); 
                 document.getElementById('invalid-subtext').innerText = `${v} خاڵ نایاساییە! (ئامانج ${targetScore}یە)`;
@@ -1268,8 +734,6 @@
             localStorage.setItem('domino_streak', JSON.stringify(streakData));
 
             players[curT].score += v; players[curT].history.push(v);
-            
-            // ئەنیمەیشنی فڕینی ژمارەکان لێرە کار پێ دەکەین
             if (v > 0) createFloatingNumber(curT, v);
 
             if (v >= 30) addTickerMessage(`ئۆۆۆ! ${players[curT].name} خاڵێکی زۆر گەورەی هێنا (${v}) 🚀`); 
@@ -1277,43 +741,28 @@
             
             saveState(); render(); closeModal('score-modal');
             
-            // ئەگەر گەیشتە ئامانج و بردیەوە
             if(players[curT].score >= targetScore) { 
-                isPaused = true; clearInterval(timerInterval); 
-                document.getElementById('timer-icon').innerText = "▶️"; 
-                document.getElementById('timer-container').parentElement.classList.add('paused');
+                isPaused = true; clearInterval(timerInterval); document.getElementById('timer-icon').innerText = "▶️"; document.getElementById('timer-container').parentElement.classList.add('paused');
+                let sortedScores = Object.values(players).map(p => p.score).sort((a,b) => b - a); let diff = sortedScores[0] - (sortedScores.length > 1 ? sortedScores[1] : 0); let finalTime = document.getElementById('game-timer').innerText;
                 
-                let sortedScores = Object.values(players).map(p => p.score).sort((a,b) => b - a); 
-                let diff = sortedScores[0] - (sortedScores.length > 1 ? sortedScores[1] : 0); 
-                let finalTime = document.getElementById('game-timer').innerText;
-                
-                // شاردنەوەی سەرەتا بۆ ئەوەی دۆمینەکە دەربکەوێت
                 document.getElementById('winner-display').style.opacity = '0';
                 document.getElementById('win-stats').style.opacity = '0';
                 document.getElementById('win-reset-btn').style.opacity = '0';
                 
                 addTickerMessage(`پیرۆزە! ${players[curT].name} یارییەکەی بردەوە 🏆`);
                 document.getElementById('winner-display').innerText = "👑 " + players[curT].name; 
-                document.getElementById('win-stats').innerHTML = `<div style="font-size:1.8rem; color:#ccc; margin-bottom: 15px;">کاتی یاری: <span style="color:var(--neon); font-weight:bold;">${finalTime}</span></div><div style="font-size:1.8rem; color:#ccc;">بە جیاوازی: <span style="color:var(--red); font-weight:bold;">${diff} خاڵ</span></div>`;
-                
+                document.getElementById('win-stats').innerHTML = `<div style="font-size:1.4rem; color:#ccc; margin-bottom: 12px;">کاتی یاری: <span style="color:var(--gold); font-weight:bold;">${finalTime}</span></div><div style="font-size:1.4rem; color:#ccc;">بە جیاوازی: <span style="color:var(--red); font-weight:bold;">${diff} خاڵ</span></div>`;
                 saveHist(players[curT].name, finalTime, diff); 
                 openModal('win-modal');
-                
-                // دەستپێکردنی ئەنیمەیشنی کەوتنی دۆمینەکان پاش کەمێک
-                setTimeout(triggerDominoFallSequence, 400);
+                setTimeout(triggerDominoFallSequence, 300);
             }
         }
 
-        // ==========================================
-        // پاشەکەوتکردن و مێژووی گشتی
-        // ==========================================
         function saveState() { localStorage.setItem('domino_g', JSON.stringify(players)); }
         
         function saveHist(winner, timePlayed, diff) { 
-            let h = JSON.parse(localStorage.getItem('domino_h') || '{}'); 
-            let d = new Date().toLocaleDateString('ku-IQ'); 
-            if(!h[d]) h[d] = []; 
-            h[d].unshift({ winner: winner, time: new Date().toLocaleTimeString('ku-IQ'), dur: timePlayed, gap: diff }); 
+            let h = JSON.parse(localStorage.getItem('domino_h') || '{}'); let d = new Date().toLocaleDateString('ku-IQ'); 
+            if(!h[d]) h[d] = []; h[d].unshift({ winner: winner, time: new Date().toLocaleTimeString('ku-IQ'), dur: timePlayed, gap: diff }); 
             localStorage.setItem('domino_h', JSON.stringify(h)); 
 
             if(Object.keys(players).length == 2) {
@@ -1323,83 +772,24 @@
         }
 
         function loadHist() { 
-            let h = JSON.parse(localStorage.getItem('domino_h') || '{}'); 
-            let c = document.getElementById('history-content'); 
-            c.innerHTML = ""; 
-            let totalGamesCount = 0; 
-            
-            for(let d in h) { 
-                totalGamesCount += h[d].length; 
-                c.innerHTML += `
-                <div class="folder">
-                    <div class="folder-head" onclick="toggleF(this)">📅 ${d} <span>▼</span></div>
-                    <div class="folder-body">
-                        ${h[d].map(g => `
-                        <div style="border-bottom:1px solid rgba(255,255,255,0.1); padding:15px; display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px; background: rgba(0,0,0,0.5); border-radius: 12px;">
-                            <div style="text-align:right;">
-                                <span style="font-weight:900; color:#fff; font-size:1.4rem;">👑 ${g.winner}</span><br>
-                                <span style="color:var(--red); font-size:1.1rem; font-weight:bold;">بە جیاوازی: ${g.gap} خاڵ</span>
-                            </div>
-                            <span style="color:var(--neon); font-size:1.2rem; font-weight:bold; background: rgba(57,255,20,0.1); padding: 8px 15px; border-radius: 12px; border: 1px solid rgba(57,255,20,0.2);">⏱️ ${g.dur}</span>
-                        </div>`).join("")}
-                    </div>
-                </div>`; 
-            } 
+            let h = JSON.parse(localStorage.getItem('domino_h') || '{}'); let c = document.getElementById('history-content'); c.innerHTML = ""; let totalGamesCount = 0; 
+            for(let d in h) { totalGamesCount += h[d].length; c.innerHTML += `<div class="folder"><div class="folder-head" onclick="toggleF(this)">📅 ${d} <span>▼</span></div><div class="folder-body">${h[d].map(g => `<div style="border-bottom:1px solid rgba(255,192,0,0.2); padding:12px; display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px; background: rgba(0,0,0,0.5); border-radius: 10px;"><div style="text-align:right;"><span style="font-weight:900; color:#fff; font-size:1.2rem;">👑 ${g.winner}</span><br><span style="color:var(--red); font-size:1rem; font-weight:bold;">بە جیاوازی: ${g.gap} خاڵ</span></div><span style="color:var(--gold); font-size:1.1rem; font-weight:bold; background: rgba(255,192,0,0.1); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255,192,0,0.3);">⏱️ ${g.dur}</span></div>`).join("")}</div></div>`; } 
             document.getElementById('dash-total-games').innerText = totalGamesCount; 
         }
         
-        function resetCurrentGame() { 
-            let lastMode = Object.keys(players).length; 
-            localStorage.removeItem('domino_g'); 
-            localStorage.removeItem('domino_s'); 
-            localStorage.removeItem('domino_streak'); 
-            seconds = 0; 
-            setMode(lastMode, true); 
-            closeModal('win-modal'); 
-        }
-
-        function confirmNewGame(n) { 
-            openModal('new-game-modal'); 
-            document.getElementById('confirm-new-btn').onclick = () => { 
-                setMode(n, true); 
-                closeModal('new-game-modal'); 
-                closeSettings(); 
-            }; 
-        }
-
-        function toggleF(h) { 
-            let b = h.nextElementSibling; 
-            b.style.display = (b.style.display === 'block') ? 'none' : 'block'; 
-        }
+        function resetCurrentGame() { let lastMode = Object.keys(players).length; localStorage.removeItem('domino_g'); localStorage.removeItem('domino_s'); localStorage.removeItem('domino_streak'); seconds = 0; setMode(lastMode, true); closeModal('win-modal'); }
+        function confirmNewGame(n) { openModal('new-game-modal'); document.getElementById('confirm-new-btn').onclick = () => { setMode(n, true); closeModal('new-game-modal'); closeSettings(); }; }
+        function toggleF(h) { let b = h.nextElementSibling; b.style.display = (b.style.display === 'block') ? 'none' : 'block'; }
         
-        function askClearHistory() { 
-            openModal('clear-history-modal'); 
-        }
-        
+        function askClearHistory() { openModal('clear-history-modal'); }
         function executeClearHistory() {
-            localStorage.removeItem('domino_h'); 
-            localStorage.removeItem('domino_match_history'); 
-            allMatchesHistory = []; 
-            loadHist(); 
-            updateAIandP2P();
+            localStorage.removeItem('domino_h'); localStorage.removeItem('domino_match_history'); allMatchesHistory = []; loadHist(); updateAIandP2P();
             closeModal('clear-history-modal');
         }
 
-        // ==========================================
-        // کاتی کردنەوەی پەڕەکە
-        // ==========================================
         window.onload = () => { 
-            let bg = localStorage.getItem('domino_bg'); 
-            if(bg) { 
-                document.body.style.backgroundImage = bg; 
-                setTimeout(() => { 
-                    document.querySelectorAll('.theme-item').forEach(i => { 
-                        if(i.style.backgroundImage === bg) i.classList.add('active'); 
-                    }); 
-                }, 100); 
-            }
-            updateDatalist(); 
-            updateTickerDisplay(); 
+            let bg = localStorage.getItem('domino_bg'); if(bg) { document.body.style.backgroundImage = bg; setTimeout(() => { document.querySelectorAll('.theme-item').forEach(i => { if(i.style.backgroundImage === bg) i.classList.add('active'); }); }, 100); }
+            updateDatalist(); updateTickerDisplay(); 
             setMode(localStorage.getItem('domino_g') ? Object.keys(JSON.parse(localStorage.getItem('domino_g'))).length : 2); 
             document.getElementById('timer-container').parentElement.classList.add('paused');
         };
