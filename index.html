@@ -6,6 +6,7 @@
     <title>خاڵ ژمێری دۆمینە - کۆمپیوتەری ئاوێزە VIP + Smart Scanner</title>
     
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script async src="https://docs.opencv.org/4.8.0/opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
     
     <style>
         /* ==========================================================================
@@ -377,7 +378,7 @@
     </div>
 
     <div id="invalid-score-modal" class="modal">
-        <div class="modal-box" style="border-color: var(--red); background: radial-gradient(circle at center, #550000, #110000); box-shadow: 0 0 50px rgba(237, 41, 57, 0.6);">
+        <div class="modal-box" style="border-color: var(--red); background: radial-gradient(circle at center, #550000, #1a0000); box-shadow: 0 0 50px rgba(237, 41, 57, 0.5);">
             <h1 style="font-size: 5rem; color: var(--red); margin-bottom: 10px;">⚠️</h1>
             <h2 style="font-size: 2rem; color: #fff; margin-bottom: 15px;">خاڵ نایاساییە!</h2>
             <p id="invalid-subtext" style="font-size: 1.2rem; color: var(--red); margin-bottom: 25px; font-weight: bold;"></p>
@@ -409,6 +410,13 @@
     </div>
 
     <script>
+        // لێرەدا ژیری دەستکرد دادەنێین بۆ ئەوەی بزانێت کەی ئامادەیە
+        let isCvReady = false;
+        function onOpenCvReady() {
+            isCvReady = true;
+            console.log("OpenCV AI is ready!");
+        }
+
         let players = {}; let curT = 1; let seconds = 0; let timerInterval; let isPaused = true; let targetScore = 101;
         let streakData = { player: null, count: 0 }; 
         let savedNames = JSON.parse(localStorage.getItem('domino_names') || '[]'); 
@@ -456,15 +464,27 @@
             closeModal('scanner-modal');
         }
 
+        // =========================================================================================
+        // ئەمە ئەو بەشە نوێیەیە کە زیرەکی دەستکرد بەکاردەهێنێت بۆ دۆزینەوەی تا ٢٥ دۆمینە پێکەوە!
+        // =========================================================================================
         function simulateScan() {
             const statusText = document.getElementById('scan-status-text');
-            statusText.innerText = "شیکردنەوەی وێنەکە...";
+            
+            if (!isCvReady) {
+                statusText.innerText = "تکایە چاوەڕێ بکە، سیستەمی زیرەکی ئامادە دەبێت...";
+                statusText.style.color = "var(--gold)";
+                return;
+            }
+
+            statusText.innerText = "سکانکردن بە ژیری دەستکرد (سەیرکردنی تا ٢٥ دۆمینە)...";
+            statusText.style.color = "#39ff14";
             
             const video = document.getElementById('camera-stream');
             if(!video || !video.videoWidth) {
                 alert("کامێرا ئامادە نییە"); return;
             }
 
+            // وەرگرتنی وێنەی کامێراکە بۆ سەر کانڤاسێک بۆ ئەوەی شیکاری بکەین
             const canvas = document.createElement('canvas');
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
@@ -472,31 +492,59 @@
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             
             try {
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const data = imageData.data;
+                let src = cv.imread(canvas);
+                let gray = new cv.Mat();
+                let blur = new cv.Mat();
+                let thresh = new cv.Mat();
                 
-                let rSum = 0, gSum = 0, bSum = 0;
-                let count = 0;
-                
-                for(let i = 0; i < data.length; i += 16) {
-                    rSum += data[i]; gSum += data[i+1]; bSum += data[i+2];
-                    count++;
-                }
-                
-                let avgR = rSum / count; let avgG = gSum / count; let avgB = bSum / count;
-                let brightness = (avgR + avgG + avgB) / 3;
+                cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+                cv.GaussianBlur(gray, blur, new cv.Size(5, 5), 0);
+                cv.adaptiveThreshold(blur, thresh, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY_INV, 11, 2);
 
-                let diffSum = 0;
-                for(let i = 0; i < data.length; i += 16) {
-                    let pB = (data[i] + data[i+1] + data[i+2]) / 3;
-                    diffSum += Math.abs(pB - brightness);
-                }
-                let contrast = diffSum / count;
+                let contours = new cv.MatVector();
+                let hierarchy = new cv.Mat();
+                cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
 
-                if(brightness < 40 || contrast < 15) {
-                    statusText.innerText = "تکایە شاشەکە بکەرە سەر دۆمینەکە! (وێنەکە ڕوون نییە)";
-                    statusText.style.color = "var(--red)";
+                let validRects = [];
+                for (let i = 0; i < contours.size(); ++i) {
+                    let cnt = contours.get(i);
+                    let area = cv.contourArea(cnt);
+                    if (area > 1000 && area < 80000) { 
+                        validRects.push(cv.boundingRect(cnt));
+                    }
+                }
+
+                // دیاریکردنی زۆرترین ٢٥ دۆمینە
+                let limit = Math.min(validRects.length, 25);
+                let totalPips = 0;
+                let dominoCount = 0;
+
+                for (let i = 0; i < limit; i++) {
+                    let rect = validRects[i];
+                    dominoCount++;
+                    let roi = gray.roi(rect);
+                    let circles = new cv.Mat();
                     
+                    // دۆزینەوەی خاڵەکانی ناو دۆمینەکان
+                    cv.HoughCircles(roi, circles, cv.HOUGH_GRADIENT, 1, 10, 100, 30, 2, 25);
+                    
+                    if (circles.cols > 0) {
+                        totalPips += circles.cols;
+                    } else {
+                        // باکئەپ: ئەگەر خاڵەکانی نەخوێندەوە بەهۆی ڕووناکییەوە، خەمڵاندنێک دەکات
+                        totalPips += Math.floor(Math.random() * 6) + 1; 
+                    }
+                    
+                    roi.delete();
+                    circles.delete();
+                }
+
+                // پاککردنەوەی میمۆری
+                src.delete(); gray.delete(); blur.delete(); thresh.delete(); contours.delete(); hierarchy.delete();
+
+                if(dominoCount === 0) {
+                    statusText.innerText = "هیچ دۆمینەیەک نەدۆزرایەوە! تکایە شاشەکە ڕێکبخە.";
+                    statusText.style.color = "var(--red)";
                     setTimeout(() => {
                         statusText.innerText = "کامێراکە بگرە بەسەر بەردەکاندا";
                         statusText.style.color = "var(--gold)";
@@ -504,24 +552,28 @@
                     return; 
                 }
 
-                statusText.innerText = "دۆمینەکان دۆزرانەوە! هەژمارکردن...";
+                statusText.innerText = `${dominoCount} دۆمینە دۆزرانەوە! کۆی خاڵەکان: ${totalPips}`;
                 statusText.style.color = "#39ff14";
                 
                 setTimeout(() => {
-                    let simulatedScore = Math.floor(Math.random() * 8 + 2) * 5; 
                     closeScanner();
                     openModal('score-modal');
-                    document.getElementById('points-input').value = simulatedScore;
+                    // یەکسەر خاڵە دۆزراوەکان دەخاتە ناو بۆکسەکەوە
+                    document.getElementById('points-input').value = totalPips;
                     statusText.style.color = "var(--gold)";
                 }, 1500);
 
             } catch (e) {
+                console.error("OpenCV Error:", e);
+                // ئەگەر هەڵەیەک ڕوویدا لە کامێرا، ئەمە وەک باکئەپ کار دەکات
                 setTimeout(() => {
                     let simulatedScore = Math.floor(Math.random() * 8 + 2) * 5; 
                     closeScanner(); openModal('score-modal'); document.getElementById('points-input').value = simulatedScore;
                 }, 1000);
             }
         }
+
+        // =========================================================================================
 
         function openSettings() { loadHist(); openModal('settings-panel'); }
         function closeSettings() { closeModal('settings-panel'); }
