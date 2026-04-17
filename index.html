@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>خاڵ ژمێری دۆمینە - کۆمپیوتەری ئاوێزە VIP Pro Max 👑</title>
+    <title>خاڵژمێری دۆمینە - کۆمپیوتەری ئاوێزە VIP 👑</title>
     
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <script async src="https://docs.opencv.org/4.8.0/opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
     
     <style>
         /* ==========================================================================
-           ١. گۆڕاوە سەرەکییەکان (ڕەنگە کوردەوارییەکان)
+           بەشی یەکەم: گۆڕاوە سەرەکییەکان (ڕەنگە کوردەوارییەکان و ڤی ئای پی)
            ========================================================================== */
         :root { 
             --gold: #FFC000;      
@@ -21,161 +20,746 @@
             --card-gradient: linear-gradient(145deg, rgba(45, 25, 15, 0.95), rgba(20, 10, 5, 0.98)); 
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        /* پاککردنەوەی ستایلی وێبگەڕەکان */
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            margin: 0; 
+            padding: 0; 
+        }
         
+        /* ستایلی گشتی پەڕەکە */
         body { 
             background-color: #1a0f0a; 
             background-image: url('https://images.pexels.com/photos/1393972/pexels-photo-1393972.jpeg?fm=jpg');
-            background-size: cover; background-position: center; background-attachment: fixed;
-            color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; 
-            height: 100vh; width: 100vw; display: flex; flex-direction: column; overflow: hidden;
+            background-size: cover; 
+            background-position: center; 
+            background-attachment: fixed;
+            color: #fff; 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            height: 100vh; 
+            width: 100vw; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden;
             perspective: 1200px;
         }
 
+        /* ==========================================================================
+           بەشی دووەم: پەردەی تاریکی (Blur Iris) بۆ کاتی کردنەوەی مۆداڵەکان
+           ========================================================================== */
         #app-content {
-            display: flex; flex-direction: column; height: 100vh; width: 100vw;
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh; 
+            width: 100vw;
             transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), filter 0.5s ease, border-radius 0.5s ease;
-            transform-origin: center center; background: rgba(20, 10, 0, 0.4); 
+            transform-origin: center center; 
+            background: rgba(20, 10, 0, 0.4); 
         }
 
         #app-content.iris-active {
-            transform: scale(0.92); filter: blur(12px) brightness(0.6) sepia(0.3); 
-            border-radius: 30px; pointer-events: none; box-shadow: 0 0 50px rgba(0,0,0,1); 
+            transform: scale(0.92); 
+            filter: blur(12px) brightness(0.6) sepia(0.3); 
+            border-radius: 30px; 
+            pointer-events: none; 
+            box-shadow: 0 0 50px rgba(0,0,0,1); 
         }
 
-        /* شاشەی دەستپێک */
+        /* ==========================================================================
+           بەشی سێیەم: شاشەی دەستپێک (Splash Screen) بۆ کۆمپیوتەری ئاوێزە
+           ========================================================================== */
         #splash-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
             background: radial-gradient(circle at center, #2c1a0f 0%, #000 100%); 
-            z-index: 999999; display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            z-index: 999999; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
             transition: opacity 0.6s ease-in-out, transform 0.6s ease;
         }
-        .splash-title { font-size: 3.5rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 30px rgba(255, 192, 0, 0.6); margin-bottom: 12px; letter-spacing: 2px; animation: pulseGold 2s infinite alternate; }
-        .splash-subtitle { font-size: 1.4rem; color: #fff; letter-spacing: 1px; opacity: 0; animation: slideUp 1s ease-out 0.3s forwards; }
-        .splash-footer { position: absolute; bottom: 40px; font-size: 1rem; color: #ccc; font-weight: bold; border-top: 1px solid var(--gold); padding-top: 15px; width: 80%; text-align: center; line-height: 1.6; opacity: 0; animation: fadeIn 1.5s ease-in 0.8s forwards; }
-        @keyframes pulseGold { from { text-shadow: 0 0 15px var(--gold); transform: scale(1); } to { text-shadow: 0 0 40px var(--gold), 0 0 60px rgba(255, 192, 0, 0.4); transform: scale(1.05); } }
-        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 0.9; } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* بەشی سەرەوە (Header) */
-        .header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 30px 15px 12px 15px; background: rgba(20, 10, 5, 0.85); 
-            border-bottom: 1px solid var(--glass-border); z-index: 100; flex-shrink: 0; 
-            backdrop-filter: blur(15px); box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+        .splash-title { 
+            font-size: 3.5rem; 
+            font-weight: 900; 
+            color: var(--gold); 
+            text-shadow: 0 0 30px rgba(255, 192, 0, 0.6); 
+            margin-bottom: 12px; 
+            letter-spacing: 2px; 
+            animation: pulseGold 2s infinite alternate; 
         }
-        .timer-wrapper { display: flex; align-items: center; gap: 8px; background: rgba(255, 192, 0, 0.1); padding: 6px 18px; border-radius: 50px; cursor: pointer; border: 2px solid var(--gold); box-shadow: 0 0 12px rgba(255, 192, 0, 0.4); transition: all 0.3s ease; }
-        #game-timer { font-family: monospace; font-size: 1.2rem; font-weight: 900; color: var(--gold); transition: color 0.5s ease, text-shadow 0.5s ease; letter-spacing: 1px; }
-        .paused .timer-wrapper { border-color: var(--red); background: rgba(237, 41, 57, 0.1); box-shadow: 0 0 20px rgba(237, 41, 57, 0.6); animation: blinker 1.5s linear infinite; }
-        @keyframes blinker { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-        .ai-hud-container { background: linear-gradient(180deg, rgba(30, 15, 5, 0.9), rgba(15, 5, 0, 0.8)); border-bottom: 1px solid var(--glass-border); padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; backdrop-filter: blur(10px); }
-        .ai-hud-item { text-align: center; flex: 1; }
-        .ai-hud-title { font-size: 0.65rem; color: #d4af37; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; letter-spacing: 0.5px; }
-        .ai-hud-value { font-size: 0.85rem; font-weight: 900; color: #fff; }
-        .ai-hud-value.gold-text { color: var(--gold); text-shadow: 0 0 6px rgba(255, 192, 0, 0.6); }
-        .ai-hud-divider { width: 1px; height: 25px; background: linear-gradient(to bottom, transparent, var(--gold), transparent); opacity: 0.5; }
+        .splash-subtitle { 
+            font-size: 1.4rem; 
+            color: #fff; 
+            letter-spacing: 1px; 
+            opacity: 0; 
+            animation: slideUp 1s ease-out 0.3s forwards; 
+        }
 
-        /* ناوچەی سەرەکی و کارتەکان */
-        .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; }
-        .main-wrapper::-webkit-scrollbar { display: none; }
-        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; flex-shrink: 0; }
-        .grid-3 { grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 12px 6px; }
+        .splash-footer { 
+            position: absolute; 
+            bottom: 40px; 
+            font-size: 1rem; 
+            color: #ccc; 
+            font-weight: bold; 
+            border-top: 1px solid var(--gold); 
+            padding-top: 15px; 
+            width: 80%; 
+            text-align: center; 
+            line-height: 1.6; 
+            opacity: 0; 
+            animation: fadeIn 1.5s ease-in 0.8s forwards; 
+        }
+
+        @keyframes pulseGold { 
+            from { text-shadow: 0 0 15px var(--gold); transform: scale(1); } 
+            to { text-shadow: 0 0 40px var(--gold), 0 0 60px rgba(255, 192, 0, 0.4); transform: scale(1.05); } 
+        }
+
+        @keyframes slideUp { 
+            from { transform: translateY(30px); opacity: 0; } 
+            to { transform: translateY(0); opacity: 0.9; } 
+        }
+
+        @keyframes fadeIn { 
+            from { opacity: 0; } 
+            to { opacity: 1; } 
+        }
+
+        /* ==========================================================================
+           بەشی چوارەم: بەشی سەرەوە (Header) و کاتژمێر
+           ========================================================================== */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 30px 15px 12px 15px; 
+            background: rgba(20, 10, 5, 0.85); 
+            border-bottom: 1px solid var(--glass-border); 
+            z-index: 100; 
+            flex-shrink: 0; 
+            backdrop-filter: blur(15px); 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+        }
+
+        .timer-wrapper { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            background: rgba(255, 192, 0, 0.1); 
+            padding: 6px 18px; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            border: 2px solid var(--gold); 
+            box-shadow: 0 0 12px rgba(255, 192, 0, 0.4); 
+            transition: all 0.3s ease; 
+        }
+
+        #game-timer { 
+            font-family: monospace; 
+            font-size: 1.2rem; 
+            font-weight: 900; 
+            color: var(--gold); 
+            transition: color 0.5s ease, text-shadow 0.5s ease; 
+            letter-spacing: 1px; 
+        }
+
+        .paused .timer-wrapper { 
+            border-color: var(--red); 
+            background: rgba(237, 41, 57, 0.1); 
+            box-shadow: 0 0 20px rgba(237, 41, 57, 0.6); 
+            animation: blinker 1.5s linear infinite; 
+        }
+
+        @keyframes blinker { 
+            0%, 100% { opacity: 1; } 
+            50% { opacity: 0.5; } 
+        }
+
+        /* ==========================================================================
+           بەشی پێنجەم: داشبۆردی زیرەکی پێشبینیکەر
+           ========================================================================== */
+        .ai-hud-container { 
+            background: linear-gradient(180deg, rgba(30, 15, 5, 0.9), rgba(15, 5, 0, 0.8)); 
+            border-bottom: 1px solid var(--glass-border); 
+            padding: 8px 12px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-shrink: 0; 
+            backdrop-filter: blur(10px); 
+        }
+
+        .ai-hud-item { 
+            text-align: center; 
+            flex: 1; 
+        }
+
+        .ai-hud-title { 
+            font-size: 0.65rem; 
+            color: #d4af37; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            margin-bottom: 3px; 
+            letter-spacing: 0.5px; 
+        }
+
+        .ai-hud-value { 
+            font-size: 0.85rem; 
+            font-weight: 900; 
+            color: #fff; 
+        }
+
+        .ai-hud-value.gold-text { 
+            color: var(--gold); 
+            text-shadow: 0 0 6px rgba(255, 192, 0, 0.6); 
+        }
+
+        .ai-hud-divider { 
+            width: 1px; 
+            height: 25px; 
+            background: linear-gradient(to bottom, transparent, var(--gold), transparent); 
+            opacity: 0.5; 
+        }
+
+        /* ==========================================================================
+           بەشی شەشەم: ناوچەی سەرەکی و کارتەکانی خاڵ
+           ========================================================================== */
+        .main-wrapper { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            overflow-y: auto; 
+            overflow-x: hidden; 
+            scroll-behavior: smooth; 
+        }
+
+        .main-wrapper::-webkit-scrollbar { 
+            display: none; 
+        }
+
+        .game-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+            padding: 12px; 
+            flex-shrink: 0; 
+        }
+
+        .grid-3 { 
+            grid-template-columns: 1fr 1fr 1fr; 
+            gap: 8px; 
+            padding: 12px 6px; 
+        }
 
         .card { 
-            position: relative; text-align: center; border-radius: 20px; overflow: hidden; z-index: 1;
-            padding: 20px 12px; background: var(--card-gradient); border: 1px solid rgba(255,192,0,0.2);
+            position: relative; 
+            text-align: center; 
+            border-radius: 20px; 
+            overflow: hidden; 
+            z-index: 1;
+            padding: 20px 12px; 
+            background: var(--card-gradient); 
+            border: 1px solid rgba(255,192,0,0.2);
             box-shadow: 0 8px 25px rgba(0,0,0,0.8), inset 0 2px 8px rgba(255,255,255,0.05);
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s; 
-            animation: cardEnter 0.6s both; transform-style: preserve-3d; 
+            animation: cardEnter 0.6s both; 
+            transform-style: preserve-3d; 
         }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.95), inset 0 2px 12px rgba(255,192,0,0.15); }
-        @keyframes cardEnter { from { opacity: 0; transform: translateY(40px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        .card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -2; background: conic-gradient(transparent, transparent, transparent, var(--gold)); animation: spin 8s linear infinite; }
-        .card::after { content: ''; position: absolute; top: 2px; left: 2px; right: 2px; bottom: 2px; background: var(--wood-dark); border-radius: 18px; z-index: -1; backdrop-filter: blur(10px); }
-        .card > * { position: relative; z-index: 2; } 
-        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        .card.streak-fire::before { background: conic-gradient(transparent, transparent, transparent, #ff4500, #ff8c00, #ffd700); animation: spin 1s linear infinite; }
-        .card.streak-fire::after { background: rgba(40, 10, 0, 0.95); }
-        .streak-badge { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); background: linear-gradient(45deg, #ff4500, #ffd700); color: #000; padding: 4px 14px; border-radius: 10px; font-size: 0.8rem; font-weight: 900; box-shadow: 0 0 20px rgba(255, 140, 0, 0.8); z-index: 10; display: none; white-space: nowrap; }
-        .card.streak-fire .streak-badge { display: block; animation: bounceFire 0.5s infinite alternate cubic-bezier(0.5, 0.05, 1, 0.5); }
-        @keyframes bounceFire { to { transform: translate(-50%, -4px) scale(1.05); } }
+        .card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 12px 30px rgba(0,0,0,0.95), inset 0 2px 12px rgba(255,192,0,0.15); 
+        }
 
-        .floating-score { position: absolute; font-size: 2rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 15px var(--gold), 0 0 30px #ff4500; pointer-events: none; z-index: 1000; animation: floatUpFade 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-        @keyframes floatUpFade { 0% { opacity: 0; transform: translateY(15px) scale(0.3) rotateX(45deg); } 20% { opacity: 1; transform: translateY(0) scale(1.1) rotateX(0deg); } 70% { opacity: 1; transform: translateY(-40px) scale(1) rotateX(0deg); } 100% { opacity: 0; transform: translateY(-70px) scale(0.5) rotateX(-45deg); } }
+        @keyframes cardEnter { 
+            from { opacity: 0; transform: translateY(40px) scale(0.9); } 
+            to { opacity: 1; transform: translateY(0) scale(1); } 
+        }
 
-        .player-input { background: linear-gradient(135deg, rgba(80, 20, 10, 0.7), rgba(40, 10, 0, 0.9)); border: 1px solid rgba(255, 192, 0, 0.4); color: #fff; text-align: center; width: 100%; font-weight: 900; font-size: 1.1rem; padding: 10px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px; outline: none; box-shadow: inset 0 2px 10px rgba(0,0,0,0.8); transition: 0.3s; cursor: pointer; letter-spacing: 1px; }
-        .score-display-box { background: rgba(0,0,0,0.4); border-radius: 15px; padding: 15px 5px; margin: 10px 0; border: 1px solid rgba(255,192,0,0.15); cursor: pointer; transition: 0.2s; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.7); }
-        .score-display-box:active { transform: scale(0.92); background: rgba(255,192,0,0.1); }
-        .score-total { font-size: 4rem; font-weight: 900; color: #fff; margin: 0; line-height: 1; text-shadow: 0 5px 15px rgba(0,0,0,0.8); }
-        .score-label { font-size: 1rem; color: var(--gold); font-weight: bold; margin-top: 5px; }
-        .progress-bg { background: rgba(0,0,0,0.5); border-radius: 10px; height: 10px; width: 100%; margin: 15px 0; overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.05); }
-        .progress-fill { background: linear-gradient(90deg, var(--red), var(--gold), var(--green)); height: 100%; width: 0%; transition: width 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-radius: 10px; box-shadow: 0 0 10px rgba(255,255,255,0.2); }
-        .rem-text { font-size: 0.85rem; color: #ccc; font-weight: bold; }
+        .card::before { 
+            content: ''; 
+            position: absolute; 
+            top: -50%; 
+            left: -50%; 
+            width: 200%; 
+            height: 200%; 
+            z-index: -2; 
+            background: conic-gradient(transparent, transparent, transparent, var(--gold)); 
+            animation: spin 8s linear infinite; 
+        }
 
-        /* مێژوو */
-        .unified-history-container { margin: 0 15px 20px 15px; background: rgba(25, 10, 5, 0.8); border-radius: 20px; padding: 15px; border: 1px solid rgba(255,192,0,0.2); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9); display: flex; flex-direction: column; flex-shrink: 0; backdrop-filter: blur(15px); }
-        .history-title-bar { text-align: center; color: var(--gold); font-weight: 900; font-size: 1.1rem; margin-bottom: 12px; border-bottom: 1px dashed rgba(255,192,0,0.3); padding-bottom: 10px; }
-        .history-grid { display: grid; gap: 15px; flex: 1; }
-        .history-column { display: flex; flex-direction: column; border-left: 1px dashed rgba(255, 192, 0, 0.2); padding-left: 8px; }
-        .history-column:last-child { border-left: none; padding-left: 0; padding-right: 8px; }
-        .hist-item-wrapper { position: relative; margin-bottom: 6px; transition: all 0.4s ease-out; overflow: hidden; }
-        .hist-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border-bottom: 1px solid var(--gold); background: linear-gradient(90deg, rgba(40,10,0,0.8), rgba(20,5,0,0.6)); border-radius: 10px; animation: flipInX 0.4s forwards; transform-origin: top center; opacity: 0; }
-        .collapsing { opacity: 0; transform: scale(0.9) translateY(-10px); max-height: 0 !important; margin-bottom: 0 !important; padding: 0 !important; border-bottom: none !important; }
-        @keyframes flipInX { 100% { transform: perspective(400px) rotateX(0deg); opacity: 1; } }
-        .hist-val { font-size: 1.1rem; font-weight: 900; color: var(--gold); }
-        .del-btn { color: var(--red); font-size: 1.1rem; cursor: pointer; padding: 4px 10px; background: rgba(237, 41, 57, 0.15); border-radius: 6px; border: 1px solid rgba(237, 41, 57, 0.3); }
+        .card::after { 
+            content: ''; 
+            position: absolute; 
+            top: 2px; 
+            left: 2px; 
+            right: 2px; 
+            bottom: 2px; 
+            background: var(--wood-dark); 
+            border-radius: 18px; 
+            z-index: -1; 
+            backdrop-filter: blur(10px); 
+        }
 
-        .news-ticker-container { width: 100%; background: rgba(15, 5, 0, 0.98); border-top: 1px solid var(--gold); padding: 10px 0; overflow: hidden; white-space: nowrap; flex-shrink: 0; }
-        .news-ticker-content { display: inline-block; white-space: nowrap; animation: scrollTicker 22s linear infinite; font-size: 1rem; font-weight: bold; color: var(--gold); padding-left: 100%; }
-        @keyframes scrollTicker { 0% { transform: translateX(100vw); } 100% { transform: translateX(-150%); } }
+        .card > * { 
+            position: relative; 
+            z-index: 2; 
+        } 
 
-        /* مۆداڵەکان */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center; padding: 20px; perspective: 1000px; }
-        .modal.active { display: flex; animation: modalFadeIn 0.3s ease forwards; }
-        .modal.active .modal-box { animation: modalSlideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes modalSlideUp { from { transform: translateY(80px) rotateX(-5deg) scale(0.95); opacity: 0; } to { transform: translateY(0) rotateX(0) scale(1); opacity: 1; } }
-        .modal-box { background: linear-gradient(145deg, #2a1610, #140a05); width: 100%; max-width: 480px; padding: 25px; border-radius: 30px; border: 1px solid var(--gold); text-align: center; color: #fff; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95); position: relative; }
-        .modal-box::-webkit-scrollbar { display: none; }
+        @keyframes spin { 
+            100% { transform: rotate(360deg); } 
+        }
+
+        .floating-score { 
+            position: absolute; 
+            font-size: 2rem; 
+            font-weight: 900; 
+            color: var(--gold); 
+            text-shadow: 0 0 15px var(--gold), 0 0 30px #ff4500; 
+            pointer-events: none; 
+            z-index: 1000; 
+            animation: floatUpFade 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
+        }
+
+        @keyframes floatUpFade { 
+            0% { opacity: 0; transform: translateY(15px) scale(0.3) rotateX(45deg); } 
+            20% { opacity: 1; transform: translateY(0) scale(1.1) rotateX(0deg); } 
+            70% { opacity: 1; transform: translateY(-40px) scale(1) rotateX(0deg); } 
+            100% { opacity: 0; transform: translateY(-70px) scale(0.5) rotateX(-45deg); } 
+        }
+
+        .player-input { 
+            background: linear-gradient(135deg, rgba(80, 20, 10, 0.7), rgba(40, 10, 0, 0.9)); 
+            border: 1px solid rgba(255, 192, 0, 0.4); 
+            color: #fff; 
+            text-align: center; 
+            width: 100%; 
+            font-weight: 900; 
+            font-size: 1.1rem; 
+            padding: 10px; 
+            border-radius: 10px; 
+            margin-top: 15px; 
+            margin-bottom: 15px; 
+            outline: none; 
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.8); 
+            transition: 0.3s; 
+            cursor: pointer; 
+            letter-spacing: 1px; 
+        }
+
+        .score-display-box { 
+            background: rgba(0,0,0,0.4); 
+            border-radius: 15px; 
+            padding: 15px 5px; 
+            margin: 10px 0; 
+            border: 1px solid rgba(255,192,0,0.15); 
+            cursor: pointer; 
+            transition: 0.2s; 
+            position: relative; 
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.7); 
+        }
+
+        .score-display-box:active { 
+            transform: scale(0.92); 
+            background: rgba(255,192,0,0.1); 
+        }
+
+        .score-total { 
+            font-size: 4rem; 
+            font-weight: 900; 
+            color: #fff; 
+            margin: 0; 
+            line-height: 1; 
+            text-shadow: 0 5px 15px rgba(0,0,0,0.8); 
+        }
+
+        .score-label { 
+            font-size: 1rem; 
+            color: var(--gold); 
+            font-weight: bold; 
+            margin-top: 5px; 
+        }
+
+        /* پێوەر بە ڕەنگی ئاڵا */
+        .progress-bg { 
+            background: rgba(0,0,0,0.5); 
+            border-radius: 10px; 
+            height: 10px; 
+            width: 100%; 
+            margin: 15px 0; 
+            overflow: hidden; 
+            position: relative; 
+            border: 1px solid rgba(255,255,255,0.05); 
+        }
+
+        .progress-fill { 
+            background: linear-gradient(90deg, var(--red), var(--gold), var(--green)); 
+            height: 100%; 
+            width: 0%; 
+            transition: width 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            border-radius: 10px; 
+            box-shadow: 0 0 10px rgba(255,255,255,0.2); 
+        }
+
+        .rem-text { 
+            font-size: 0.85rem; 
+            color: #ccc; 
+            font-weight: bold; 
+        }
+
+        /* ==========================================================================
+           بەشی حەوتەم: مێژووی خاڵەکان
+           ========================================================================== */
+        .unified-history-container { 
+            margin: 0 15px 20px 15px; 
+            background: rgba(25, 10, 5, 0.8); 
+            border-radius: 20px; 
+            padding: 15px; 
+            border: 1px solid rgba(255,192,0,0.2); 
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9); 
+            display: flex; 
+            flex-direction: column; 
+            flex-shrink: 0; 
+            backdrop-filter: blur(15px); 
+        }
+
+        .history-title-bar { 
+            text-align: center; 
+            color: var(--gold); 
+            font-weight: 900; 
+            font-size: 1.1rem; 
+            margin-bottom: 12px; 
+            border-bottom: 1px dashed rgba(255,192,0,0.3); 
+            padding-bottom: 10px; 
+        }
+
+        .history-grid { 
+            display: grid; 
+            gap: 15px; 
+            flex: 1; 
+        }
+
+        .history-column { 
+            display: flex; 
+            flex-direction: column; 
+            border-left: 1px dashed rgba(255, 192, 0, 0.2); 
+            padding-left: 8px; 
+        }
+
+        .history-column:last-child { 
+            border-left: none; 
+            padding-left: 0; 
+            padding-right: 8px; 
+        }
+
+        .hist-item-wrapper { 
+            position: relative; 
+            margin-bottom: 6px; 
+            transition: all 0.4s ease-out; 
+            overflow: hidden; 
+        }
+
+        .hist-item { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 8px 10px; 
+            border-bottom: 1px solid var(--gold); 
+            background: linear-gradient(90deg, rgba(40,10,0,0.8), rgba(20,5,0,0.6)); 
+            border-radius: 10px; 
+            animation: flipInX 0.4s forwards; 
+            transform-origin: top center; 
+            opacity: 0; 
+        }
+
+        .collapsing { 
+            opacity: 0; 
+            transform: scale(0.9) translateY(-10px); 
+            max-height: 0 !important; 
+            margin-bottom: 0 !important; 
+            padding: 0 !important; 
+            border-bottom: none !important; 
+        }
+
+        @keyframes flipInX { 
+            100% { transform: perspective(400px) rotateX(0deg); opacity: 1; } 
+        }
+
+        .hist-val { 
+            font-size: 1.1rem; 
+            font-weight: 900; 
+            color: var(--gold); 
+        }
+
+        .del-btn { 
+            color: var(--red); 
+            font-size: 1.1rem; 
+            cursor: pointer; 
+            padding: 4px 10px; 
+            background: rgba(237, 41, 57, 0.15); 
+            border-radius: 6px; 
+            border: 1px solid rgba(237, 41, 57, 0.3); 
+        }
+
+        /* ==========================================================================
+           بەشی هەشتەم: شریتی هەواڵ بۆ کۆمپیوتەری ئاوێزە
+           ========================================================================== */
+        .news-ticker-container { 
+            width: 100%; 
+            background: rgba(15, 5, 0, 0.98); 
+            border-top: 1px solid var(--gold); 
+            padding: 10px 0; 
+            overflow: hidden; 
+            white-space: nowrap; 
+            flex-shrink: 0; 
+        }
+
+        .news-ticker-content { 
+            display: inline-block; 
+            white-space: nowrap; 
+            animation: scrollTicker 22s linear infinite; 
+            font-size: 1rem; 
+            font-weight: bold; 
+            color: var(--gold); 
+            padding-left: 100%; 
+        }
+
+        @keyframes scrollTicker { 
+            0% { transform: translateX(100vw); } 
+            100% { transform: translateX(-150%); } 
+        }
+
+        /* ==========================================================================
+           بەشی نۆیەم: مۆداڵەکان (پەنجەرەکانی سەرەوە)
+           ========================================================================== */
+        .modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.5); 
+            z-index: 10000; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px; 
+            perspective: 1000px; 
+        }
+
+        .modal.active { 
+            display: flex; 
+            animation: modalFadeIn 0.3s ease forwards; 
+        }
+
+        .modal.active .modal-box { 
+            animation: modalSlideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+        }
+
+        @keyframes modalFadeIn { 
+            from { opacity: 0; } 
+            to { opacity: 1; } 
+        }
+
+        @keyframes modalSlideUp { 
+            from { transform: translateY(80px) rotateX(-5deg) scale(0.95); opacity: 0; } 
+            to { transform: translateY(0) rotateX(0) scale(1); opacity: 1; } 
+        }
+
+        .modal-box { 
+            background: linear-gradient(145deg, #2a1610, #140a05); 
+            width: 100%; 
+            max-width: 480px; 
+            padding: 25px; 
+            border-radius: 30px; 
+            border: 1px solid var(--gold); 
+            text-align: center; 
+            color: #fff; 
+            max-height: 85vh; 
+            overflow-y: auto; 
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95); 
+            position: relative; 
+        }
+
+        .modal-box::-webkit-scrollbar { 
+            display: none; 
+        }
         
-        .btn { padding: 15px; border-radius: 12px; border: none; font-weight: 900; width: 100%; cursor: pointer; font-size: 1.1rem; margin-top: 12px; transition: transform 0.2s; }
-        .btn:active { transform: scale(0.95); }
-        .btn-gold { background: linear-gradient(45deg, #FFC000, #F2994A); color: #000; box-shadow: 0 6px 15px rgba(255, 192, 0, 0.4); }
-        .btn-red { background: linear-gradient(45deg, #8B0000, #b30000); color: #fff; box-shadow: 0 6px 15px rgba(139, 0, 0, 0.5); }
-        
-        /* سکانەری VIP (تایبەتمەندی نوێی تێدایە) */
-        .scanner-container { position: relative; width: 100%; height: 260px; background: #000; border-radius: 15px; overflow: hidden; margin-bottom: 20px; border: 2px solid var(--gold); box-shadow: 0 0 30px rgba(255, 192, 0, 0.3); display: flex; justify-content: center; align-items: center; }
-        #camera-stream { width: 100%; height: 100%; object-fit: cover; }
-        .laser-line { position: absolute; width: 100%; height: 2px; background: #39ff14; box-shadow: 0 0 15px #39ff14, 0 0 30px #39ff14; z-index: 11; animation: scanLaser 1.5s linear infinite; }
-        @keyframes scanLaser { 0% { top: 5%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 95%; opacity: 0; } }
-        .scan-corner { position: absolute; width: 35px; height: 35px; border: 4px solid var(--gold); z-index: 12; }
-        .scan-tl { top: 15px; left: 15px; border-right: none; border-bottom: none; }
-        .scan-tr { top: 15px; right: 15px; border-left: none; border-bottom: none; }
-        .scan-bl { bottom: 15px; left: 15px; border-right: none; border-top: none; }
-        .scan-br { bottom: 15px; right: 15px; border-left: none; border-top: none; }
-        .scanning-text { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); color: var(--gold); font-size: 1rem; font-weight: 900; background: rgba(0,0,0,0.8); padding: 8px 20px; border-radius: 15px; z-index: 13; width: 90%; text-align: center; border: 1px solid rgba(255,192,0,0.3); }
-        
-        /* دوگمەی فلاش */
-        .torch-btn { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.7); border: 2px solid #fff; color: #fff; width: 45px; height: 45px; border-radius: 50%; z-index: 20; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
-        .torch-btn.on { background: var(--gold); color: #000; border-color: var(--gold); box-shadow: 0 0 20px var(--gold); }
+        .select-btn { 
+            padding: 14px; 
+            border-radius: 12px; 
+            border: 1px solid #5c3a21; 
+            background: rgba(40,20,10,0.8); 
+            color: #fff; 
+            font-weight: bold; 
+            width: 100%; 
+            margin-bottom: 8px; 
+            cursor: pointer; 
+            text-align: right; 
+        }
 
-        .domino-stage { display: flex; justify-content: center; align-items: flex-end; height: 120px; margin-bottom: 20px; perspective: 800px; overflow: visible; padding-bottom: 5px; border-bottom: 1px solid rgba(255,192,0,0.3); }
-        .domino-piece { width: 30px; height: 70px; background: linear-gradient(to bottom, #f5deb3, #d2b48c); border-radius: 4px; margin: 0 5px; position: relative; transform-origin: bottom right; border: 1px solid #8b4513; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        .domino-piece::after { content: ''; position: absolute; top: 50%; left: 10%; width: 80%; height: 2px; background: #3e2723; transform: translateY(-50%); }
-        @keyframes dominoFall { 100% { transform: rotateZ(68deg); } }
-        .falling { animation: dominoFall 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .select-btn.active { 
+            border-color: var(--gold); 
+            color: var(--gold); 
+            background: rgba(255, 192, 0, 0.1); 
+        }
+
+        .folder { 
+            background: rgba(0,0,0,0.4); 
+            border-radius: 15px; 
+            margin-bottom: 12px; 
+            border: 1px solid rgba(255,192,0,0.1); 
+            text-align: right; 
+        }
+
+        .folder-head { 
+            padding: 16px; 
+            background: linear-gradient(90deg, rgba(40,20,10,0.9), rgba(60,30,15,0.9)); 
+            color: var(--gold); 
+            font-weight: 900; 
+            display: flex; 
+            justify-content: space-between; 
+            cursor: pointer; 
+        }
+
+        .folder-body { 
+            display: none; 
+            padding: 15px; 
+        }
+
+        .btn { 
+            padding: 15px; 
+            border-radius: 12px; 
+            border: none; 
+            font-weight: 900; 
+            width: 100%; 
+            cursor: pointer; 
+            font-size: 1.1rem; 
+            margin-top: 12px; 
+            transition: transform 0.2s; 
+        }
+
+        .btn:active { 
+            transform: scale(0.95); 
+        }
+
+        .btn-gold { 
+            background: linear-gradient(45deg, #FFC000, #F2994A); 
+            color: #000; 
+            box-shadow: 0 6px 15px rgba(255, 192, 0, 0.4); 
+        }
+
+        .btn-red { 
+            background: linear-gradient(45deg, #8B0000, #b30000); 
+            color: #fff; 
+            box-shadow: 0 6px 15px rgba(139, 0, 0, 0.5); 
+        }
+
+        /* ==========================================================================
+           بەشی دەیەم: دیزاینی ئیمزاکردن و مێژووی تایبەت
+           ========================================================================== */
+        #signature-pad { 
+            border: 2px dashed var(--gold); 
+            border-radius: 15px; 
+            background: #0a0502; 
+            width: 100%; 
+            height: 200px; 
+            margin-bottom: 15px; 
+            cursor: crosshair; 
+            touch-action: none; 
+        }
         
-        /* خشتەکانی ڕێکخستن */
-        .select-btn { padding: 14px; border-radius: 12px; border: 1px solid #5c3a21; background: rgba(40,20,10,0.8); color: #fff; font-weight: bold; width: 100%; margin-bottom: 8px; cursor: pointer; }
-        .select-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(255, 192, 0, 0.1); }
-        .folder { background: rgba(0,0,0,0.4); border-radius: 15px; margin-bottom: 12px; border: 1px solid rgba(255,192,0,0.1); text-align: right; }
-        .folder-head { padding: 16px; background: linear-gradient(90deg, rgba(40,20,10,0.9), rgba(60,30,15,0.9)); color: var(--gold); font-weight: 900; display: flex; justify-content: space-between; cursor: pointer; }
-        .folder-body { display: none; padding: 15px; }
-        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .theme-item { height: 75px; border-radius: 12px; border: 2px solid #4a2e1b; background-size: cover; cursor: pointer; }
-        .theme-item.active { border-color: var(--gold); box-shadow: 0 0 15px var(--gold); }
+        .match-card { 
+            background: rgba(0,0,0,0.6); 
+            border: 1px solid var(--gold); 
+            border-radius: 15px; 
+            padding: 15px; 
+            margin-bottom: 10px; 
+            cursor: pointer; 
+            transition: 0.2s; 
+        }
+
+        .match-card:hover { 
+            transform: scale(1.02); 
+            box-shadow: 0 0 15px rgba(255,192,0,0.2); 
+        }
+
+        .match-detail-row { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 10px 0; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+            font-size: 1.1rem; 
+        }
+
+        .match-detail-row:last-child { 
+            border-bottom: none; 
+        }
+
+        .sig-image-container { 
+            margin-top: 15px; 
+            background: #000; 
+            border: 2px solid var(--gold); 
+            border-radius: 15px; 
+            padding: 10px; 
+            display: none; 
+        }
+
+        .sig-image-container img { 
+            width: 100%; 
+            filter: drop-shadow(0 0 5px rgba(255,192,0,0.8)); 
+        }
+        
+        .domino-stage { 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-end; 
+            height: 120px; 
+            margin-bottom: 20px; 
+            perspective: 800px; 
+            overflow: visible; 
+            padding-bottom: 5px; 
+            border-bottom: 1px solid rgba(255,192,0,0.3); 
+        }
+
+        .domino-piece { 
+            width: 30px; 
+            height: 70px; 
+            background: linear-gradient(to bottom, #f5deb3, #d2b48c); 
+            border-radius: 4px; 
+            margin: 0 5px; 
+            position: relative; 
+            transform-origin: bottom right; 
+            border: 1px solid #8b4513; 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+
+        .domino-piece::after { 
+            content: ''; 
+            position: absolute; 
+            top: 50%; 
+            left: 10%; 
+            width: 80%; 
+            height: 2px; 
+            background: #3e2723; 
+            transform: translateY(-50%); 
+        }
+
+        @keyframes dominoFall { 
+            100% { transform: rotateZ(68deg); } 
+        }
+
+        .falling { 
+            animation: dominoFall 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; 
+        }
+
     </style>
 </head>
 <body>
@@ -185,19 +769,22 @@
     <div id="splash-screen">
         <div class="splash-title">دۆمینە</div>
         <div class="splash-subtitle">کۆمپیوتەری ئاوێزە VIP</div>
-        <div class="splash-footer">گەشەپێدراوە لەلایەن :<br><span style="color:var(--gold)">محەمەد حەیدەر - ئاوێزە PC</span></div>
+        <div class="splash-footer">گەشەپێدراوە لەلایەن :<br><span style="color:var(--gold)">محەمەد حەیدەر و شێروان - کۆمپیوتەری ئاوێزە</span></div>
     </div>
 
-    <div id="alert-msg" style="display:none; position:fixed; top:100px; left:50%; transform:translateX(-50%); background:var(--red); color:#fff; padding:12px; border-radius:10px; z-index:2000; font-weight:bold; box-shadow:0 8px 20px rgba(237,41,57,0.6);">⚠️ تکایە کاتەکە کار پێ بکە</div>
+    <div id="alert-msg" style="display:none; position:fixed; top:100px; left:50%; transform:translateX(-50%); background:var(--red); color:#fff; padding:12px; border-radius:10px; z-index:2000; font-weight:bold; box-shadow:0 8px 20px rgba(237,41,57,0.6);">
+        ⚠️ تکایە کاتەکە کار پێ بکە
+    </div>
 
     <div id="app-content">
+        
         <div class="header">
             <div onclick="openSettings()" style="font-size:1.8rem; cursor:pointer; text-shadow: 0 0 12px var(--gold);">⚙️</div>
             <div class="timer-wrapper" id="timer-container" onclick="toggleTimer()">
                 <span id="timer-icon" style="font-size: 1.2rem;">▶️</span>
                 <span id="game-timer">00:00</span>
             </div>
-            <div style="color:var(--gold); font-weight:900; font-size: 1.1rem; letter-spacing: 1px;">ئاوێزە VIP</div>
+            <div style="color:var(--gold); font-weight:900; font-size: 1.1rem; letter-spacing: 1px;">کۆمپیوتەری ئاوێزە</div>
         </div>
 
         <div class="ai-hud-container" id="ai-hud">
@@ -218,7 +805,9 @@
         </div>
 
         <div class="news-ticker-container">
-            <div class="news-ticker-content">بەخێربێیت بۆ خاڵ ژمێری دۆمینە .... گەشەپێدراوە لەلایەن: محەمەد حەیدەر - کۆمپیوتەری ئاوێزە</div>
+            <div class="news-ticker-content">
+                بەخێربێیت بۆ خاڵژمێری دۆمینە .... گەشەپێدراوە لەلایەن: محەمەد حەیدەر بە هاوکاری شێروان - کۆمپیوتەری ئاوێزە
+            </div>
         </div>
     </div>
 
@@ -227,62 +816,146 @@
             <h2 style="color:var(--gold); margin-bottom:20px; font-size: 1.8rem;">گۆڕینی ناو</h2>
             <input type="text" id="edit-name-input" style="width:100%; font-size:1.5rem; background:rgba(0,0,0,0.8); border:2px solid var(--gold); color:#fff; text-align:center; padding:12px; border-radius:12px; outline:none; margin-bottom: 20px; font-weight:900;">
             <div id="saved-names-chips" style="display:flex; flex-direction:column; max-height: 180px; overflow-y:auto; margin-bottom:20px;"></div>
-            <div style="display:flex; gap:12px;"><button class="btn btn-red" onclick="closeModal('name-modal')">لابردن</button><button class="btn btn-gold" onclick="saveNameFromModal()">پاشەکەوت</button></div>
+            <div style="display:flex; gap:12px;">
+                <button class="btn btn-red" onclick="closeModal('name-modal')">لابردن</button>
+                <button class="btn btn-gold" onclick="saveNameFromModal()">پاشەکەوت</button>
+            </div>
         </div>
     </div>
 
     <div id="settings-panel" class="modal">
         <div class="modal-box" style="max-width:100%; border-radius: 0; min-height: 100vh;">
             <h2 style="color:var(--gold); margin-bottom:25px; font-size: 2.2rem;">ڕێکخستنەکان</h2>
-            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>📊 داشبۆردی ئامارەکان</span><span>▼</span></div><div class="folder-body"><div class="dash-num" id="dash-total-games">0</div></div></div>
-            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>👥 جۆری یاری</span><span>▼</span></div><div class="folder-body"><div class="select-btn mode-item" id="btn-mode-2" onclick="confirmNewGame(2)">٢ نەفەری</div><div class="select-btn mode-item" id="btn-mode-3" onclick="confirmNewGame(3)">٣ نەفەری</div></div></div>
-            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>🎯 ئامانج (گۆڕین)</span><span>▼</span></div><div class="folder-body"><div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;"><div class="select-btn target-item" data-val="100" onclick="setTarget(100, this)">100</div><div class="select-btn target-item" data-val="101" onclick="setTarget(101, this)">101</div></div><input type="number" id="custom-target" placeholder="ئامانج..." style="margin-top:10px; width:100%; padding:10px;"><button class="btn-gold" onclick="setCustomTarget()">دانان</button></div></div>
-            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندەکان</span><span>▼</span></div><div class="folder-body theme-grid">
-                <div class="theme-item" style="background-image:url('https://images.pexels.com/photos/1393972/pexels-photo-1393972.jpeg?fm=jpg')" onclick="changeTheme(this)"></div>
-                <div class="theme-item" style="background-image:url('https://wallpapers.com/images/hd/ongoing-domino-game-mcerg8h2hzc7389q.jpg')" onclick="changeTheme(this)"></div>
-            </div></div>
+            
+            <div class="folder">
+                <div class="folder-head" onclick="toggleF(this)"><span>👥 جۆری یاری</span><span>▼</span></div>
+                <div class="folder-body">
+                    <div class="select-btn mode-item" id="btn-mode-2" onclick="confirmNewGame(2)">٢ نەفەری</div>
+                    <div class="select-btn mode-item" id="btn-mode-3" onclick="confirmNewGame(3)">٣ نەفەری</div>
+                </div>
+            </div>
+            
+            <div class="folder">
+                <div class="folder-head" onclick="toggleF(this)"><span>🎯 ئامانج (گۆڕین)</span><span>▼</span></div>
+                <div class="folder-body">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="select-btn target-item" data-val="100" onclick="setTarget(100, this)">100</div>
+                        <div class="select-btn target-item" data-val="101" onclick="setTarget(101, this)">101</div>
+                    </div>
+                    <input type="number" id="custom-target" placeholder="ئامانج..." style="margin-top:10px; width:100%; padding:10px; text-align:center; background:#000; color:#fff; border:1px solid var(--gold); border-radius:8px;">
+                    <button class="btn-gold" onclick="setCustomTarget()">دانان</button>
+                </div>
+            </div>
+            
+            <div class="folder">
+                <div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندەکان</span><span>▼</span></div>
+                <div class="folder-body theme-grid">
+                    <div class="theme-item" style="background-image:url('https://images.pexels.com/photos/1393972/pexels-photo-1393972.jpeg?fm=jpg')" onclick="changeTheme(this)"></div>
+                    <div class="theme-item" style="background-image:url('https://wallpapers.com/images/hd/ongoing-domino-game-mcerg8h2hzc7389q.jpg')" onclick="changeTheme(this)"></div>
+                </div>
+            </div>
+            
+            <div class="folder">
+                <div class="folder-head" onclick="toggleF(this)"><span>📜 مێژووی یارییەکان</span><span>▼</span></div>
+                <div class="folder-body">
+                    <div id="history-content"></div>
+                    <button class="btn btn-red" onclick="askClearHistory()" style="margin-top:20px;">سڕینەوەی گشتی 🗑️</button>
+                </div>
+            </div>
+            
             <button class="btn btn-red" onclick="closeSettings()" style="margin-top: 25px;">گەڕانەوە بۆ یاری ✖️</button>
+        </div>
+    </div>
+
+    <div id="history-detail-modal" class="modal">
+        <div class="modal-box" style="border-color: var(--gold);">
+            <h2 style="color:var(--gold); margin-bottom:15px; font-size: 1.8rem;">زانیاری زیاتر 📊</h2>
+            <div style="background: rgba(0,0,0,0.5); border-radius: 15px; padding: 15px; border: 1px solid rgba(255,255,255,0.1);">
+                <div class="match-detail-row">
+                    <span style="color:#aaa;">ئامانجی یاری:</span>
+                    <span id="detail-target" style="color:#fff; font-weight:bold;">101</span>
+                </div>
+                <div class="match-detail-row">
+                    <span style="color:#aaa;" id="detail-team1-name">تیمی یەکەم</span>
+                    <span id="detail-team1-score" style="color:var(--gold); font-weight:bold; font-size:1.3rem;">0</span>
+                </div>
+                <div class="match-detail-row">
+                    <span style="color:#aaa;" id="detail-team2-name">تیمی دووەم</span>
+                    <span id="detail-team2-score" style="color:var(--gold); font-weight:bold; font-size:1.3rem;">0</span>
+                </div>
+                <div class="match-detail-row" style="background:rgba(255,192,0,0.1); border-radius:8px; padding:10px; margin-top:10px;">
+                    <span style="color:var(--gold); font-weight:bold;">کۆی خاڵەکان:</span>
+                    <span id="detail-total-score" style="color:#fff; font-weight:bold; font-size:1.3rem;">0</span>
+                </div>
+            </div>
+            
+            <button id="show-sig-btn" class="btn btn-gold" style="display:none; margin-top:15px;" onclick="document.getElementById('sig-img-box').style.display='block'; this.style.display='none';">نیشاندانی ئیمزا ✍️</button>
+            
+            <div id="sig-img-box" class="sig-image-container">
+                <p style="color:var(--red); font-size:0.9rem; font-weight:bold; margin-bottom:5px;">سزای دۆڕانی بە (سفر) ⚠️</p>
+                <img id="detail-sig-img" src="" alt="ئیمزا">
+            </div>
+
+            <button class="btn btn-red" style="margin-top:20px;" onclick="closeModal('history-detail-modal')">داخستن</button>
         </div>
     </div>
 
     <div id="score-modal" class="modal">
         <div class="modal-box" style="border-color: var(--gold);">
-            <h2 style="font-size: 2rem; color: #fff; margin-bottom: 5px;">تۆمارکردن</h2>
-            <button class="btn-gold" style="padding: 12px; margin-bottom: 10px; font-size: 1.1rem; display:flex; justify-content:center; gap:10px;" onclick="openScanner()">
-                <span style="font-size:1.4rem">👁️‍🗨️</span> سکانەری ژیری دەستکرد (AI)
-            </button>
+            <h2 style="font-size: 2rem; color: #fff; margin-bottom: 15px;">تۆمارکردن</h2>
             <input type="number" id="points-input" style="width:100%; font-size:5.5rem; background:rgba(0,0,0,0.5); border:none; border-bottom:4px solid var(--gold); color:var(--gold); text-align:center; outline:none; margin:15px 0 25px 0; font-weight:900;" placeholder="0">
-            <div style="display:flex; gap:15px;"><button class="btn btn-red" onclick="closeModal('score-modal')">لابردن</button><button class="btn btn-gold" onclick="validateScore()">تۆمارکردن</button></div>
-        </div>
-    </div>
-
-    <div id="scanner-modal" class="modal">
-        <div class="modal-box" style="border-color: #39ff14; box-shadow: 0 0 40px rgba(57, 255, 20, 0.3);">
-            <h2 style="font-size: 1.6rem; color: #39ff14; margin-bottom: 15px; text-shadow: 0 0 10px #39ff14;">سکانەری ئاوێزە Pro 🤖</h2>
-            
-            <div class="scanner-container">
-                <div class="torch-btn" id="torch-btn" onclick="toggleTorch()">💡</div>
-                
-                <video id="camera-stream" autoplay playsinline></video>
-                <div class="laser-line"></div>
-                <div class="scan-corner scan-tl"></div>
-                <div class="scan-corner scan-tr"></div>
-                <div class="scan-corner scan-bl"></div>
-                <div class="scan-corner scan-br"></div>
-                
-                <div class="scanning-text" id="scan-status-text">کامێراکە ڕێکبخە...</div>
-            </div>
-            
             <div style="display:flex; gap:15px;">
-                <button class="btn btn-red" style="font-size: 1rem; padding: 12px;" onclick="closeScanner()">داخستن</button>
-                <button class="btn" style="background: #39ff14; color: #000; font-size: 1.1rem; padding: 12px; box-shadow: 0 0 15px #39ff14;" onclick="simulateScan()">سکان بکە 🎯</button>
+                <button class="btn btn-red" onclick="closeModal('score-modal')">لابردن</button>
+                <button class="btn btn-gold" onclick="validateScore()">تۆمارکردن</button>
             </div>
         </div>
     </div>
 
-    <div id="invalid-score-modal" class="modal"><div class="modal-box" style="border-color: var(--red);"><h1 style="font-size: 5rem; color: var(--red);">⚠️</h1><h2 style="font-size: 2rem; color: #fff;">خاڵ نایاساییە!</h2><p id="invalid-subtext" style="font-size: 1.2rem; color: var(--red); font-weight: bold;"></p><button class="btn btn-red" onclick="closeModal('invalid-score-modal')">تێگەیشتم</button></div></div>
-    <div id="clear-history-modal" class="modal"><div class="modal-box" style="border-color: var(--red);"><h1 style="font-size: 4rem; color: var(--red);">🗑️</h1><h2 style="font-size: 1.6rem; color: #fff;">سڕینەوەی هەمووی؟</h2><div style="display:flex; flex-direction: column; gap:12px;"><button class="btn btn-red" onclick="executeClearHistory()">بەڵێ</button><button class="btn" style="background:rgba(255,255,255,0.1); color:#fff;" onclick="closeModal('clear-history-modal')">نەخێر</button></div></div></div>
-    <div id="new-game-modal" class="modal"><div class="modal-box" style="border-color: var(--gold);"><h1 style="font-size: 4.5rem;">🎮</h1><h2 style="font-size: 2rem;">یاری نوێ؟</h2><div style="display:flex; gap:15px;"><button class="btn btn-gold" id="confirm-new-btn">بەڵێ</button><button class="btn btn-red" onclick="closeModal('new-game-modal')">نەخێر</button></div></div></div>
+    <div id="signature-modal" class="modal">
+        <div class="modal-box" style="border-color: var(--red); box-shadow: 0 0 50px rgba(237,41,57,0.5);">
+            <h1 style="font-size: 4rem; margin-bottom: 5px;">🚨</h1>
+            <h2 style="color:var(--red); font-size:1.8rem; margin-bottom: 5px;">دۆڕانی گەورە بە (سفر)!</h2>
+            <p style="color:#ccc; font-size:1rem; margin-bottom: 15px;">تکایە <span id="loser-name-sig" style="color:var(--gold); font-weight:bold;">ناوی دۆڕاو</span>، وەک داننان بەم دۆڕانە مێژووییەدا، لێرەدا ئیمزا بکە:</p>
+            
+            <canvas id="signature-pad" width="300" height="200"></canvas>
+            
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                <button onclick="clearSignature()" style="background:none; border:none; color:#aaa; font-size:1rem; cursor:pointer;">پاککردنەوە 🧹</button>
+            </div>
+            <button class="btn btn-red" onclick="saveSignatureAndWin()">ئیمزاکەم کرد ✔️</button>
+        </div>
+    </div>
+
+    <div id="invalid-score-modal" class="modal">
+        <div class="modal-box" style="border-color: var(--red);">
+            <h1 style="font-size: 5rem; color: var(--red);">⚠️</h1>
+            <h2 style="font-size: 2rem; color: #fff;">خاڵ نایاساییە!</h2>
+            <p id="invalid-subtext" style="font-size: 1.2rem; color: var(--red); font-weight: bold;"></p>
+            <button class="btn btn-red" onclick="closeModal('invalid-score-modal')">تێگەیشتم</button>
+        </div>
+    </div>
+
+    <div id="clear-history-modal" class="modal">
+        <div class="modal-box" style="border-color: var(--red);">
+            <h1 style="font-size: 4rem; color: var(--red);">🗑️</h1>
+            <h2 style="font-size: 1.6rem; color: #fff;">سڕینەوەی هەمووی؟</h2>
+            <div style="display:flex; flex-direction: column; gap:12px;">
+                <button class="btn btn-red" onclick="executeClearHistory()">بەڵێ</button>
+                <button class="btn" style="background:rgba(255,255,255,0.1); color:#fff;" onclick="closeModal('clear-history-modal')">نەخێر</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="new-game-modal" class="modal">
+        <div class="modal-box" style="border-color: var(--gold);">
+            <h1 style="font-size: 4.5rem;">🎮</h1>
+            <h2 style="font-size: 2rem;">یاری نوێ؟</h2>
+            <div style="display:flex; gap:15px;">
+                <button class="btn btn-gold" id="confirm-new-btn">بەڵێ</button>
+                <button class="btn btn-red" onclick="closeModal('new-game-modal')">نەخێر</button>
+            </div>
+        </div>
+    </div>
     
     <div id="win-modal" class="modal">
         <div class="modal-box" style="border-color: var(--gold); box-shadow: 0 0 50px rgba(255, 192, 0, 0.5);">
@@ -295,276 +968,95 @@
     </div>
 
     <script>
-        // =========================================================================================
-        // تایبەتمەندییە شاهانەکان (VIP Features Core)
-        // =========================================================================================
-        
-        // ١. سیستەمی لەرزین (Haptic Feedback)
-        function triggerVibration(type) {
-            if ("vibrate" in navigator) {
-                if (type === 'success') navigator.vibrate([100, 50, 100]); // دوو لەرزینی خێرا
-                else if (type === 'error') navigator.vibrate([300]); // یەک لەرزینی درێژ
-                else if (type === 'click') navigator.vibrate(50); // لەرزینی بچووک
-            }
-        }
-
-        // ٢. قسەکەری دەنگی زیرەک (Voice Announcer)
-        function speakVoice(text) {
-            if ('speechSynthesis' in window) {
-                let utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'en-US'; // کوردی زۆر باش نییە لە هەموو مۆبایلێکدا، بۆیە ئینگلیزی یان عەرەبی باشە. بەس ژمارە دەخوێنێتەوە
-                utterance.rate = 1.2;
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-
-        // ٣. سیستەمی فلاش (Torch Light)
-        let isTorchOn = false;
-        async function toggleTorch() {
-            if (!cameraStream) return;
-            const track = cameraStream.getVideoTracks()[0];
-            const imageCapture = new ImageCapture(track);
-            const capabilities = await imageCapture.getPhotoCapabilities();
-            
-            if (capabilities.fillLightMode && capabilities.fillLightMode.includes('flash')) {
-                isTorchOn = !isTorchOn;
-                track.applyConstraints({
-                    advanced: [{ torch: isTorchOn }]
-                });
-                const btn = document.getElementById('torch-btn');
-                if(isTorchOn) btn.classList.add('on');
-                else btn.classList.remove('on');
-                triggerVibration('click');
-            } else {
-                alert("مۆبایلەکەت پشتگیری فلاش ناکات لەناو براوزەردا!");
-            }
-        }
-
-        // OpenCV Load
-        let isCvReady = false;
-        function onOpenCvReady() {
-            isCvReady = true;
-            console.log("Aweza AI Vision Initialized!");
-        }
-
-        let players = {}; let curT = 1; let seconds = 0; let timerInterval; let isPaused = true; let targetScore = 101;
-        let streakData = { player: null, count: 0 }; 
+        // گۆڕاوە سەرەکییەکانی یارییەکە
+        let players = {}; 
+        let curT = 1; 
+        let seconds = 0; 
+        let timerInterval; 
+        let isPaused = true; 
+        let targetScore = 101;
         let savedNames = JSON.parse(localStorage.getItem('domino_names') || '[]'); 
         let currentEditingPlayer = null;
-        let allMatchesHistory = JSON.parse(localStorage.getItem('domino_match_history') || '[]');
-        let cameraStream = null;
+        let allMatchesHistory = JSON.parse(localStorage.getItem('domino_match_history_v2') || '[]'); 
 
-        setTimeout(() => { let splash = document.getElementById('splash-screen'); splash.style.opacity = '0'; setTimeout(() => { splash.style.display = 'none'; }, 600); }, 2000);
+        // کۆدەکانی تابلۆی ئیمزاکردن (Canvas API)
+        let sigCanvas = document.getElementById('signature-pad');
+        let sigCtx = sigCanvas.getContext('2d');
+        let isDrawing = false;
+        let pendingWinData = null; 
+
+        function initSignaturePad() {
+            sigCtx.lineWidth = 4;
+            sigCtx.lineCap = 'round';
+            sigCtx.strokeStyle = '#FFC000'; 
+            
+            const startDraw = (e) => { 
+                isDrawing = true; 
+                draw(e); 
+            };
+            const stopDraw = () => { 
+                isDrawing = false; 
+                sigCtx.beginPath(); 
+            };
+            const draw = (e) => {
+                if (!isDrawing) return;
+                e.preventDefault();
+                let rect = sigCanvas.getBoundingClientRect();
+                let x = (e.clientX || e.touches[0].clientX) - rect.left;
+                let y = (e.clientY || e.touches[0].clientY) - rect.top;
+                sigCtx.lineTo(x, y);
+                sigCtx.stroke();
+                sigCtx.beginPath();
+                sigCtx.moveTo(x, y);
+            };
+
+            sigCanvas.addEventListener('mousedown', startDraw);
+            sigCanvas.addEventListener('mouseup', stopDraw);
+            sigCanvas.addEventListener('mousemove', draw);
+            sigCanvas.addEventListener('touchstart', startDraw, {passive: false});
+            sigCanvas.addEventListener('touchend', stopDraw);
+            sigCanvas.addEventListener('touchmove', draw, {passive: false});
+        }
+        initSignaturePad();
+
+        function clearSignature() {
+            sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+        }
+
+        // شاردنەوەی شاشەی دەستپێک دوای ٢ چرکە
+        setTimeout(() => { 
+            let splash = document.getElementById('splash-screen'); 
+            splash.style.opacity = '0'; 
+            setTimeout(() => { 
+                splash.style.display = 'none'; 
+            }, 600); 
+        }, 2000);
 
         function openModal(modalId) {
-            triggerVibration('click');
             document.getElementById(modalId).classList.add('active');
             document.getElementById('app-content').classList.add('iris-active');
         }
 
         function closeModal(modalId) {
-            if(modalId) { document.getElementById(modalId).classList.remove('active'); } 
-            else { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
+            if(modalId) { 
+                document.getElementById(modalId).classList.remove('active'); 
+            } else { 
+                document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); 
+            }
             let anyActive = document.querySelector('.modal.active');
-            if(!anyActive) document.getElementById('app-content').classList.remove('iris-active');
+            if(!anyActive) {
+                document.getElementById('app-content').classList.remove('iris-active');
+            }
             document.getElementById('points-input').value = '';
         }
 
-        async function openScanner() {
-            closeModal('score-modal'); 
-            openModal('scanner-modal');
-            const statusText = document.getElementById('scan-status-text');
-            statusText.innerText = "ئامادەکردنی کامێرای VIP...";
-            statusText.style.color = "var(--gold)";
-            
-            try {
-                // هێنانی باشترین کوالێتی کامێرا بە فۆکەسی ئۆتۆماتیک
-                cameraStream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } } 
-                });
-                document.getElementById('camera-stream').srcObject = cameraStream;
-            } catch (err) {
-                alert("کامێرا نەکرایەوە! دڵنیابە لە ڕێگەپێدان.");
-                closeScanner();
-            }
+        function openSettings() { 
+            loadHist(); 
+            openModal('settings-panel'); 
         }
 
-        function closeScanner() {
-            if(cameraStream) { 
-                cameraStream.getTracks().forEach(track => { track.stop(); }); 
-                cameraStream = null;
-                isTorchOn = false;
-                document.getElementById('torch-btn').classList.remove('on');
-            }
-            closeModal('scanner-modal');
-        }
-
-        // =========================================================================================
-        // ٤. سکانەری ژیری دەستکردی قووڵ (Deep Contour Analysis) کە ١٠٠٪ دروستە بۆ دۆمینە
-        // =========================================================================================
-        function simulateScan() {
-            triggerVibration('click');
-            const statusText = document.getElementById('scan-status-text');
-            
-            if (!isCvReady) {
-                statusText.innerText = "خەریکی داگرتنی مۆدێلی AI... تکایە چاوەڕێ بکە.";
-                statusText.style.color = "var(--gold)";
-                return;
-            }
-
-            statusText.innerText = "سکانکردنی قووڵ دەستی پێکرد 🔍...";
-            statusText.style.color = "#39ff14";
-            
-            const video = document.getElementById('camera-stream');
-            if(!video || !video.videoWidth) return;
-
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            try {
-                let src = cv.imread(canvas);
-                let gray = new cv.Mat();
-                let blur = new cv.Mat();
-                let thresh = new cv.Mat();
-                
-                // پڕۆسێسکردنی وێنەکە بۆ دەرخستنی دۆمینەکان
-                cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
-                cv.GaussianBlur(gray, blur, new cv.Size(5, 5), 0);
-                cv.adaptiveThreshold(blur, thresh, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY_INV, 11, 2);
-
-                let contours = new cv.MatVector();
-                let hierarchy = new cv.Mat();
-                cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
-
-                let dominoRects = [];
-                for (let i = 0; i < contours.size(); ++i) {
-                    let cnt = contours.get(i);
-                    let area = cv.contourArea(cnt);
-                    // قەبارەی ڕاستەقینەی دۆمینە
-                    if (area > 1500 && area < 60000) { 
-                        dominoRects.push(cv.boundingRect(cnt));
-                    }
-                }
-
-                // --- ٥. مەرجی زۆر گرنگ: ئەگەر دۆمینە نەبوو، ڕاستەوخۆ دەوەستێت ---
-                if (dominoRects.length === 0) {
-                    statusText.innerText = "دۆمینە نەدۆزرایەوە! ⚠️";
-                    statusText.style.color = "var(--red)";
-                    statusText.style.background = "rgba(0,0,0,0.9)";
-                    statusText.style.border = "2px solid var(--red)";
-                    triggerVibration('error');
-                    
-                    // دوای ٣ چرکە دەیگەڕێنێتەوە باری ئاسایی
-                    setTimeout(() => {
-                        statusText.innerText = "کامێراکە ڕێکبخە...";
-                        statusText.style.color = "var(--gold)";
-                        statusText.style.border = "1px solid rgba(255,192,0,0.3)";
-                    }, 3000);
-                    
-                    src.delete(); gray.delete(); blur.delete(); thresh.delete(); contours.delete(); hierarchy.delete();
-                    return; 
-                }
-
-                let limit = Math.min(dominoRects.length, 25);
-                let totalPips = 0;
-
-                // شیکاری ناوەوەی هەر دۆمینەیەک
-                for (let i = 0; i < limit; i++) {
-                    let rect = dominoRects[i];
-                    let roi = gray.roi(rect);
-                    
-                    // بەکارهێنانی تەکنیکی (Internal Contours) لەبری بازنە کە زۆر دروستترە بۆ خاڵەکان
-                    let roiThresh = new cv.Mat();
-                    cv.threshold(roi, roiThresh, 100, 255, cv.THRESH_BINARY_INV | cv.THRESH_OTSU);
-                    
-                    let pipContours = new cv.MatVector();
-                    let pipHierarchy = new cv.Mat();
-                    cv.findContours(roiThresh, pipContours, pipHierarchy, cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE);
-                    
-                    let dotsInThisDomino = 0;
-                    for (let j = 0; j < pipContours.size(); j++) {
-                        let pCnt = pipContours.get(j);
-                        let pArea = cv.contourArea(pCnt);
-                        // ئەگەر قەبارەکە لە خاڵی دۆمینە دەچوو
-                        if (pArea > 15 && pArea < 500) { 
-                            dotsInThisDomino++;
-                        }
-                    }
-                    
-                    // --- ٦. دژە فێڵ (Anti-Cheat): هیچ دۆمینەیەک لە ١٢ خاڵ زیاتر نییە! ---
-                    if (dotsInThisDomino > 12) {
-                        dotsInThisDomino = 12; 
-                    }
-                    
-                    totalPips += dotsInThisDomino;
-                    
-                    roi.delete(); roiThresh.delete(); pipContours.delete(); pipHierarchy.delete();
-                }
-
-                src.delete(); gray.delete(); blur.delete(); thresh.delete(); contours.delete(); hierarchy.delete();
-
-                // ٧. ڕێژەی دڵنیایی ژیری دەستکرد (AI Confidence Score)
-                let confidence = Math.floor(Math.random() * (99 - 90 + 1) + 90); // هەمیشە سەروو ٩٠٪ نیشان دەدات بۆ دڵنیایی
-
-                statusText.innerHTML = `✅ ${dominoRects.length} دۆمینە • کۆی خاڵ: ${totalPips} <br> <span style="font-size:0.8rem; color:#aaa;">ڕێژەی دڵنیایی AI: ${confidence}٪</span>`;
-                statusText.style.color = "#39ff14";
-                statusText.style.border = "2px solid #39ff14";
-                
-                triggerVibration('success');
-                speakVoice(totalPips.toString()); // دەنگەکە خاڵەکان دەخوێنێتەوە
-
-                setTimeout(() => {
-                    closeScanner();
-                    openModal('score-modal');
-                    document.getElementById('points-input').value = totalPips;
-                    statusText.style.color = "var(--gold)";
-                    statusText.style.border = "1px solid rgba(255,192,0,0.3)";
-                }, 2000);
-
-            } catch (e) {
-                console.error("OpenCV Error:", e);
-                statusText.innerText = "هەڵە لە خوێندنەوە! مێزەکە ڕووناک بکەرەوە.";
-                statusText.style.color = "var(--red)";
-                triggerVibration('error');
-            }
-        }
-        // =========================================================================================
-
-        function openSettings() { loadHist(); openModal('settings-panel'); }
-        function closeSettings() { closeModal('settings-panel'); }
-
-        function updateAIandP2P() {
-            let keys = Object.keys(players);
-            if(keys.length < 2) return;
-            let scores = keys.map(k => players[k].score);
-            let distances = scores.map(s => Math.max(1, targetScore - s)); 
-            let totalDist = distances.reduce((a,b) => a+b, 0);
-            let isAllZero = scores.every(s => s === 0);
-            
-            if(isAllZero) { document.getElementById('ai-prob').innerText = keys.length == 2 ? "٥٠٪ بەرامبەر ٥٠٪" : "یەکسانن"; } 
-            else if(keys.length == 2) {
-                let p1Chance = Math.round((distances[1] / totalDist) * 100);
-                let p2Chance = Math.round((distances[0] / totalDist) * 100);
-                let leadName = players[1].score >= players[2].score ? players[1].name : players[2].name;
-                document.getElementById('ai-prob').innerText = `${Math.max(p1Chance, p2Chance)}٪ بۆ ${leadName}`;
-            } else {
-                let minIdx = distances.indexOf(Math.min(...distances));
-                let chance = Math.round(((totalDist - distances[minIdx]) / (totalDist * (keys.length-1))) * 100);
-                document.getElementById('ai-prob').innerText = `${chance}٪ بۆ ${players[keys[minIdx]].name}`;
-            }
-
-            if(keys.length == 2) {
-                let n1 = players[1].name; let n2 = players[2].name;
-                if(n1 == "تیمی 1" || n2 == "تیمی 2") { document.getElementById('p2p-stats').innerText = "داتای پێشوو نییە"; return; }
-                let matches = allMatchesHistory.filter(m => (m.p1 == n1 && m.p2 == n2) || (m.p1 == n2 && m.p2 == n1));
-                if(matches.length > 0) {
-                    let w1 = matches.filter(m => m.winner == n1).length; let w2 = matches.filter(m => m.winner == n2).length;
-                    document.getElementById('p2p-stats').innerText = `${n1} (${w1}) - (${w2}) ${n2}`;
-                } else { document.getElementById('p2p-stats').innerText = "یەکەم ڕووبەڕووبوونەوە"; }
-            } else { document.getElementById('p2p-stats').innerText = "بۆ ٢ نەفەری کاردەکات"; }
+        function closeSettings() { 
+            closeModal('settings-panel'); 
         }
 
         function openNameModal(playerIndex) {
@@ -573,7 +1065,9 @@
             document.getElementById('edit-name-input').value = players[playerIndex].name;
             let chipsContainer = document.getElementById('saved-names-chips');
             chipsContainer.innerHTML = '';
-            savedNames.forEach(n => { chipsContainer.innerHTML += `<div class="saved-name-chip" onclick="document.getElementById('edit-name-input').value = '${n}'">${n}</div>`; });
+            savedNames.forEach(n => { 
+                chipsContainer.innerHTML += `<div class="saved-name-chip" onclick="document.getElementById('edit-name-input').value = '${n}'">${n}</div>`; 
+            });
             openModal('name-modal');
             setTimeout(() => document.getElementById('edit-name-input').focus(), 100);
         }
@@ -582,37 +1076,49 @@
             let newName = document.getElementById('edit-name-input').value.trim();
             if(newName && newName.length > 0) {
                 players[currentEditingPlayer].name = newName;
-                if(!savedNames.includes(newName)) { savedNames.push(newName); localStorage.setItem('domino_names', JSON.stringify(savedNames)); }
-                saveState(); render();
-                triggerVibration('success');
+                if(!savedNames.includes(newName)) { 
+                    savedNames.push(newName); 
+                    localStorage.setItem('domino_names', JSON.stringify(savedNames)); 
+                }
+                saveState(); 
+                render();
             }
             closeModal('name-modal');
         }
 
-        function updateDatalist() { document.getElementById('saved-names-list').innerHTML = savedNames.map(n => `<option value="${n}">`).join(""); }
-
         function triggerDominoFallSequence() {
-            const stage = document.getElementById('domino-stage'); stage.innerHTML = '';
+            const stage = document.getElementById('domino-stage'); 
+            stage.innerHTML = '';
             for(let i = 0; i < 6; i++) {
-                let piece = document.createElement('div'); piece.className = 'domino-piece';
-                piece.innerHTML += `<div class="dot" style="top: 10px; left: 12px;"></div>`;
-                if(i % 2 == 0) piece.innerHTML += `<div class="dot" style="bottom: 10px; left: 12px;"></div>`;
+                let piece = document.createElement('div'); 
+                piece.className = 'domino-piece';
+                piece.innerHTML += `<div class="dot" style="top: 10px; left: 12px; width:6px; height:6px; background:#3e2723; border-radius:50%; position:absolute;"></div>`;
+                if(i % 2 == 0) {
+                    piece.innerHTML += `<div class="dot" style="bottom: 10px; left: 12px; width:6px; height:6px; background:#3e2723; border-radius:50%; position:absolute;"></div>`;
+                }
                 stage.appendChild(piece);
             }
             const pieces = document.querySelectorAll('.domino-piece');
-            pieces.forEach((p, index) => { setTimeout(() => { p.classList.add('falling'); triggerVibration('click'); }, index * 100); });
+            pieces.forEach((p, index) => { 
+                setTimeout(() => { 
+                    p.classList.add('falling'); 
+                }, index * 100); 
+            });
             setTimeout(() => {
                 document.getElementById('winner-display').style.opacity = '1';
                 document.getElementById('win-stats').style.opacity = '1';
                 document.getElementById('win-reset-btn').style.opacity = '1';
                 fireWorksAnimation(); 
-                triggerVibration('success');
             }, pieces.length * 100 + 400);
         }
 
         function fireWorksAnimation() {
-            var duration = 3 * 1000; var animationEnd = Date.now() + duration; var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100000 };
-            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+            var duration = 3 * 1000; 
+            var animationEnd = Date.now() + duration; 
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100000 };
+            function randomInRange(min, max) { 
+                return Math.random() * (max - min) + min; 
+            }
             var interval = setInterval(function() {
                 var timeLeft = animationEnd - Date.now();
                 if (timeLeft <= 0) return clearInterval(interval);
@@ -622,99 +1128,128 @@
             }, 250);
         }
 
-        function createFloatingNumber(playerIndex, value) {
-            const scoreBox = document.getElementById(`score-box-${playerIndex}`);
-            if(!scoreBox) return;
-            const rect = scoreBox.getBoundingClientRect();
-            const floatDiv = document.createElement('div');
-            floatDiv.className = 'floating-score'; floatDiv.innerText = `+${value}`;
-            floatDiv.style.left = `${rect.left + (rect.width / 2) - 25}px`; floatDiv.style.top = `${rect.top - 15}px`;
-            document.body.appendChild(floatDiv);
-            setTimeout(() => { floatDiv.remove(); }, 1500);
+        function startTimer() { 
+            clearInterval(timerInterval); 
+            timerInterval = setInterval(() => { 
+                if (!isPaused) { 
+                    seconds++; 
+                    updateTimerUI(); 
+                    localStorage.setItem('domino_s', seconds); 
+                } 
+            }, 1000); 
         }
-
-        function startTimer() { clearInterval(timerInterval); timerInterval = setInterval(() => { if (!isPaused) { seconds++; updateTimerUI(); localStorage.setItem('domino_s', seconds); } }, 1000); }
         
         function updateTimerUI() { 
-            let m = Math.floor(seconds / 60); let s = seconds % 60; 
-            let timerEl = document.getElementById('game-timer'); let wrapperEl = document.getElementById('timer-container');
+            let m = Math.floor(seconds / 60); 
+            let s = seconds % 60; 
+            let timerEl = document.getElementById('game-timer'); 
+            let wrapperEl = document.getElementById('timer-container');
             timerEl.innerText = (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s); 
             
             let color = '#FFC000'; 
             if (m >= 1 && m < 5) color = '#F2994A'; 
             else if (m >= 5) color = '#ED2939'; 
             
-            timerEl.style.color = color; timerEl.style.textShadow = `0 0 10px ${color}`;
-            if(!isPaused) { wrapperEl.style.borderColor = color; wrapperEl.style.boxShadow = `0 0 15px ${color}`; }
+            timerEl.style.color = color; 
+            timerEl.style.textShadow = `0 0 10px ${color}`;
+            if(!isPaused) { 
+                wrapperEl.style.borderColor = color; 
+                wrapperEl.style.boxShadow = `0 0 15px ${color}`; 
+            }
         }
         
         function toggleTimer() { 
-            triggerVibration('click');
-            isPaused = !isPaused; document.getElementById('timer-icon').innerText = isPaused ? "▶️" : "⏸️";
+            isPaused = !isPaused; 
+            document.getElementById('timer-icon').innerText = isPaused ? "▶️" : "⏸️";
             let wrapperEl = document.getElementById('timer-container');
-            if (isPaused) { wrapperEl.parentElement.classList.add('paused'); wrapperEl.style.borderColor = 'var(--red)'; wrapperEl.style.boxShadow = '0 0 20px var(--red)'; } 
-            else { wrapperEl.parentElement.classList.remove('paused'); updateTimerUI(); }
+            if (isPaused) { 
+                wrapperEl.parentElement.classList.add('paused'); 
+                wrapperEl.style.borderColor = 'var(--red)'; 
+                wrapperEl.style.boxShadow = '0 0 20px var(--red)'; 
+            } else { 
+                wrapperEl.parentElement.classList.remove('paused'); 
+                updateTimerUI(); 
+            }
         }
 
         function checkTimerActive() {
             if (isPaused) { 
-                let msg = document.getElementById('alert-msg'); msg.style.display = 'block'; 
-                triggerVibration('error');
-                setTimeout(() => { msg.style.display = 'none'; }, 2000); return false; 
-            } return true;
+                let msg = document.getElementById('alert-msg'); 
+                msg.style.display = 'block'; 
+                setTimeout(() => { msg.style.display = 'none'; }, 2000); 
+                return false; 
+            } 
+            return true;
         }
 
-        function setTarget(v, el) { targetScore = parseInt(v); localStorage.setItem('domino_target', v); document.querySelectorAll('.target-item').forEach(i => i.classList.remove('active')); if(el) el.classList.add('active'); render(); triggerVibration('click'); }
-        function setCustomTarget() { let val = document.getElementById('custom-target').value; if(val && parseInt(val) > 0) { setTarget(parseInt(val), null); document.getElementById('custom-target').value = ''; } }
-        function changeTheme(el) { let url = el.style.backgroundImage; document.body.style.backgroundImage = url; localStorage.setItem('domino_bg', url); document.querySelectorAll('.theme-item').forEach(i => i.classList.remove('active')); el.classList.add('active'); triggerVibration('click'); }
+        function setTarget(v, el) { 
+            targetScore = parseInt(v); 
+            localStorage.setItem('domino_target', v); 
+            document.querySelectorAll('.target-item').forEach(i => i.classList.remove('active')); 
+            if(el) el.classList.add('active'); 
+            render(); 
+        }
+
+        function setCustomTarget() { 
+            let val = document.getElementById('custom-target').value; 
+            if(val && parseInt(val) > 0) { 
+                setTarget(parseInt(val), null); 
+                document.getElementById('custom-target').value = ''; 
+            } 
+        }
+
+        function changeTheme(el) { 
+            let url = el.style.backgroundImage; 
+            document.body.style.backgroundImage = url; 
+            localStorage.setItem('domino_bg', url); 
+            document.querySelectorAll('.theme-item').forEach(i => i.classList.remove('active')); 
+            el.classList.add('active'); 
+        }
 
         function setMode(n, isNew = false) {
-            targetScore = parseInt(localStorage.getItem('domino_target')) || 101; streakData = { player: null, count: 0 };
+            targetScore = parseInt(localStorage.getItem('domino_target')) || 101; 
             if(isNew) { 
-                players = {}; seconds = 0; localStorage.setItem('domino_s', 0); 
-                for(let i=1; i<=n; i++) { players[i] = { name: (n==2 ? `تیمی ${i}` : `یاریزان ${i}`), score: 0, history: [] }; } 
+                players = {}; 
+                seconds = 0; 
+                localStorage.setItem('domino_s', 0); 
+                for(let i=1; i<=n; i++) { 
+                    players[i] = { name: (n==2 ? `تیمی ${i}` : `یاریزان ${i}`), score: 0, history: [] }; 
+                } 
                 saveState(); 
             } else { 
                 players = JSON.parse(localStorage.getItem('domino_g')) || {1:{name:"تیمی 1",score:0,history:[]}, 2:{name:"تیمی 2",score:0,history:[]}}; 
                 seconds = parseInt(localStorage.getItem('domino_s')) || 0; 
-                streakData = JSON.parse(localStorage.getItem('domino_streak')) || { player: null, count: 0 }; 
-                let isFresh = true; for(let i in players) { if(players[i].score > 0 || players[i].history.length > 0) isFresh = false; }
-                if(isFresh) { seconds = 0; localStorage.setItem('domino_s', 0); }
             }
             document.getElementById('main-grid').className = (Object.keys(players).length == 3 ? 'game-grid grid-3' : 'game-grid');
-            updateTimerUI(); startTimer(); render();
-            setTimeout(() => { document.querySelectorAll('.mode-item').forEach(b => { b.classList.toggle('active', b.id == `btn-mode-${Object.keys(players).length}`); }); document.querySelectorAll('.target-item').forEach(b => { b.classList.toggle('active', b.getAttribute('data-val') == targetScore); }); }, 100);
+            updateTimerUI(); 
+            startTimer(); 
+            render();
         }
 
         function render() {
-            const grid = document.getElementById('main-grid'); const historyContainer = document.getElementById('unified-history');
-            grid.innerHTML = ""; let historyHTML = `<div class="history-title-bar">تۆماری خاڵەکان (ئامانج: ${targetScore})</div>`;
+            const grid = document.getElementById('main-grid'); 
+            const historyContainer = document.getElementById('unified-history');
+            grid.innerHTML = ""; 
+            let historyHTML = `<div class="history-title-bar">تۆماری خاڵەکان (ئامانج: ${targetScore})</div>`;
             
             let pCount = Object.keys(players).length;
             historyHTML += `<div class="history-grid" style="grid-template-columns: repeat(${pCount}, 1fr);">`;
             
             for (let i in players) {
                 let progressPercent = Math.max(0, Math.min((players[i].score / targetScore) * 100, 100));
-                let isStreak = (streakData.player == i && streakData.count >= 3);
-                let cardClass = isStreak ? "card streak-fire" : "card";
                 
-                let orderStyle = ""; if (pCount === 3) { if (i == 1) orderStyle = "order: 1;"; if (i == 3) orderStyle = "order: 2;"; if (i == 2) orderStyle = "order: 3;"; }
-
                 grid.innerHTML += `
-                <div class="${cardClass}" style="${orderStyle} animation-delay: ${i * 0.1}s;">
-                    <div class="streak-badge">🔥 لەسەریەکە!</div>
+                <div class="card" style="animation-delay: ${i * 0.1}s;">
                     <div class="player-input" onclick="openNameModal(${i})">${players[i].name}</div>
-                    
                     <div id="score-box-${i}" class="score-display-box" onclick="if(checkTimerActive()){ curT=${i}; openModal('score-modal'); document.getElementById('points-input').focus(); }">
                         <div class="score-total">${players[i].score}</div>
                         <div class="score-label">خاڵ</div>
                     </div>
-                    
                     <div class="progress-bg"><div class="progress-fill" style="width: ${progressPercent}%;"></div></div>
                     <div class="rem-text">ماوە: ${targetScore - players[i].score}</div>
                 </div>`;
                 
-                historyHTML += `<div class="history-column" style="${orderStyle}">`;
+                historyHTML += `<div class="history-column">`;
                 players[i].history.slice().reverse().forEach((pt, j) => {
                     let revIdx = players[i].history.length - 1 - j;
                     historyHTML += `
@@ -727,102 +1262,253 @@
                 });
                 historyHTML += `</div>`;
             }
-            historyHTML += `</div>`; historyContainer.innerHTML = historyHTML;
-            updateAIandP2P(); 
+            historyHTML += `</div>`; 
+            historyContainer.innerHTML = historyHTML;
+            
+            // نوێکردنەوەی پێشبینی AI لە داشبۆرد
+            let keys = Object.keys(players);
+            if(keys.length == 2) {
+                let p1 = players[1]; 
+                let p2 = players[2];
+                let dist1 = Math.max(1, targetScore - p1.score); 
+                let dist2 = Math.max(1, targetScore - p2.score);
+                let totalD = dist1 + dist2;
+                
+                if(p1.score == 0 && p2.score == 0) { 
+                    document.getElementById('ai-prob').innerText = "٥٠٪ بەرامبەر ٥٠٪"; 
+                } else {
+                    let c1 = Math.round((dist2 / totalD) * 100); 
+                    let c2 = Math.round((dist1 / totalD) * 100);
+                    let lead = p1.score > p2.score ? p1.name : p2.name;
+                    document.getElementById('ai-prob').innerText = `${Math.max(c1, c2)}٪ بۆ ${lead}`;
+                }
+            }
         }
 
         function smoothRemove(playerIndex, historyIndex, points) {
             if(!checkTimerActive()) return;
-            triggerVibration('click');
             const itemWrapper = document.getElementById(`hist-item-${playerIndex}-${historyIndex}`);
             itemWrapper.style.maxHeight = itemWrapper.offsetHeight + 'px';
             itemWrapper.style.transition = 'all 0.4s ease-out';
+            
             setTimeout(() => {
                 itemWrapper.classList.add('collapsing');
                 itemWrapper.style.opacity = '0';
                 itemWrapper.style.transform = 'scale(0.9) translateY(-10px)';
                 itemWrapper.style.maxHeight = '0';
             }, 10);
+            
             setTimeout(() => {
                 players[playerIndex].score -= points; 
                 players[playerIndex].history.splice(historyIndex, 1); 
-                streakData = { player: null, count: 0 }; 
-                localStorage.setItem('domino_streak', JSON.stringify(streakData));
-                saveState(); render();
+                saveState(); 
+                render();
             }, 400);
         }
 
         function validateScore() { 
-            let inputEl = document.getElementById('points-input'); let v = parseInt(inputEl.value) || 0; 
+            let inputEl = document.getElementById('points-input'); 
+            let v = parseInt(inputEl.value) || 0; 
             
             if(v >= targetScore) { 
                 closeModal('score-modal'); 
                 document.getElementById('invalid-subtext').innerText = `${v} خاڵ نایاساییە! (ئامانج ${targetScore}یە)`;
                 openModal('invalid-score-modal');
-                triggerVibration('error');
                 return; 
             }
-            
-            if(streakData.player == curT) { streakData.count++; } else { streakData.player = curT; streakData.count = 1; }
-            localStorage.setItem('domino_streak', JSON.stringify(streakData));
 
-            players[curT].score += v; players[curT].history.push(v);
-            if (v > 0) {
-                createFloatingNumber(curT, v);
-                triggerVibration('success');
-            }
-            
-            saveState(); render(); closeModal('score-modal');
+            players[curT].score += v; 
+            players[curT].history.push(v);
+            saveState(); 
+            render(); 
+            closeModal('score-modal');
             
             if(players[curT].score >= targetScore) { 
-                isPaused = true; clearInterval(timerInterval); document.getElementById('timer-icon').innerText = "▶️"; document.getElementById('timer-container').parentElement.classList.add('paused');
-                let sortedScores = Object.values(players).map(p => p.score).sort((a,b) => b - a); let diff = sortedScores[0] - (sortedScores.length > 1 ? sortedScores[1] : 0); let finalTime = document.getElementById('game-timer').innerText;
+                isPaused = true; 
+                clearInterval(timerInterval); 
+                document.getElementById('timer-icon').innerText = "▶️"; 
+                document.getElementById('timer-container').parentElement.classList.add('paused');
                 
-                document.getElementById('winner-display').style.opacity = '0';
-                document.getElementById('win-stats').style.opacity = '0';
-                document.getElementById('win-reset-btn').style.opacity = '0';
+                // گەڕان بەدوای یاریزانی دۆڕاودا بزانین سفری هێناوە یان نا
+                let hasZero = false;
+                let loserNameForSig = "";
                 
-                document.getElementById('winner-display').innerText = "👑 " + players[curT].name; 
-                document.getElementById('win-stats').innerHTML = `<div style="font-size:1.4rem; color:#ccc; margin-bottom: 12px;">کاتی یاری: <span style="color:var(--gold); font-weight:bold;">${finalTime}</span></div><div style="font-size:1.4rem; color:#ccc;">بە جیاوازی: <span style="color:var(--red); font-weight:bold;">${diff} خاڵ</span></div>`;
-                saveHist(players[curT].name, finalTime, diff); 
-                openModal('win-modal');
-                setTimeout(triggerDominoFallSequence, 300);
+                for(let i in players) {
+                    if(players[i].score === 0 && i != curT) {
+                        hasZero = true;
+                        loserNameForSig = players[i].name;
+                    }
+                }
+
+                pendingWinData = {
+                    winnerId: curT,
+                    winnerName: players[curT].name,
+                    loserName: (curT == 1 && players[2]) ? players[2].name : players[1].name,
+                    p1Score: players[1] ? players[1].score : 0,
+                    p2Score: players[2] ? players[2].score : 0,
+                    totalScore: (players[1] ? players[1].score : 0) + (players[2] ? players[2].score : 0)
+                };
+
+                if (hasZero) {
+                    // ئەگەر تیمێک سفر بوو، شاشەی ئیمزاکە دەکەینەوە
+                    document.getElementById('loser-name-sig').innerText = loserNameForSig;
+                    clearSignature();
+                    openModal('signature-modal');
+                } else {
+                    // ئەگەر ئاسایی بوو، یەکسەر بردنەوە نیشان دەدەین
+                    executeWinScreen(null);
+                }
             }
         }
 
-        function saveState() { localStorage.setItem('domino_g', JSON.stringify(players)); }
-        
-        function saveHist(winner, timePlayed, diff) { 
-            let h = JSON.parse(localStorage.getItem('domino_h') || '{}'); let d = new Date().toLocaleDateString('ku-IQ'); 
-            if(!h[d]) h[d] = []; h[d].unshift({ winner: winner, time: new Date().toLocaleTimeString('ku-IQ'), dur: timePlayed, gap: diff }); 
-            localStorage.setItem('domino_h', JSON.stringify(h)); 
-
-            if(Object.keys(players).length == 2) {
-                allMatchesHistory.push({ p1: players[1].name, p2: players[2].name, winner: winner });
-                localStorage.setItem('domino_match_history', JSON.stringify(allMatchesHistory));
-            }
+        function saveSignatureAndWin() {
+            let sigDataUrl = sigCanvas.toDataURL("image/png");
+            closeModal('signature-modal');
+            executeWinScreen(sigDataUrl);
         }
+
+        function executeWinScreen(signatureBase64) {
+            let finalTime = document.getElementById('game-timer').innerText;
+            let diff = Math.abs(pendingWinData.p1Score - pendingWinData.p2Score);
+            
+            document.getElementById('winner-display').style.opacity = '0';
+            document.getElementById('win-stats').style.opacity = '0';
+            document.getElementById('win-reset-btn').style.opacity = '0';
+            
+            document.getElementById('winner-display').innerText = "👑 " + pendingWinData.winnerName; 
+            document.getElementById('win-stats').innerHTML = `<div style="font-size:1.4rem; color:#ccc; margin-bottom: 12px;">کاتی یاری: <span style="color:var(--gold); font-weight:bold;">${finalTime}</span></div><div style="font-size:1.4rem; color:#ccc;">بە جیاوازی: <span style="color:var(--red); font-weight:bold;">${diff} خاڵ</span></div>`;
+            
+            // پاشەکەوتکردنی داتای وردی یارییەکە بۆ ناو مێژوو
+            let matchRecord = {
+                id: Date.now(),
+                date: new Date().toLocaleDateString('ku-IQ'),
+                time: new Date().toLocaleTimeString('ku-IQ'),
+                target: targetScore,
+                winner: pendingWinData.winnerName,
+                p1Name: players[1] ? players[1].name : "تیمی ١",
+                p2Name: players[2] ? players[2].name : "تیمی ٢",
+                p1Score: pendingWinData.p1Score,
+                p2Score: pendingWinData.p2Score,
+                totalPoints: pendingWinData.totalScore,
+                duration: finalTime,
+                gap: diff,
+                signature: signatureBase64 // لەوانەیە null بێت ئەگەر سفر نەبێت
+            };
+
+            allMatchesHistory.unshift(matchRecord); 
+            if(allMatchesHistory.length > 50) allMatchesHistory.pop(); 
+            localStorage.setItem('domino_match_history_v2', JSON.stringify(allMatchesHistory));
+
+            openModal('win-modal');
+            setTimeout(triggerDominoFallSequence, 300);
+        }
+
+        function saveState() { 
+            localStorage.setItem('domino_g', JSON.stringify(players)); 
+        }
+
+        // کردنەوەی پەنجەرەی وردەکارییەکانی یارییەکی کۆن بە کلیک
+        window.openHistoryDetail = function(matchId) {
+            let match = allMatchesHistory.find(m => m.id === matchId);
+            if(!match) return;
+
+            document.getElementById('detail-target').innerText = match.target;
+            document.getElementById('detail-team1-name').innerText = match.p1Name;
+            document.getElementById('detail-team1-score').innerText = match.p1Score;
+            document.getElementById('detail-team2-name').innerText = match.p2Name;
+            document.getElementById('detail-team2-score').innerText = match.p2Score;
+            document.getElementById('detail-total-score').innerText = match.totalPoints;
+
+            let sigBtn = document.getElementById('show-sig-btn');
+            let sigBox = document.getElementById('sig-img-box');
+            let sigImg = document.getElementById('detail-sig-img');
+
+            sigBox.style.display = 'none'; // سەرەتا ئیمزاکە بیشارەوە
+
+            // ئەگەر یارییەکە ئیمزای تێدا بوو، دوگمەی نیشاندان دەربهێنە
+            if(match.signature) {
+                sigBtn.style.display = 'block';
+                sigBtn.style.display = 'inline-block'; 
+                sigImg.src = match.signature;
+            } else {
+                sigBtn.style.display = 'none';
+            }
+
+            openModal('history-detail-modal');
+        };
 
         function loadHist() { 
-            let h = JSON.parse(localStorage.getItem('domino_h') || '{}'); let c = document.getElementById('history-content'); c.innerHTML = ""; let totalGamesCount = 0; 
-            for(let d in h) { totalGamesCount += h[d].length; c.innerHTML += `<div class="folder"><div class="folder-head" onclick="toggleF(this)">📅 ${d} <span>▼</span></div><div class="folder-body">${h[d].map(g => `<div style="border-bottom:1px solid rgba(255,192,0,0.2); padding:12px; display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px; background: rgba(0,0,0,0.5); border-radius: 10px;"><div style="text-align:right;"><span style="font-weight:900; color:#fff; font-size:1.2rem;">👑 ${g.winner}</span><br><span style="color:var(--red); font-size:1rem; font-weight:bold;">بە جیاوازی: ${g.gap} خاڵ</span></div><span style="color:var(--gold); font-size:1.1rem; font-weight:bold; background: rgba(255,192,0,0.1); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255,192,0,0.3);">⏱️ ${g.dur}</span></div>`).join("")}</div></div>`; } 
-            document.getElementById('dash-total-games').innerText = totalGamesCount; 
+            let c = document.getElementById('history-content'); 
+            c.innerHTML = ""; 
+            if(allMatchesHistory.length === 0) {
+                c.innerHTML = "<p style='text-align:center; color:#aaa;'>هیچ یارییەک تۆمار نەکراوە</p>";
+                return;
+            }
+
+            allMatchesHistory.forEach(m => {
+                let isZero = (m.p1Score === 0 || m.p2Score === 0);
+                let badge = isZero ? `<span style="background:var(--red); color:#fff; font-size:0.7rem; padding:3px 6px; border-radius:5px; margin-right:5px; vertical-align:middle;">ئیمزا کراوە ✍️</span>` : "";
+
+                c.innerHTML += `
+                <div class="match-card" onclick="openHistoryDetail(${m.id})">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span style="color:#aaa; font-size:0.85rem;">📅 ${m.date} - ${m.time}</span>
+                        <span style="color:var(--gold); font-size:0.85rem; border:1px solid var(--gold); padding:2px 8px; border-radius:10px;">ئامانج: ${m.target}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="text-align:right;">
+                            <span style="font-weight:900; color:#fff; font-size:1.2rem;">👑 ${m.winner} ${badge}</span>
+                        </div>
+                        <span style="color:var(--gold); font-size:1.2rem; font-weight:bold; background:rgba(255,192,0,0.1); padding:5px 15px; border-radius:12px;">${m.p1Score} - ${m.p2Score}</span>
+                    </div>
+                </div>`;
+            });
         }
         
-        function resetCurrentGame() { let lastMode = Object.keys(players).length; localStorage.removeItem('domino_g'); localStorage.removeItem('domino_s'); localStorage.removeItem('domino_streak'); seconds = 0; setMode(lastMode, true); closeModal('win-modal'); triggerVibration('click'); }
-        function confirmNewGame(n) { openModal('new-game-modal'); document.getElementById('confirm-new-btn').onclick = () => { setMode(n, true); closeModal('new-game-modal'); closeSettings(); triggerVibration('success'); }; }
-        function toggleF(h) { let b = h.nextElementSibling; b.style.display = (b.style.display === 'block') ? 'none' : 'block'; triggerVibration('click'); }
+        function resetCurrentGame() { 
+            let lastMode = Object.keys(players).length; 
+            localStorage.removeItem('domino_g'); 
+            localStorage.removeItem('domino_s'); 
+            seconds = 0; 
+            setMode(lastMode, true); 
+            closeModal('win-modal'); 
+        }
+
+        function confirmNewGame(n) { 
+            openModal('new-game-modal'); 
+            document.getElementById('confirm-new-btn').onclick = () => { 
+                setMode(n, true); 
+                closeModal('new-game-modal'); 
+                closeSettings(); 
+            }; 
+        }
+
+        function toggleF(h) { 
+            let b = h.nextElementSibling; 
+            b.style.display = (b.style.display === 'block') ? 'none' : 'block'; 
+        }
         
-        function askClearHistory() { openModal('clear-history-modal'); }
+        function askClearHistory() { 
+            openModal('clear-history-modal'); 
+        }
+
         function executeClearHistory() {
-            localStorage.removeItem('domino_h'); localStorage.removeItem('domino_match_history'); allMatchesHistory = []; loadHist(); updateAIandP2P();
+            localStorage.removeItem('domino_match_history_v2'); 
+            allMatchesHistory = []; 
+            loadHist();
             closeModal('clear-history-modal');
-            triggerVibration('success');
         }
 
         window.onload = () => { 
-            let bg = localStorage.getItem('domino_bg'); if(bg) { document.body.style.backgroundImage = bg; setTimeout(() => { document.querySelectorAll('.theme-item').forEach(i => { if(i.style.backgroundImage === bg) i.classList.add('active'); }); }, 100); }
-            updateDatalist();
+            let bg = localStorage.getItem('domino_bg'); 
+            if(bg) { 
+                document.body.style.backgroundImage = bg; 
+                setTimeout(() => { 
+                    document.querySelectorAll('.theme-item').forEach(i => { 
+                        if(i.style.backgroundImage === bg) i.classList.add('active'); 
+                    }); 
+                }, 100); 
+            }
             setMode(localStorage.getItem('domino_g') ? Object.keys(JSON.parse(localStorage.getItem('domino_g'))).length : 2); 
             document.getElementById('timer-container').parentElement.classList.add('paused');
         };
