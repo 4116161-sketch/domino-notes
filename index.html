@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>خاڵژمێری دۆمینە - کۆمپیوتەری ئاوێزە VIP 👑</title>
+    <title>خاڵ ژمێری دۆمینە - کۆمپیوتەری ئاوێزە VIP</title>
     
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     
     <style>
         /* ==========================================================================
-           بەشی یەکەم: گۆڕاوە سەرەکییەکان (ڕەنگە کوردەوارییەکان و ڤی ئای پی)
+           ١. گۆڕاوە سەرەکییەکان (ڕەنگە کوردەوارییەکان)
            ========================================================================== */
         :root { 
             --gold: #FFC000;      
@@ -20,650 +20,198 @@
             --card-gradient: linear-gradient(145deg, rgba(45, 25, 15, 0.95), rgba(20, 10, 5, 0.98)); 
         }
 
-        /* پاککردنەوەی ستایلی وێبگەڕەکان */
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            margin: 0; 
-            padding: 0; 
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
-        /* ستایلی گشتی پەڕەکە */
         body { 
             background-color: #1a0f0a; 
             background-image: url('https://images.pexels.com/photos/1393972/pexels-photo-1393972.jpeg?fm=jpg');
-            background-size: cover; 
-            background-position: center; 
-            background-attachment: fixed;
-            color: #fff; 
-            font-family: 'Segoe UI', Tahoma, sans-serif; 
-            height: 100vh; 
-            width: 100vw; 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden;
+            background-size: cover; background-position: center; background-attachment: fixed;
+            color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; 
+            height: 100vh; width: 100vw; display: flex; flex-direction: column; overflow: hidden;
             perspective: 1200px;
         }
 
         /* ==========================================================================
-           بەشی دووەم: پەردەی تاریکی (Blur Iris) بۆ کاتی کردنەوەی مۆداڵەکان
+           ٢. پەردەی تاریکی (Blur Iris) بۆ مۆداڵەکان
            ========================================================================== */
         #app-content {
-            display: flex; 
-            flex-direction: column; 
-            height: 100vh; 
-            width: 100vw;
+            display: flex; flex-direction: column; height: 100vh; width: 100vw;
             transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), filter 0.5s ease, border-radius 0.5s ease;
-            transform-origin: center center; 
-            background: rgba(20, 10, 0, 0.4); 
+            transform-origin: center center; background: rgba(20, 10, 0, 0.4); 
         }
 
         #app-content.iris-active {
-            transform: scale(0.92); 
-            filter: blur(12px) brightness(0.6) sepia(0.3); 
-            border-radius: 30px; 
-            pointer-events: none; 
-            box-shadow: 0 0 50px rgba(0,0,0,1); 
+            transform: scale(0.92); filter: blur(12px) brightness(0.6) sepia(0.3); 
+            border-radius: 30px; pointer-events: none; box-shadow: 0 0 50px rgba(0,0,0,1); 
         }
 
         /* ==========================================================================
-           بەشی سێیەم: شاشەی دەستپێک (Splash Screen) بۆ کۆمپیوتەری ئاوێزە
+           ٣. شاشەی دەستپێک (Splash Screen) - کوردەواری
            ========================================================================== */
         #splash-screen {
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at center, #2c1a0f 0%, #000 100%); 
-            z-index: 999999; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
+            z-index: 999999; display: flex; flex-direction: column; justify-content: center; align-items: center; 
             transition: opacity 0.6s ease-in-out, transform 0.6s ease;
         }
 
-        .splash-title { 
-            font-size: 3.5rem; 
-            font-weight: 900; 
-            color: var(--gold); 
-            text-shadow: 0 0 30px rgba(255, 192, 0, 0.6); 
-            margin-bottom: 12px; 
-            letter-spacing: 2px; 
-            animation: pulseGold 2s infinite alternate; 
-        }
-
-        .splash-subtitle { 
-            font-size: 1.4rem; 
-            color: #fff; 
-            letter-spacing: 1px; 
-            opacity: 0; 
-            animation: slideUp 1s ease-out 0.3s forwards; 
-        }
-
-        .splash-footer { 
-            position: absolute; 
-            bottom: 40px; 
-            font-size: 1rem; 
-            color: #ccc; 
-            font-weight: bold; 
-            border-top: 1px solid var(--gold); 
-            padding-top: 15px; 
-            width: 80%; 
-            text-align: center; 
-            line-height: 1.6; 
-            opacity: 0; 
-            animation: fadeIn 1.5s ease-in 0.8s forwards; 
-        }
-
-        @keyframes pulseGold { 
-            from { text-shadow: 0 0 15px var(--gold); transform: scale(1); } 
-            to { text-shadow: 0 0 40px var(--gold), 0 0 60px rgba(255, 192, 0, 0.4); transform: scale(1.05); } 
-        }
-
-        @keyframes slideUp { 
-            from { transform: translateY(30px); opacity: 0; } 
-            to { transform: translateY(0); opacity: 0.9; } 
-        }
-
-        @keyframes fadeIn { 
-            from { opacity: 0; } 
-            to { opacity: 1; } 
-        }
+        .splash-title { font-size: 3.5rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 30px rgba(255, 192, 0, 0.6); margin-bottom: 12px; letter-spacing: 2px; animation: pulseGold 2s infinite alternate; }
+        .splash-subtitle { font-size: 1.4rem; color: #fff; letter-spacing: 1px; opacity: 0; animation: slideUp 1s ease-out 0.3s forwards; }
+        .splash-footer { position: absolute; bottom: 40px; font-size: 1rem; color: #ccc; font-weight: bold; border-top: 1px solid var(--gold); padding-top: 15px; width: 80%; text-align: center; line-height: 1.6; opacity: 0; animation: fadeIn 1.5s ease-in 0.8s forwards; }
+        @keyframes pulseGold { from { text-shadow: 0 0 15px var(--gold); transform: scale(1); } to { text-shadow: 0 0 40px var(--gold), 0 0 60px rgba(255, 192, 0, 0.4); transform: scale(1.05); } }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 0.9; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* ==========================================================================
-           بەشی چوارەم: بەشی سەرەوە (Header) و کاتژمێر
+           ٤. بەشی سەرەوە (Header) و کاتژمێر
            ========================================================================== */
         .header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 30px 15px 12px 15px; 
-            background: rgba(20, 10, 5, 0.85); 
-            border-bottom: 1px solid var(--glass-border); 
-            z-index: 100; 
-            flex-shrink: 0; 
-            backdrop-filter: blur(15px); 
-            box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 30px 15px 12px 15px; background: rgba(20, 10, 5, 0.85); 
+            border-bottom: 1px solid var(--glass-border); z-index: 100; flex-shrink: 0; 
+            backdrop-filter: blur(15px); box-shadow: 0 5px 20px rgba(0,0,0,0.8);
         }
 
-        .timer-wrapper { 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            background: rgba(255, 192, 0, 0.1); 
-            padding: 6px 18px; 
-            border-radius: 50px; 
-            cursor: pointer; 
-            border: 2px solid var(--gold); 
-            box-shadow: 0 0 12px rgba(255, 192, 0, 0.4); 
-            transition: all 0.3s ease; 
-        }
+        .timer-wrapper { display: flex; align-items: center; gap: 8px; background: rgba(255, 192, 0, 0.1); padding: 6px 18px; border-radius: 50px; cursor: pointer; border: 2px solid var(--gold); box-shadow: 0 0 12px rgba(255, 192, 0, 0.4); transition: all 0.3s ease; }
+        #game-timer { font-family: monospace; font-size: 1.2rem; font-weight: 900; color: var(--gold); transition: color 0.5s ease, text-shadow 0.5s ease; letter-spacing: 1px; }
+        .paused .timer-wrapper { border-color: var(--red); background: rgba(237, 41, 57, 0.1); box-shadow: 0 0 20px rgba(237, 41, 57, 0.6); animation: blinker 1.5s linear infinite; }
+        @keyframes blinker { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-        #game-timer { 
-            font-family: monospace; 
-            font-size: 1.2rem; 
-            font-weight: 900; 
-            color: var(--gold); 
-            transition: color 0.5s ease, text-shadow 0.5s ease; 
-            letter-spacing: 1px; 
-        }
-
-        .paused .timer-wrapper { 
-            border-color: var(--red); 
-            background: rgba(237, 41, 57, 0.1); 
-            box-shadow: 0 0 20px rgba(237, 41, 57, 0.6); 
-            animation: blinker 1.5s linear infinite; 
-        }
-
-        @keyframes blinker { 
-            0%, 100% { opacity: 1; } 
-            50% { opacity: 0.5; } 
-        }
+        /* داشبۆردی پێشبینیکەر */
+        .ai-hud-container { background: linear-gradient(180deg, rgba(30, 15, 5, 0.9), rgba(15, 5, 0, 0.8)); border-bottom: 1px solid var(--glass-border); padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; backdrop-filter: blur(10px); }
+        .ai-hud-item { text-align: center; flex: 1; }
+        .ai-hud-title { font-size: 0.65rem; color: #d4af37; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; letter-spacing: 0.5px; }
+        .ai-hud-value { font-size: 0.85rem; font-weight: 900; color: #fff; }
+        .ai-hud-value.gold-text { color: var(--gold); text-shadow: 0 0 6px rgba(255, 192, 0, 0.6); }
+        .ai-hud-divider { width: 1px; height: 25px; background: linear-gradient(to bottom, transparent, var(--gold), transparent); opacity: 0.5; }
 
         /* ==========================================================================
-           بەشی پێنجەم: داشبۆردی زیرەکی پێشبینیکەر
+           ٥. ناوچەی سەرەکی و کارتەکان
            ========================================================================== */
-        .ai-hud-container { 
-            background: linear-gradient(180deg, rgba(30, 15, 5, 0.9), rgba(15, 5, 0, 0.8)); 
-            border-bottom: 1px solid var(--glass-border); 
-            padding: 8px 12px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            flex-shrink: 0; 
-            backdrop-filter: blur(10px); 
-        }
+        .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; }
+        .main-wrapper::-webkit-scrollbar { display: none; }
+        .main-wrapper { -ms-overflow-style: none; scrollbar-width: none; }
 
-        .ai-hud-item { 
-            text-align: center; 
-            flex: 1; 
-        }
-
-        .ai-hud-title { 
-            font-size: 0.65rem; 
-            color: #d4af37; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            margin-bottom: 3px; 
-            letter-spacing: 0.5px; 
-        }
-
-        .ai-hud-value { 
-            font-size: 0.85rem; 
-            font-weight: 900; 
-            color: #fff; 
-        }
-
-        .ai-hud-value.gold-text { 
-            color: var(--gold); 
-            text-shadow: 0 0 6px rgba(255, 192, 0, 0.6); 
-        }
-
-        .ai-hud-divider { 
-            width: 1px; 
-            height: 25px; 
-            background: linear-gradient(to bottom, transparent, var(--gold), transparent); 
-            opacity: 0.5; 
-        }
-
-        /* ==========================================================================
-           بەشی شەشەم: ناوچەی سەرەکی و کارتەکانی خاڵ
-           ========================================================================== */
-        .main-wrapper { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            overflow-y: auto; 
-            overflow-x: hidden; 
-            scroll-behavior: smooth; 
-        }
-
-        .main-wrapper::-webkit-scrollbar { 
-            display: none; 
-        }
-
-        .game-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 12px; 
-            padding: 12px; 
-            flex-shrink: 0; 
-        }
-
-        .grid-3 { 
-            grid-template-columns: 1fr 1fr 1fr; 
-            gap: 8px; 
-            padding: 12px 6px; 
-        }
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; flex-shrink: 0; }
+        .grid-3 { grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 12px 6px; }
+        .grid-3 .card { padding: 12px 5px; }
 
         .card { 
-            position: relative; 
-            text-align: center; 
-            border-radius: 20px; 
-            overflow: hidden; 
-            z-index: 1;
-            padding: 20px 12px; 
-            background: var(--card-gradient); 
-            border: 1px solid rgba(255,192,0,0.2);
+            position: relative; text-align: center; border-radius: 20px; overflow: hidden; z-index: 1;
+            padding: 20px 12px; background: var(--card-gradient); border: 1px solid rgba(255,192,0,0.2);
             box-shadow: 0 8px 25px rgba(0,0,0,0.8), inset 0 2px 8px rgba(255,255,255,0.05);
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s; 
-            animation: cardEnter 0.6s both; 
-            transform-style: preserve-3d; 
+            animation: cardEnter 0.6s both; transform-style: preserve-3d; 
         }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.95), inset 0 2px 12px rgba(255,192,0,0.15); }
+        @keyframes cardEnter { from { opacity: 0; transform: translateY(40px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-        .card:hover { 
-            transform: translateY(-5px); 
-            box-shadow: 0 12px 30px rgba(0,0,0,0.95), inset 0 2px 12px rgba(255,192,0,0.15); 
-        }
+        .card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -2; background: conic-gradient(transparent, transparent, transparent, var(--gold)); animation: spin 8s linear infinite; }
+        .card::after { content: ''; position: absolute; top: 2px; left: 2px; right: 2px; bottom: 2px; background: var(--wood-dark); border-radius: 18px; z-index: -1; backdrop-filter: blur(10px); }
+        .card > * { position: relative; z-index: 2; } 
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        @keyframes cardEnter { 
-            from { opacity: 0; transform: translateY(40px) scale(0.9); } 
-            to { opacity: 1; transform: translateY(0) scale(1); } 
-        }
+        .card.streak-fire::before { background: conic-gradient(transparent, transparent, transparent, #ff4500, #ff8c00, #ffd700); animation: spin 1s linear infinite; }
+        .card.streak-fire::after { background: rgba(40, 10, 0, 0.95); }
+        .streak-badge { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); background: linear-gradient(45deg, #ff4500, #ffd700); color: #000; padding: 4px 14px; border-radius: 10px; font-size: 0.8rem; font-weight: 900; box-shadow: 0 0 20px rgba(255, 140, 0, 0.8); z-index: 10; display: none; white-space: nowrap; }
+        .card.streak-fire .streak-badge { display: block; animation: bounceFire 0.5s infinite alternate cubic-bezier(0.5, 0.05, 1, 0.5); }
+        @keyframes bounceFire { to { transform: translate(-50%, -4px) scale(1.05); } }
 
-        .card::before { 
-            content: ''; 
-            position: absolute; 
-            top: -50%; 
-            left: -50%; 
-            width: 200%; 
-            height: 200%; 
-            z-index: -2; 
-            background: conic-gradient(transparent, transparent, transparent, var(--gold)); 
-            animation: spin 8s linear infinite; 
-        }
+        .floating-score { position: absolute; font-size: 2rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 15px var(--gold), 0 0 30px #ff4500; pointer-events: none; z-index: 1000; animation: floatUpFade 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        @keyframes floatUpFade { 0% { opacity: 0; transform: translateY(15px) scale(0.3) rotateX(45deg); } 20% { opacity: 1; transform: translateY(0) scale(1.1) rotateX(0deg); } 70% { opacity: 1; transform: translateY(-40px) scale(1) rotateX(0deg); } 100% { opacity: 0; transform: translateY(-70px) scale(0.5) rotateX(-45deg); } }
 
-        .card::after { 
-            content: ''; 
-            position: absolute; 
-            top: 2px; 
-            left: 2px; 
-            right: 2px; 
-            bottom: 2px; 
-            background: var(--wood-dark); 
-            border-radius: 18px; 
-            z-index: -1; 
-            backdrop-filter: blur(10px); 
-        }
+        .player-input { background: linear-gradient(135deg, rgba(80, 20, 10, 0.7), rgba(40, 10, 0, 0.9)); border: 1px solid rgba(255, 192, 0, 0.4); color: #fff; text-align: center; width: 100%; font-weight: 900; font-size: 1.1rem; padding: 10px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px; outline: none; box-shadow: inset 0 2px 10px rgba(0,0,0,0.8); transition: 0.3s; cursor: pointer; letter-spacing: 1px; }
+        .player-input:focus { border-color: var(--gold); box-shadow: inset 0 2px 10px rgba(0,0,0,0.8), 0 0 15px rgba(255,192,0,0.5); }
+        .grid-3 .player-input { font-size: 0.9rem; padding: 8px 4px; }
 
-        .card > * { 
-            position: relative; 
-            z-index: 2; 
-        } 
-
-        @keyframes spin { 
-            100% { transform: rotate(360deg); } 
-        }
-
-        .floating-score { 
-            position: absolute; 
-            font-size: 2rem; 
-            font-weight: 900; 
-            color: var(--gold); 
-            text-shadow: 0 0 15px var(--gold), 0 0 30px #ff4500; 
-            pointer-events: none; 
-            z-index: 1000; 
-            animation: floatUpFade 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
-        }
-
-        @keyframes floatUpFade { 
-            0% { opacity: 0; transform: translateY(15px) scale(0.3) rotateX(45deg); } 
-            20% { opacity: 1; transform: translateY(0) scale(1.1) rotateX(0deg); } 
-            70% { opacity: 1; transform: translateY(-40px) scale(1) rotateX(0deg); } 
-            100% { opacity: 0; transform: translateY(-70px) scale(0.5) rotateX(-45deg); } 
-        }
-
-        .player-input { 
-            background: linear-gradient(135deg, rgba(80, 20, 10, 0.7), rgba(40, 10, 0, 0.9)); 
-            border: 1px solid rgba(255, 192, 0, 0.4); 
-            color: #fff; 
-            text-align: center; 
-            width: 100%; 
-            font-weight: 900; 
-            font-size: 1.1rem; 
-            padding: 10px; 
-            border-radius: 10px; 
-            margin-top: 15px; 
-            margin-bottom: 15px; 
-            outline: none; 
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.8); 
-            transition: 0.3s; 
-            cursor: pointer; 
-            letter-spacing: 1px; 
-        }
-
-        .score-display-box { 
-            background: rgba(0,0,0,0.4); 
-            border-radius: 15px; 
-            padding: 15px 5px; 
-            margin: 10px 0; 
-            border: 1px solid rgba(255,192,0,0.15); 
-            cursor: pointer; 
-            transition: 0.2s; 
-            position: relative; 
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.7); 
-        }
-
-        .score-display-box:active { 
-            transform: scale(0.92); 
-            background: rgba(255,192,0,0.1); 
-        }
-
-        .score-total { 
-            font-size: 4rem; 
-            font-weight: 900; 
-            color: #fff; 
-            margin: 0; 
-            line-height: 1; 
-            text-shadow: 0 5px 15px rgba(0,0,0,0.8); 
-        }
-
-        .score-label { 
-            font-size: 1rem; 
-            color: var(--gold); 
-            font-weight: bold; 
-            margin-top: 5px; 
-        }
+        .score-display-box { background: rgba(0,0,0,0.4); border-radius: 15px; padding: 15px 5px; margin: 10px 0; border: 1px solid rgba(255,192,0,0.15); cursor: pointer; transition: 0.2s; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.7); }
+        .score-display-box:active { transform: scale(0.92); background: rgba(255,192,0,0.1); }
+        .score-total { font-size: 4rem; font-weight: 900; color: #fff; margin: 0; line-height: 1; text-shadow: 0 5px 15px rgba(0,0,0,0.8); }
+        .score-label { font-size: 1rem; color: var(--gold); font-weight: bold; margin-top: 5px; letter-spacing: 1px; }
+        .grid-3 .score-total { font-size: 2.8rem; }
 
         /* پێوەر بە ڕەنگی ئاڵا */
-        .progress-bg { 
-            background: rgba(0,0,0,0.5); 
-            border-radius: 10px; 
-            height: 10px; 
-            width: 100%; 
-            margin: 15px 0; 
-            overflow: hidden; 
-            position: relative; 
-            border: 1px solid rgba(255,255,255,0.05); 
-        }
-
-        .progress-fill { 
-            background: linear-gradient(90deg, var(--red), var(--gold), var(--green)); 
-            height: 100%; 
-            width: 0%; 
-            transition: width 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            border-radius: 10px; 
-            box-shadow: 0 0 10px rgba(255,255,255,0.2); 
-        }
-
-        .rem-text { 
-            font-size: 0.85rem; 
-            color: #ccc; 
-            font-weight: bold; 
-        }
+        .progress-bg { background: rgba(0,0,0,0.5); border-radius: 10px; height: 10px; width: 100%; margin: 15px 0; overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.05); }
+        .progress-fill { background: linear-gradient(90deg, var(--red), var(--gold), var(--green)); height: 100%; width: 0%; transition: width 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-radius: 10px; box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+        .rem-text { font-size: 0.85rem; color: #ccc; font-weight: bold; letter-spacing: 1px; }
 
         /* ==========================================================================
-           بەشی حەوتەم: مێژووی خاڵەکان
+           ٦. مێژووی خاڵەکان لە خوارەوە
            ========================================================================== */
-        .unified-history-container { 
-            margin: 0 15px 20px 15px; 
-            background: rgba(25, 10, 5, 0.8); 
-            border-radius: 20px; 
-            padding: 15px; 
-            border: 1px solid rgba(255,192,0,0.2); 
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9); 
-            display: flex; 
-            flex-direction: column; 
-            flex-shrink: 0; 
-            backdrop-filter: blur(15px); 
-        }
+        .unified-history-container { margin: 0 15px 20px 15px; background: rgba(25, 10, 5, 0.8); border-radius: 20px; padding: 15px; border: 1px solid rgba(255,192,0,0.2); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9); display: flex; flex-direction: column; flex-shrink: 0; backdrop-filter: blur(15px); }
+        .history-title-bar { text-align: center; color: var(--gold); font-weight: 900; font-size: 1.1rem; margin-bottom: 12px; border-bottom: 1px dashed rgba(255,192,0,0.3); padding-bottom: 10px; letter-spacing: 1px; }
+        .history-grid { display: grid; gap: 15px; flex: 1; align-content: start; }
+        .history-column { display: flex; flex-direction: column; border-left: 1px dashed rgba(255, 192, 0, 0.2); padding-left: 8px; }
+        .history-column:last-child { border-left: none; padding-left: 0; padding-right: 8px; }
 
-        .history-title-bar { 
-            text-align: center; 
-            color: var(--gold); 
-            font-weight: 900; 
-            font-size: 1.1rem; 
-            margin-bottom: 12px; 
-            border-bottom: 1px dashed rgba(255,192,0,0.3); 
-            padding-bottom: 10px; 
-        }
+        .hist-item-wrapper { position: relative; margin-bottom: 6px; transition: all 0.4s ease-out; overflow: hidden; }
+        .hist-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border-bottom: 1px solid var(--gold); background: linear-gradient(90deg, rgba(40,10,0,0.8), rgba(20,5,0,0.6)); border-radius: 10px; transition: all 0.3s; position: relative; z-index: 2; animation: flipInX 0.4s forwards; transform-origin: top center; opacity: 0; }
+        .collapsing { opacity: 0; transform: scale(0.9) translateY(-10px); max-height: 0 !important; margin-bottom: 0 !important; padding: 0 !important; border-bottom: none !important; }
+        @keyframes flipInX { 0% { transform: perspective(400px) rotateX(90deg); opacity: 0; } 40% { transform: perspective(400px) rotateX(-10deg); } 70% { transform: perspective(400px) rotateX(10deg); } 100% { transform: perspective(400px) rotateX(0deg); opacity: 1; } }
 
-        .history-grid { 
-            display: grid; 
-            gap: 15px; 
-            flex: 1; 
-        }
-
-        .history-column { 
-            display: flex; 
-            flex-direction: column; 
-            border-left: 1px dashed rgba(255, 192, 0, 0.2); 
-            padding-left: 8px; 
-        }
-
-        .history-column:last-child { 
-            border-left: none; 
-            padding-left: 0; 
-            padding-right: 8px; 
-        }
-
-        .hist-item-wrapper { 
-            position: relative; 
-            margin-bottom: 6px; 
-            transition: all 0.4s ease-out; 
-            overflow: hidden; 
-        }
-
-        .hist-item { 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            padding: 8px 10px; 
-            border-bottom: 1px solid var(--gold); 
-            background: linear-gradient(90deg, rgba(40,10,0,0.8), rgba(20,5,0,0.6)); 
-            border-radius: 10px; 
-            animation: flipInX 0.4s forwards; 
-            transform-origin: top center; 
-            opacity: 0; 
-        }
-
-        .collapsing { 
-            opacity: 0; 
-            transform: scale(0.9) translateY(-10px); 
-            max-height: 0 !important; 
-            margin-bottom: 0 !important; 
-            padding: 0 !important; 
-            border-bottom: none !important; 
-        }
-
-        @keyframes flipInX { 
-            100% { transform: perspective(400px) rotateX(0deg); opacity: 1; } 
-        }
-
-        .hist-val { 
-            font-size: 1.1rem; 
-            font-weight: 900; 
-            color: var(--gold); 
-        }
-
-        .del-btn { 
-            color: var(--red); 
-            font-size: 1.1rem; 
-            cursor: pointer; 
-            padding: 4px 10px; 
-            background: rgba(237, 41, 57, 0.15); 
-            border-radius: 6px; 
-            border: 1px solid rgba(237, 41, 57, 0.3); 
-        }
+        .hist-val { font-size: 1.1rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 5px rgba(255,192,0,0.4); flex: 1; text-align: left; padding-left: 10px; }
+        .del-btn { color: var(--red); font-size: 1.1rem; cursor: pointer; padding: 4px 10px; background: rgba(237, 41, 57, 0.15); border-radius: 6px; border: 1px solid rgba(237, 41, 57, 0.3); transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .del-btn:active { transform: scale(0.85); background: rgba(237, 41, 57, 0.5); }
 
         /* ==========================================================================
-           بەشی هەشتەم: شریتی هەواڵ بۆ کۆمپیوتەری ئاوێزە
+           ٧. شریتی هەواڵ (تێکستی جێگیر)
            ========================================================================== */
-        .news-ticker-container { 
-            width: 100%; 
-            background: rgba(15, 5, 0, 0.98); 
-            border-top: 1px solid var(--gold); 
-            padding: 10px 0; 
-            overflow: hidden; 
-            white-space: nowrap; 
-            flex-shrink: 0; 
-        }
-
-        .news-ticker-content { 
-            display: inline-block; 
-            white-space: nowrap; 
-            animation: scrollTicker 22s linear infinite; 
-            font-size: 1rem; 
-            font-weight: bold; 
-            color: var(--gold); 
-            padding-left: 100%; 
-        }
-
-        @keyframes scrollTicker { 
-            0% { transform: translateX(100vw); } 
-            100% { transform: translateX(-150%); } 
-        }
+        .news-ticker-container { width: 100%; background: rgba(15, 5, 0, 0.98); border-top: 1px solid var(--gold); padding: 10px 0; overflow: hidden; white-space: nowrap; flex-shrink: 0; box-shadow: 0 -5px 20px rgba(255, 192, 0, 0.1); }
+        .news-ticker-content { display: inline-block; white-space: nowrap; animation: scrollTicker 22s linear infinite; font-size: 1rem; font-weight: bold; color: var(--gold); text-shadow: 0 0 10px rgba(255, 192, 0, 0.4); padding-left: 100%; letter-spacing: 1px; }
+        @keyframes scrollTicker { 0% { transform: translateX(100vw); } 100% { transform: translateX(-150%); } }
 
         /* ==========================================================================
-           بەشی نۆیەم: مۆداڵەکان (پەنجەرەکانی سەرەوە)
+           ٨. مۆداڵەکان (تەواوی دیزاینی خۆت)
            ========================================================================== */
-        .modal { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0,0,0,0.5); 
-            z-index: 10000; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 20px; 
-            perspective: 1000px; 
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center; padding: 20px; perspective: 1000px; }
+        .modal.active { display: flex; animation: modalFadeIn 0.3s ease forwards; }
+        .modal.active .modal-box { animation: modalSlideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes modalSlideUp { from { transform: translateY(80px) rotateX(-5deg) scale(0.95); opacity: 0; } to { transform: translateY(0) rotateX(0) scale(1); opacity: 1; } }
 
-        .modal.active { 
-            display: flex; 
-            animation: modalFadeIn 0.3s ease forwards; 
-        }
-
-        .modal.active .modal-box { 
-            animation: modalSlideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
-        }
-
-        @keyframes modalFadeIn { 
-            from { opacity: 0; } 
-            to { opacity: 1; } 
-        }
-
-        @keyframes modalSlideUp { 
-            from { transform: translateY(80px) rotateX(-5deg) scale(0.95); opacity: 0; } 
-            to { transform: translateY(0) rotateX(0) scale(1); opacity: 1; } 
-        }
-
-        .modal-box { 
-            background: linear-gradient(145deg, #2a1610, #140a05); 
-            width: 100%; 
-            max-width: 480px; 
-            padding: 25px; 
-            border-radius: 30px; 
-            border: 1px solid var(--gold); 
-            text-align: center; 
-            color: #fff; 
-            max-height: 85vh; 
-            overflow-y: auto; 
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95); 
-            position: relative; 
-        }
-
-        .modal-box::-webkit-scrollbar { 
-            display: none; 
-        }
+        .modal-box { background: linear-gradient(145deg, #2a1610, #140a05); width: 100%; max-width: 480px; padding: 25px; border-radius: 30px; border: 1px solid var(--gold); text-align: center; color: #fff; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95); position: relative; }
+        .modal-box::-webkit-scrollbar { display: none; }
+        .modal-box { -ms-overflow-style: none; scrollbar-width: none; }
         
-        .select-btn { 
-            padding: 14px; 
-            border-radius: 12px; 
-            border: 1px solid #5c3a21; 
-            background: rgba(40,20,10,0.8); 
-            color: #fff; 
-            font-weight: bold; 
-            width: 100%; 
-            margin-bottom: 8px; 
-            cursor: pointer; 
-            text-align: right; 
-        }
+        .select-btn { padding: 14px 18px; border-radius: 12px; border: 1px solid #5c3a21; background: rgba(40,20,10,0.8); color: #fff; font-weight: bold; font-size: 1rem; cursor: pointer; position: relative; margin-bottom: 8px; width: 100%; transition: all 0.3s ease; text-align: right; padding-right: 50px; }
+        .select-btn:hover { background: rgba(60,30,15,0.8); }
+        .select-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(255, 192, 0, 0.1); box-shadow: inset 0 0 15px rgba(255,192,0,0.15); }
+        .select-btn.active::after { content: '✔'; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: var(--gold); color: #000; width: 22px; height: 22px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 900; box-shadow: 0 0 8px var(--gold); }
 
-        .select-btn.active { 
-            border-color: var(--gold); 
-            color: var(--gold); 
-            background: rgba(255, 192, 0, 0.1); 
-        }
+        .saved-name-chip { display: block; background: rgba(255, 192, 0, 0.1); border: 1px solid var(--gold); color: var(--gold); padding: 10px; border-radius: 12px; margin-bottom: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; width: 100%; text-align: center; font-size: 1.1rem; letter-spacing: 1px; }
+        .saved-name-chip:hover { background: rgba(255, 192, 0, 0.25); }
+        .saved-name-chip:active { transform: scale(0.95); background: var(--gold); color: #000; }
 
-        .folder { 
-            background: rgba(0,0,0,0.4); 
-            border-radius: 15px; 
-            margin-bottom: 12px; 
-            border: 1px solid rgba(255,192,0,0.1); 
-            text-align: right; 
-        }
+        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .theme-item { height: 75px; border-radius: 12px; border: 2px solid #4a2e1b; background-size: cover; background-position: center; cursor: pointer; transition: 0.2s; }
+        .theme-item.active { border-color: var(--gold); box-shadow: 0 0 15px var(--gold); transform: scale(1.03); z-index: 2; }
 
-        .folder-head { 
-            padding: 16px; 
-            background: linear-gradient(90deg, rgba(40,20,10,0.9), rgba(60,30,15,0.9)); 
-            color: var(--gold); 
-            font-weight: 900; 
-            display: flex; 
-            justify-content: space-between; 
-            cursor: pointer; 
-        }
+        .folder { background: rgba(0,0,0,0.4); border-radius: 15px; margin-bottom: 12px; border: 1px solid rgba(255,192,0,0.1); overflow: hidden; text-align: right; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        .folder-head { padding: 16px; background: linear-gradient(90deg, rgba(40,20,10,0.9), rgba(60,30,15,0.9)); border-bottom: 1px solid rgba(255,192,0,0.2); color: var(--gold); font-weight: 900; font-size: 1rem; display: flex; justify-content: space-between; cursor: pointer; transition: background 0.3s; }
+        .folder-body { display: none; padding: 15px; background: rgba(0,0,0,0.7); }
 
-        .folder-body { 
-            display: none; 
-            padding: 15px; 
-        }
+        .dash-box { background: rgba(20,10,5,0.9); border: 1px solid var(--gold); padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 5px; box-shadow: inset 0 0 20px rgba(255, 192, 0, 0.1); }
+        .dash-num { font-size: 3rem; color: var(--gold); font-weight: 900; margin: 10px 0; text-shadow: 0 0 15px rgba(255,192,0,0.4); }
 
-        .btn { 
-            padding: 15px; 
-            border-radius: 12px; 
-            border: none; 
-            font-weight: 900; 
-            width: 100%; 
-            cursor: pointer; 
-            font-size: 1.1rem; 
-            margin-top: 12px; 
-            transition: transform 0.2s; 
-        }
-
-        .btn:active { 
-            transform: scale(0.95); 
-        }
-
-        .btn-gold { 
-            background: linear-gradient(45deg, #FFC000, #F2994A); 
-            color: #000; 
-            box-shadow: 0 6px 15px rgba(255, 192, 0, 0.4); 
-        }
-
-        .btn-red { 
-            background: linear-gradient(45deg, #8B0000, #b30000); 
-            color: #fff; 
-            box-shadow: 0 6px 15px rgba(139, 0, 0, 0.5); 
-        }
+        .btn { padding: 15px; border-radius: 12px; border: none; font-weight: 900; width: 100%; cursor: pointer; font-size: 1.1rem; margin-top: 12px; transition: transform 0.2s, box-shadow 0.2s; letter-spacing: 1px; }
+        .btn:active { transform: scale(0.95); }
+        .btn-gold { background: linear-gradient(45deg, #FFC000, #F2994A); color: #000; box-shadow: 0 6px 15px rgba(255, 192, 0, 0.4); }
+        .btn-red { background: linear-gradient(45deg, #8B0000, #b30000); color: #fff; box-shadow: 0 6px 15px rgba(139, 0, 0, 0.5); }
+        
+        #alert-msg { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); background: var(--red); color: #fff; padding: 12px 20px; border-radius: 10px; z-index: 2000; display: none; font-weight: bold; font-size: 1rem; box-shadow: 0 8px 20px rgba(237,41,57,0.6); text-align: center; width: 80%; }
 
         /* ==========================================================================
-           بەشی دەیەم: دیزاینی ئیمزاکردن و مێژووی تایبەت
+           ١٠. ئەنیمەیشنی 3D دۆمینە بۆ بردنەوە
+           ========================================================================== */
+        .domino-stage { display: flex; justify-content: center; align-items: flex-end; height: 120px; margin-bottom: 20px; perspective: 800px; overflow: visible; padding-bottom: 5px; border-bottom: 1px solid rgba(255,192,0,0.3); }
+        .domino-piece { width: 30px; height: 70px; background: linear-gradient(to bottom, #f5deb3, #d2b48c); border-radius: 4px; margin: 0 5px; position: relative; transform-origin: bottom right; box-shadow: inset 0 0 10px rgba(139,69,19,0.3), -3px 5px 8px rgba(0,0,0,0.8); border: 1px solid #8b4513; transform: rotateZ(0deg); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .domino-piece::after { content: ''; position: absolute; top: 50%; left: 10%; width: 80%; height: 2px; background: #3e2723; transform: translateY(-50%); box-shadow: 0 1px 1px rgba(255,255,255,0.4); }
+        .domino-piece .dot { width: 6px; height: 6px; background: radial-gradient(circle, #3e2723, #000); border-radius: 50%; position: absolute; box-shadow: inset 0 1px 2px rgba(255,255,255,0.3); }
+        @keyframes dominoFall { 0% { transform: rotateZ(0deg); } 100% { transform: rotateZ(68deg); } }
+        .falling { animation: dominoFall 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+        /* ==========================================================================
+           ١١. ستایلە نوێیەکان (ئیمزا و مێژوو)
            ========================================================================== */
         #signature-pad { 
             border: 2px dashed var(--gold); 
@@ -674,92 +222,23 @@
             margin-bottom: 15px; 
             cursor: crosshair; 
             touch-action: none; 
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
         }
         
-        .match-card { 
-            background: rgba(0,0,0,0.6); 
-            border: 1px solid var(--gold); 
-            border-radius: 15px; 
-            padding: 15px; 
-            margin-bottom: 10px; 
-            cursor: pointer; 
-            transition: 0.2s; 
-        }
+        .match-card { background: rgba(0,0,0,0.6); border: 1px solid var(--gold); border-radius: 15px; padding: 15px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }
+        .match-card:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(255,192,0,0.2); }
+        .match-detail-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 1.1rem; }
+        .match-detail-row:last-child { border-bottom: none; }
+        .sig-image-container { margin-top: 15px; background: #000; border: 2px solid var(--gold); border-radius: 15px; padding: 10px; display: none; text-align: center; }
+        .sig-image-container img { width: 100%; filter: drop-shadow(0 0 5px rgba(255,192,0,0.8)); }
 
-        .match-card:hover { 
-            transform: scale(1.02); 
-            box-shadow: 0 0 15px rgba(255,192,0,0.2); 
+        @media (orientation: landscape) and (max-height: 600px) {
+            .main-wrapper { flex-direction: row; }
+            .game-grid { width: 55%; overflow-y: auto; }
+            .unified-history-container { width: 45%; margin: 15px 15px 15px 0; }
+            .header { padding: 15px 15px 10px 15px; }
+            .splash-title { font-size: 2.5rem; }
         }
-
-        .match-detail-row { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 10px 0; 
-            border-bottom: 1px solid rgba(255,255,255,0.1); 
-            font-size: 1.1rem; 
-        }
-
-        .match-detail-row:last-child { 
-            border-bottom: none; 
-        }
-
-        .sig-image-container { 
-            margin-top: 15px; 
-            background: #000; 
-            border: 2px solid var(--gold); 
-            border-radius: 15px; 
-            padding: 10px; 
-            display: none; 
-        }
-
-        .sig-image-container img { 
-            width: 100%; 
-            filter: drop-shadow(0 0 5px rgba(255,192,0,0.8)); 
-        }
-        
-        .domino-stage { 
-            display: flex; 
-            justify-content: center; 
-            align-items: flex-end; 
-            height: 120px; 
-            margin-bottom: 20px; 
-            perspective: 800px; 
-            overflow: visible; 
-            padding-bottom: 5px; 
-            border-bottom: 1px solid rgba(255,192,0,0.3); 
-        }
-
-        .domino-piece { 
-            width: 30px; 
-            height: 70px; 
-            background: linear-gradient(to bottom, #f5deb3, #d2b48c); 
-            border-radius: 4px; 
-            margin: 0 5px; 
-            position: relative; 
-            transform-origin: bottom right; 
-            border: 1px solid #8b4513; 
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
-        }
-
-        .domino-piece::after { 
-            content: ''; 
-            position: absolute; 
-            top: 50%; 
-            left: 10%; 
-            width: 80%; 
-            height: 2px; 
-            background: #3e2723; 
-            transform: translateY(-50%); 
-        }
-
-        @keyframes dominoFall { 
-            100% { transform: rotateZ(68deg); } 
-        }
-
-        .falling { 
-            animation: dominoFall 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; 
-        }
-
     </style>
 </head>
 <body>
@@ -768,23 +247,20 @@
 
     <div id="splash-screen">
         <div class="splash-title">دۆمینە</div>
-        <div class="splash-subtitle">کۆمپیوتەری ئاوێزە </div>
-        <div class="splash-footer">گەشەپێدراوە لەلایەن :<br><span style="color:var(--gold)">محەمەد حەیدەر - ئاوێزە</span></div>
+        <div class="splash-subtitle">کۆمپیوتەری ئاوێزە</div>
+        <div class="splash-footer">گەشەپێدراوە لەلایەن :<br><span style="color:var(--gold)">محەمەد حەیدەر - کۆمپیوتەری ئاوێزە</span></div>
     </div>
 
-    <div id="alert-msg" style="display:none; position:fixed; top:100px; left:50%; transform:translateX(-50%); background:var(--red); color:#fff; padding:12px; border-radius:10px; z-index:2000; font-weight:bold; box-shadow:0 8px 20px rgba(237,41,57,0.6);">
-        ⚠️ تکایە کاتەکە کار پێ بکە
-    </div>
+    <div id="alert-msg">تکایە کاتەکە کار پێ بکە ⚠️</div>
 
     <div id="app-content">
-        
         <div class="header">
             <div onclick="openSettings()" style="font-size:1.8rem; cursor:pointer; text-shadow: 0 0 12px var(--gold);">⚙️</div>
             <div class="timer-wrapper" id="timer-container" onclick="toggleTimer()">
                 <span id="timer-icon" style="font-size: 1.2rem;">▶️</span>
                 <span id="game-timer">00:00</span>
             </div>
-            <div style="color:var(--gold); font-weight:900; font-size: 1.1rem; letter-spacing: 1px;">کۆمپیوتەری ئاوێزە</div>
+            <div style="color:var(--gold); font-weight:900; font-size: 1rem; letter-spacing: 1px;">ئاوێزە VIP</div>
         </div>
 
         <div class="ai-hud-container" id="ai-hud">
@@ -805,17 +281,16 @@
         </div>
 
         <div class="news-ticker-container">
-            <div class="news-ticker-content">
-                بەخێربێیت بۆ خاڵژمێری دۆمینە .... گەشەپێدراوە لەلایەن: محەمەد حەیدەر بە هاوکاری شێروان - کۆمپیوتەری ئاوێزە
-            </div>
+            <div class="news-ticker-content" id="ticker-text">بەخێربێیت بۆ خاڵ ژمێری دۆمینە .... گەشەپێدراوە لەلایەن: محەمەد حەیدەر - کۆمپیوتەری ئاوێزە</div>
         </div>
     </div>
 
     <div id="name-modal" class="modal">
         <div class="modal-box" style="border-color: var(--gold);">
-            <h2 style="color:var(--gold); margin-bottom:20px; font-size: 1.8rem;">گۆڕینی ناو</h2>
-            <input type="text" id="edit-name-input" style="width:100%; font-size:1.5rem; background:rgba(0,0,0,0.8); border:2px solid var(--gold); color:#fff; text-align:center; padding:12px; border-radius:12px; outline:none; margin-bottom: 20px; font-weight:900;">
-            <div id="saved-names-chips" style="display:flex; flex-direction:column; max-height: 180px; overflow-y:auto; margin-bottom:20px;"></div>
+            <h2 style="color:var(--gold); margin-bottom:20px; font-size: 1.8rem; text-shadow: 0 0 10px rgba(255,192,0,0.5);">گۆڕینی ناو</h2>
+            <input type="text" id="edit-name-input" placeholder="ناو بنووسە..." style="width:100%; font-size:1.5rem; background:rgba(0,0,0,0.8); border:2px solid var(--gold); color:#fff; text-align:center; padding:12px; border-radius:12px; outline:none; margin-bottom: 20px; font-weight:900; box-shadow: inset 0 0 10px rgba(255,192,0,0.2);">
+            <div style="text-align: right; margin-bottom: 10px; color: #aaa; font-size: 0.9rem; font-weight: bold;">ناوە کۆنەکان:</div>
+            <div id="saved-names-chips" style="display:flex; flex-direction:column; align-items:center; max-height: 180px; overflow-y:auto; margin-bottom:20px; width:100%; padding-right: 5px;"></div>
             <div style="display:flex; gap:12px;">
                 <button class="btn btn-red" onclick="closeModal('name-modal')">لابردن</button>
                 <button class="btn btn-gold" onclick="saveNameFromModal()">پاشەکەوت</button>
@@ -825,15 +300,10 @@
 
     <div id="settings-panel" class="modal">
         <div class="modal-box" style="max-width:100%; border-radius: 0; min-height: 100vh;">
-            <h2 style="color:var(--gold); margin-bottom:25px; font-size: 2.2rem;">ڕێکخستنەکان</h2>
+            <h2 style="color:var(--gold); margin-bottom:25px; font-size: 2.2rem; text-shadow: 0 0 20px var(--gold);">ڕێکخستنەکان</h2>
             
-            <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>👥 جۆری یاری</span><span>▼</span></div>
-                <div class="folder-body">
-                    <div class="select-btn mode-item" id="btn-mode-2" onclick="confirmNewGame(2)">٢ نەفەری</div>
-                    <div class="select-btn mode-item" id="btn-mode-3" onclick="confirmNewGame(3)">٣ نەفەری</div>
-                </div>
-            </div>
+            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>📊 داشبۆردی ئامارەکان</span><span>▼</span></div><div class="folder-body"><div class="dash-box"><p style="color:#aaa; font-weight:bold; font-size: 1rem;">کۆی یارییە ئەنجامدراوەکان</p><div class="dash-num" id="dash-total-games">0</div></div></div></div>
+            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>👥 جۆری یاری</span><span>▼</span></div><div class="folder-body"><div class="select-btn mode-item" id="btn-mode-2" onclick="confirmNewGame(2)">٢ نەفەری 👥</div><div class="select-btn mode-item" id="btn-mode-3" onclick="confirmNewGame(3)">٣ نەفەری 👤</div></div></div>
             
             <div class="folder">
                 <div class="folder-head" onclick="toggleF(this)"><span>🎯 ئامانج (گۆڕین)</span><span>▼</span></div>
@@ -841,29 +311,27 @@
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                         <div class="select-btn target-item" data-val="100" onclick="setTarget(100, this)">100</div>
                         <div class="select-btn target-item" data-val="101" onclick="setTarget(101, this)">101</div>
+                        <div class="select-btn target-item" data-val="150" onclick="setTarget(150, this)">150</div>
+                        <div class="select-btn target-item" data-val="200" onclick="setTarget(200, this)">200</div>
                     </div>
-                    <input type="number" id="custom-target" placeholder="ئامانج..." style="margin-top:10px; width:100%; padding:10px; text-align:center; background:#000; color:#fff; border:1px solid var(--gold); border-radius:8px;">
-                    <button class="btn-gold" onclick="setCustomTarget()">دانان</button>
+                    <div style="margin-top: 15px; display: flex; justify-content: center; gap: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 12px; border: 1px solid rgba(255,192,0,0.2);">
+                        <input type="number" id="custom-target" placeholder="ئامانج..." style="width: 90px; background: #000; border: 2px solid var(--gold); color: #fff; border-radius: 8px; padding: 8px; text-align: center; font-weight:900; font-size:1rem; outline:none;">
+                        <button class="btn-gold" style="border-radius: 8px; border: none; padding: 0 15px; cursor: pointer; font-weight: 900; font-size:1rem; margin-top:0;" onclick="setCustomTarget()">دانان</button>
+                    </div>
                 </div>
             </div>
-            
-            <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندەکان</span><span>▼</span></div>
-                <div class="folder-body theme-grid">
-                    <div class="theme-item" style="background-image:url('https://images.pexels.com/photos/1393972/pexels-photo-1393972.jpeg?fm=jpg')" onclick="changeTheme(this)"></div>
-                    <div class="theme-item" style="background-image:url('https://wallpapers.com/images/hd/ongoing-domino-game-mcerg8h2hzc7389q.jpg')" onclick="changeTheme(this)"></div>
-                </div>
-            </div>
-            
-            <div class="folder">
-                <div class="folder-head" onclick="toggleF(this)"><span>📜 مێژووی یارییەکان</span><span>▼</span></div>
-                <div class="folder-body">
-                    <div id="history-content"></div>
-                    <button class="btn btn-red" onclick="askClearHistory()" style="margin-top:20px;">سڕینەوەی گشتی 🗑️</button>
-                </div>
-            </div>
-            
-            <button class="btn btn-red" onclick="closeSettings()" style="margin-top: 25px;">گەڕانەوە بۆ یاری ✖️</button>
+
+            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>🎨 باکگراوندەکان</span><span>▼</span></div><div class="folder-body theme-grid">
+                <div class="theme-item" style="background-image:url('https://images.pexels.com/photos/1393972/pexels-photo-1393972.jpeg?fm=jpg')" onclick="changeTheme(this)"></div>
+                <div class="theme-item" style="background-image:url('https://wallpapers.com/images/hd/ongoing-domino-game-mcerg8h2hzc7389q.jpg')" onclick="changeTheme(this)"></div>
+                <div class="theme-item" style="background-image:url('https://images.unsplash.com/photo-1768839722117-da92d4acc9ef?fm=jpg')" onclick="changeTheme(this)"></div>
+                <div class="theme-item" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/0/04/Dominoes.jpg')" onclick="changeTheme(this)"></div>
+                <div class="theme-item" style="background-image:url('https://wallpapers.com/images/featured/domino-background-6e5fpukjpa8so1qw.jpg')" onclick="changeTheme(this)"></div>
+                <div class="theme-item" style="background-image:url('https://static.vecteezy.com/system/resources/thumbnails/068/153/133/small/dominoes-on-a-black-background-photo.jpg')" onclick="changeTheme(this)"></div>
+            </div></div>
+
+            <div class="folder"><div class="folder-head" onclick="toggleF(this)"><span>📜 مێژووی یارییەکان</span><span>▼</span></div><div class="folder-body"><div id="history-content"></div><button class="btn btn-red" onclick="askClearHistory()" style="margin-top:20px;">سڕینەوەی گشتی 🗑️</button></div></div>
+            <button class="btn btn-red" onclick="closeSettings()" style="margin-top: 25px; font-size: 1.2rem; padding: 15px;">گەڕانەوە بۆ یاری ✖️</button>
         </div>
     </div>
 
@@ -884,7 +352,7 @@
                     <span id="detail-team2-score" style="color:var(--gold); font-weight:bold; font-size:1.3rem;">0</span>
                 </div>
                 <div class="match-detail-row" style="background:rgba(255,192,0,0.1); border-radius:8px; padding:10px; margin-top:10px;">
-                    <span style="color:var(--gold); font-weight:bold;">کۆی خاڵەکان:</span>
+                    <span style="color:var(--gold); font-weight:bold;">کۆی گشتی خاڵی یاری:</span>
                     <span id="detail-total-score" style="color:#fff; font-weight:bold; font-size:1.3rem;">0</span>
                 </div>
             </div>
@@ -902,8 +370,8 @@
 
     <div id="score-modal" class="modal">
         <div class="modal-box" style="border-color: var(--gold);">
-            <h2 style="font-size: 2rem; color: #fff; margin-bottom: 15px;">تۆمارکردن</h2>
-            <input type="number" id="points-input" style="width:100%; font-size:5.5rem; background:rgba(0,0,0,0.5); border:none; border-bottom:4px solid var(--gold); color:var(--gold); text-align:center; outline:none; margin:15px 0 25px 0; font-weight:900;" placeholder="0">
+            <h2 style="font-size: 2rem; color: #fff; margin-bottom: 5px;">تۆمارکردن</h2>
+            <input type="number" id="points-input" style="width:100%; font-size:5.5rem; background:rgba(0,0,0,0.5); border:none; border-bottom:4px solid var(--gold); color:var(--gold); text-align:center; outline:none; margin:15px 0 25px 0; font-weight:900; border-radius: 15px 15px 0 0; padding: 10px 0; text-shadow: 0 0 15px var(--gold);" placeholder="0" inputmode="numeric">
             <div style="display:flex; gap:15px;">
                 <button class="btn btn-red" onclick="closeModal('score-modal')">لابردن</button>
                 <button class="btn btn-gold" onclick="validateScore()">تۆمارکردن</button>
@@ -915,9 +383,9 @@
         <div class="modal-box" style="border-color: var(--red); box-shadow: 0 0 50px rgba(237,41,57,0.5);">
             <h1 style="font-size: 4rem; margin-bottom: 5px;">🚨</h1>
             <h2 style="color:var(--red); font-size:1.8rem; margin-bottom: 5px;">دۆڕانی گەورە بە (سفر)!</h2>
-            <p style="color:#ccc; font-size:1rem; margin-bottom: 15px;">تکایە <span id="loser-name-sig" style="color:var(--gold); font-weight:bold;">ناوی دۆڕاو</span>، وەک داننان بەم دۆڕانە مێژووییەدا، لێرەدا ئیمزا بکە:</p>
+            <p style="color:#ccc; font-size:1rem; margin-bottom: 15px;">تکایە <span id="loser-name-sig" style="color:var(--gold); font-weight:bold;">ناوی دۆڕاو</span>، وەک داننان بەم دۆڕانەدا لێرەدا ئیمزا بکە:</p>
             
-            <canvas id="signature-pad" width="300" height="200"></canvas>
+            <canvas id="signature-pad"></canvas>
             
             <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
                 <button onclick="clearSignature()" style="background:none; border:none; color:#aaa; font-size:1rem; cursor:pointer;">پاککردنەوە 🧹</button>
@@ -927,29 +395,29 @@
     </div>
 
     <div id="invalid-score-modal" class="modal">
-        <div class="modal-box" style="border-color: var(--red);">
-            <h1 style="font-size: 5rem; color: var(--red);">⚠️</h1>
-            <h2 style="font-size: 2rem; color: #fff;">خاڵ نایاساییە!</h2>
-            <p id="invalid-subtext" style="font-size: 1.2rem; color: var(--red); font-weight: bold;"></p>
-            <button class="btn btn-red" onclick="closeModal('invalid-score-modal')">تێگەیشتم</button>
+        <div class="modal-box" style="border-color: var(--red); background: radial-gradient(circle at center, #550000, #110000); box-shadow: 0 0 50px rgba(237, 41, 57, 0.6);">
+            <h1 style="font-size: 5rem; color: var(--red); margin-bottom: 10px;">⚠️</h1>
+            <h2 style="font-size: 2rem; color: #fff; margin-bottom: 15px;">خاڵ نایاساییە!</h2>
+            <p id="invalid-subtext" style="font-size: 1.2rem; color: var(--red); margin-bottom: 25px; font-weight: bold;"></p>
+            <button class="btn btn-red" style="font-size: 1.2rem; padding: 15px;" onclick="closeModal('invalid-score-modal'); setTimeout(()=>document.getElementById('points-input').focus(), 100);">تێگەیشتم</button>
         </div>
     </div>
 
     <div id="clear-history-modal" class="modal">
-        <div class="modal-box" style="border-color: var(--red);">
-            <h1 style="font-size: 4rem; color: var(--red);">🗑️</h1>
-            <h2 style="font-size: 1.6rem; color: #fff;">سڕینەوەی هەمووی؟</h2>
+        <div class="modal-box" style="border-color: var(--red); box-shadow: 0 0 40px rgba(237,41,57,0.5); background: linear-gradient(145deg, #3a0000, #110000);">
+            <h1 style="font-size: 4rem; color: var(--red); margin-bottom:10px;">🗑️</h1>
+            <h2 style="font-size: 1.6rem; color: #fff; margin-bottom: 25px; line-height: 1.5; font-weight: 900;">ئایا دڵنیایت لە سڕینەوەی هەموو مێژووەکان؟</h2>
             <div style="display:flex; flex-direction: column; gap:12px;">
-                <button class="btn btn-red" onclick="executeClearHistory()">بەڵێ</button>
-                <button class="btn" style="background:rgba(255,255,255,0.1); color:#fff;" onclick="closeModal('clear-history-modal')">نەخێر</button>
+                <button class="btn btn-red" style="font-size: 1.1rem;" onclick="executeClearHistory()">بەڵێ، هەمووی بسڕەوە</button>
+                <button class="btn" style="background:rgba(255,255,255,0.1); color:#fff; border: 1px solid rgba(255,255,255,0.3);" onclick="closeModal('clear-history-modal')">نەخێر، پەشیمان بوومەوە</button>
             </div>
         </div>
     </div>
 
     <div id="new-game-modal" class="modal">
         <div class="modal-box" style="border-color: var(--gold);">
-            <h1 style="font-size: 4.5rem;">🎮</h1>
-            <h2 style="font-size: 2rem;">یاری نوێ؟</h2>
+            <h1 style="font-size: 4.5rem; text-shadow: 0 0 15px var(--gold);">🎮</h1>
+            <h2 style="font-size: 2rem; margin: 20px 0;">یاری نوێ دەستپێبکەین؟</h2>
             <div style="display:flex; gap:15px;">
                 <button class="btn btn-gold" id="confirm-new-btn">بەڵێ</button>
                 <button class="btn btn-red" onclick="closeModal('new-game-modal')">نەخێر</button>
@@ -961,35 +429,40 @@
         <div class="modal-box" style="border-color: var(--gold); box-shadow: 0 0 50px rgba(255, 192, 0, 0.5);">
             <h1 style="font-size: 5.5rem; margin-bottom:5px; animation: bounce 1s infinite alternate;">🏆</h1>
             <div id="domino-stage" class="domino-stage"></div>
-            <h1 id="winner-display" style="color:var(--gold); font-size: 3rem; text-shadow: 0 0 20px var(--gold); opacity: 0; transition: opacity 0.5s;"></h1>
-            <div id="win-stats" style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 20px; margin-bottom: 25px; opacity: 0; transition: opacity 0.5s;"></div>
-            <button class="btn btn-gold" id="win-reset-btn" style="font-size: 1.4rem; padding: 18px; opacity: 0; transition: opacity 0.5s;" onclick="resetCurrentGame()">یارییەکی تر 🔄</button>
+            <h1 id="winner-display" style="color:var(--gold); margin-bottom: 20px; font-size: 3rem; text-shadow: 0 0 20px var(--gold); opacity: 0; transition: opacity 0.5s;"></h1>
+            <div id="win-stats" style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 20px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); opacity: 0; transition: opacity 0.5s;"></div>
+            <button class="btn btn-gold" id="win-reset-btn" style="font-size: 1.4rem; padding: 18px; opacity: 0; transition: opacity 0.5s;" onclick="resetCurrentGame()">دەستپێکردنەوەی یاری 🔄</button>
         </div>
     </div>
 
     <script>
-        // گۆڕاوە سەرەکییەکانی یارییەکە
         let players = {}; 
         let curT = 1; 
         let seconds = 0; 
         let timerInterval; 
         let isPaused = true; 
         let targetScore = 101;
+        let streakData = { player: null, count: 0 }; 
         let savedNames = JSON.parse(localStorage.getItem('domino_names') || '[]'); 
         let currentEditingPlayer = null;
-        let allMatchesHistory = JSON.parse(localStorage.getItem('domino_match_history_v2') || '[]'); 
+        let allMatchesHistory = JSON.parse(localStorage.getItem('domino_match_history_v2') || '[]');
 
-        // کۆدەکانی تابلۆی ئیمزاکردن (Canvas API)
+        // کۆنتڕۆڵی تابلۆی ئیمزاکردن بۆ شاشەی مۆبایل
         let sigCanvas = document.getElementById('signature-pad');
         let sigCtx = sigCanvas.getContext('2d');
         let isDrawing = false;
-        let pendingWinData = null; 
+        let pendingWinData = null;
 
-        function initSignaturePad() {
+        // ڕێکخستنی قەبارەی تابلۆی ئیمزا بۆ ئەوەی هێڵەکان لە جێگەی پەنجەکان دەرچن
+        function fixCanvasResolution() {
+            sigCanvas.width = sigCanvas.offsetWidth;
+            sigCanvas.height = sigCanvas.offsetHeight;
             sigCtx.lineWidth = 4;
             sigCtx.lineCap = 'round';
-            sigCtx.strokeStyle = '#FFC000'; 
-            
+            sigCtx.strokeStyle = '#FFC000';
+        }
+
+        function initSignaturePad() {
             const startDraw = (e) => { 
                 isDrawing = true; 
                 draw(e); 
@@ -1000,7 +473,7 @@
             };
             const draw = (e) => {
                 if (!isDrawing) return;
-                e.preventDefault();
+                e.preventDefault(); // ڕێگری لە جووڵەی پەڕەکە دەکات لە مۆبایل
                 let rect = sigCanvas.getBoundingClientRect();
                 let x = (e.clientX || e.touches[0].clientX) - rect.left;
                 let y = (e.clientY || e.touches[0].clientY) - rect.top;
@@ -1021,20 +494,23 @@
 
         function clearSignature() {
             sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+            sigCtx.beginPath();
         }
 
-        // شاردنەوەی شاشەی دەستپێک دوای ٢ چرکە
         setTimeout(() => { 
             let splash = document.getElementById('splash-screen'); 
             splash.style.opacity = '0'; 
-            setTimeout(() => { 
-                splash.style.display = 'none'; 
-            }, 600); 
+            setTimeout(() => { splash.style.display = 'none'; }, 600); 
         }, 2000);
 
         function openModal(modalId) {
             document.getElementById(modalId).classList.add('active');
             document.getElementById('app-content').classList.add('iris-active');
+            
+            // ئەگەر مۆداڵی ئیمزا بوو، قەبارەی کانڤاسەکە ڕێکبخە
+            if(modalId === 'signature-modal') {
+                setTimeout(fixCanvasResolution, 100);
+            }
         }
 
         function closeModal(modalId) {
@@ -1044,9 +520,7 @@
                 document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); 
             }
             let anyActive = document.querySelector('.modal.active');
-            if(!anyActive) {
-                document.getElementById('app-content').classList.remove('iris-active');
-            }
+            if(!anyActive) document.getElementById('app-content').classList.remove('iris-active');
             document.getElementById('points-input').value = '';
         }
 
@@ -1057,6 +531,28 @@
 
         function closeSettings() { 
             closeModal('settings-panel'); 
+        }
+
+        function updateAIandP2P() {
+            let keys = Object.keys(players);
+            if(keys.length < 2) return;
+            let scores = keys.map(k => players[k].score);
+            let distances = scores.map(s => Math.max(1, targetScore - s)); 
+            let totalDist = distances.reduce((a,b) => a+b, 0);
+            let isAllZero = scores.every(s => s === 0);
+            
+            if(isAllZero) { 
+                document.getElementById('ai-prob').innerText = keys.length == 2 ? "٥٠٪ بەرامبەر ٥٠٪" : "یەکسانن"; 
+            } else if(keys.length == 2) {
+                let p1Chance = Math.round((distances[1] / totalDist) * 100);
+                let p2Chance = Math.round((distances[0] / totalDist) * 100);
+                let leadName = players[1].score >= players[2].score ? players[1].name : players[2].name;
+                document.getElementById('ai-prob').innerText = `${Math.max(p1Chance, p2Chance)}٪ بۆ ${leadName}`;
+            } else {
+                let minIdx = distances.indexOf(Math.min(...distances));
+                let chance = Math.round(((totalDist - distances[minIdx]) / (totalDist * (keys.length-1))) * 100);
+                document.getElementById('ai-prob').innerText = `${chance}٪ بۆ ${players[keys[minIdx]].name}`;
+            }
         }
 
         function openNameModal(playerIndex) {
@@ -1086,23 +582,23 @@
             closeModal('name-modal');
         }
 
+        function updateDatalist() { 
+            document.getElementById('saved-names-list').innerHTML = savedNames.map(n => `<option value="${n}">`).join(""); 
+        }
+
         function triggerDominoFallSequence() {
             const stage = document.getElementById('domino-stage'); 
             stage.innerHTML = '';
             for(let i = 0; i < 6; i++) {
                 let piece = document.createElement('div'); 
                 piece.className = 'domino-piece';
-                piece.innerHTML += `<div class="dot" style="top: 10px; left: 12px; width:6px; height:6px; background:#3e2723; border-radius:50%; position:absolute;"></div>`;
-                if(i % 2 == 0) {
-                    piece.innerHTML += `<div class="dot" style="bottom: 10px; left: 12px; width:6px; height:6px; background:#3e2723; border-radius:50%; position:absolute;"></div>`;
-                }
+                piece.innerHTML += `<div class="dot" style="top: 10px; left: 12px;"></div>`;
+                if(i % 2 == 0) piece.innerHTML += `<div class="dot" style="bottom: 10px; left: 12px;"></div>`;
                 stage.appendChild(piece);
             }
             const pieces = document.querySelectorAll('.domino-piece');
             pieces.forEach((p, index) => { 
-                setTimeout(() => { 
-                    p.classList.add('falling'); 
-                }, index * 100); 
+                setTimeout(() => { p.classList.add('falling'); }, index * 100); 
             });
             setTimeout(() => {
                 document.getElementById('winner-display').style.opacity = '1';
@@ -1116,9 +612,7 @@
             var duration = 3 * 1000; 
             var animationEnd = Date.now() + duration; 
             var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100000 };
-            function randomInRange(min, max) { 
-                return Math.random() * (max - min) + min; 
-            }
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
             var interval = setInterval(function() {
                 var timeLeft = animationEnd - Date.now();
                 if (timeLeft <= 0) return clearInterval(interval);
@@ -1126,6 +620,19 @@
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
             }, 250);
+        }
+
+        function createFloatingNumber(playerIndex, value) {
+            const scoreBox = document.getElementById(`score-box-${playerIndex}`);
+            if(!scoreBox) return;
+            const rect = scoreBox.getBoundingClientRect();
+            const floatDiv = document.createElement('div');
+            floatDiv.className = 'floating-score'; 
+            floatDiv.innerText = `+${value}`;
+            floatDiv.style.left = `${rect.left + (rect.width / 2) - 25}px`; 
+            floatDiv.style.top = `${rect.top - 15}px`;
+            document.body.appendChild(floatDiv);
+            setTimeout(() => { floatDiv.remove(); }, 1500);
         }
 
         function startTimer() { 
@@ -1208,6 +715,7 @@
 
         function setMode(n, isNew = false) {
             targetScore = parseInt(localStorage.getItem('domino_target')) || 101; 
+            streakData = { player: null, count: 0 };
             if(isNew) { 
                 players = {}; 
                 seconds = 0; 
@@ -1219,11 +727,25 @@
             } else { 
                 players = JSON.parse(localStorage.getItem('domino_g')) || {1:{name:"تیمی 1",score:0,history:[]}, 2:{name:"تیمی 2",score:0,history:[]}}; 
                 seconds = parseInt(localStorage.getItem('domino_s')) || 0; 
+                streakData = JSON.parse(localStorage.getItem('domino_streak')) || { player: null, count: 0 }; 
+                let isFresh = true; 
+                for(let i in players) { 
+                    if(players[i].score > 0 || players[i].history.length > 0) isFresh = false; 
+                }
+                if(isFresh) { seconds = 0; localStorage.setItem('domino_s', 0); }
             }
             document.getElementById('main-grid').className = (Object.keys(players).length == 3 ? 'game-grid grid-3' : 'game-grid');
             updateTimerUI(); 
             startTimer(); 
             render();
+            setTimeout(() => { 
+                document.querySelectorAll('.mode-item').forEach(b => { 
+                    b.classList.toggle('active', b.id == `btn-mode-${Object.keys(players).length}`); 
+                }); 
+                document.querySelectorAll('.target-item').forEach(b => { 
+                    b.classList.toggle('active', b.getAttribute('data-val') == targetScore); 
+                }); 
+            }, 100);
         }
 
         function render() {
@@ -1237,19 +759,31 @@
             
             for (let i in players) {
                 let progressPercent = Math.max(0, Math.min((players[i].score / targetScore) * 100, 100));
+                let isStreak = (streakData.player == i && streakData.count >= 3);
+                let cardClass = isStreak ? "card streak-fire" : "card";
                 
+                let orderStyle = ""; 
+                if (pCount === 3) { 
+                    if (i == 1) orderStyle = "order: 1;"; 
+                    if (i == 3) orderStyle = "order: 2;"; 
+                    if (i == 2) orderStyle = "order: 3;"; 
+                }
+
                 grid.innerHTML += `
-                <div class="card" style="animation-delay: ${i * 0.1}s;">
+                <div class="${cardClass}" style="${orderStyle} animation-delay: ${i * 0.1}s;">
+                    <div class="streak-badge">🔥 لەسەریەکە!</div>
                     <div class="player-input" onclick="openNameModal(${i})">${players[i].name}</div>
+                    
                     <div id="score-box-${i}" class="score-display-box" onclick="if(checkTimerActive()){ curT=${i}; openModal('score-modal'); document.getElementById('points-input').focus(); }">
                         <div class="score-total">${players[i].score}</div>
                         <div class="score-label">خاڵ</div>
                     </div>
+                    
                     <div class="progress-bg"><div class="progress-fill" style="width: ${progressPercent}%;"></div></div>
                     <div class="rem-text">ماوە: ${targetScore - players[i].score}</div>
                 </div>`;
                 
-                historyHTML += `<div class="history-column">`;
+                historyHTML += `<div class="history-column" style="${orderStyle}">`;
                 players[i].history.slice().reverse().forEach((pt, j) => {
                     let revIdx = players[i].history.length - 1 - j;
                     historyHTML += `
@@ -1264,25 +798,7 @@
             }
             historyHTML += `</div>`; 
             historyContainer.innerHTML = historyHTML;
-            
-            // نوێکردنەوەی پێشبینی AI لە داشبۆرد
-            let keys = Object.keys(players);
-            if(keys.length == 2) {
-                let p1 = players[1]; 
-                let p2 = players[2];
-                let dist1 = Math.max(1, targetScore - p1.score); 
-                let dist2 = Math.max(1, targetScore - p2.score);
-                let totalD = dist1 + dist2;
-                
-                if(p1.score == 0 && p2.score == 0) { 
-                    document.getElementById('ai-prob').innerText = "٥٠٪ بەرامبەر ٥٠٪"; 
-                } else {
-                    let c1 = Math.round((dist2 / totalD) * 100); 
-                    let c2 = Math.round((dist1 / totalD) * 100);
-                    let lead = p1.score > p2.score ? p1.name : p2.name;
-                    document.getElementById('ai-prob').innerText = `${Math.max(c1, c2)}٪ بۆ ${lead}`;
-                }
-            }
+            updateAIandP2P(); 
         }
 
         function smoothRemove(playerIndex, historyIndex, points) {
@@ -1290,17 +806,17 @@
             const itemWrapper = document.getElementById(`hist-item-${playerIndex}-${historyIndex}`);
             itemWrapper.style.maxHeight = itemWrapper.offsetHeight + 'px';
             itemWrapper.style.transition = 'all 0.4s ease-out';
-            
             setTimeout(() => {
                 itemWrapper.classList.add('collapsing');
                 itemWrapper.style.opacity = '0';
                 itemWrapper.style.transform = 'scale(0.9) translateY(-10px)';
                 itemWrapper.style.maxHeight = '0';
             }, 10);
-            
             setTimeout(() => {
                 players[playerIndex].score -= points; 
                 players[playerIndex].history.splice(historyIndex, 1); 
+                streakData = { player: null, count: 0 }; 
+                localStorage.setItem('domino_streak', JSON.stringify(streakData));
                 saveState(); 
                 render();
             }, 400);
@@ -1316,9 +832,19 @@
                 openModal('invalid-score-modal');
                 return; 
             }
+            
+            if(streakData.player == curT) { 
+                streakData.count++; 
+            } else { 
+                streakData.player = curT; 
+                streakData.count = 1; 
+            }
+            localStorage.setItem('domino_streak', JSON.stringify(streakData));
 
             players[curT].score += v; 
             players[curT].history.push(v);
+            if (v > 0) createFloatingNumber(curT, v);
+            
             saveState(); 
             render(); 
             closeModal('score-modal');
@@ -1329,10 +855,9 @@
                 document.getElementById('timer-icon').innerText = "▶️"; 
                 document.getElementById('timer-container').parentElement.classList.add('paused');
                 
-                // گەڕان بەدوای یاریزانی دۆڕاودا بزانین سفری هێناوە یان نا
+                // سیستەمی ئیمزاکردن
                 let hasZero = false;
                 let loserNameForSig = "";
-                
                 for(let i in players) {
                     if(players[i].score === 0 && i != curT) {
                         hasZero = true;
@@ -1350,18 +875,17 @@
                 };
 
                 if (hasZero) {
-                    // ئەگەر تیمێک سفر بوو، شاشەی ئیمزاکە دەکەینەوە
                     document.getElementById('loser-name-sig').innerText = loserNameForSig;
                     clearSignature();
                     openModal('signature-modal');
                 } else {
-                    // ئەگەر ئاسایی بوو، یەکسەر بردنەوە نیشان دەدەین
                     executeWinScreen(null);
                 }
             }
         }
 
         function saveSignatureAndWin() {
+            // سەیڤکردنی ئیمزاکە بە شێوەی وێنە
             let sigDataUrl = sigCanvas.toDataURL("image/png");
             closeModal('signature-modal');
             executeWinScreen(sigDataUrl);
@@ -1378,7 +902,7 @@
             document.getElementById('winner-display').innerText = "👑 " + pendingWinData.winnerName; 
             document.getElementById('win-stats').innerHTML = `<div style="font-size:1.4rem; color:#ccc; margin-bottom: 12px;">کاتی یاری: <span style="color:var(--gold); font-weight:bold;">${finalTime}</span></div><div style="font-size:1.4rem; color:#ccc;">بە جیاوازی: <span style="color:var(--red); font-weight:bold;">${diff} خاڵ</span></div>`;
             
-            // پاشەکەوتکردنی داتای وردی یارییەکە بۆ ناو مێژوو
+            // سەیڤکردن لە مێژوودا لەگەڵ ئیمزاکە
             let matchRecord = {
                 id: Date.now(),
                 date: new Date().toLocaleDateString('ku-IQ'),
@@ -1392,7 +916,7 @@
                 totalPoints: pendingWinData.totalScore,
                 duration: finalTime,
                 gap: diff,
-                signature: signatureBase64 // لەوانەیە null بێت ئەگەر سفر نەبێت
+                signature: signatureBase64 
             };
 
             allMatchesHistory.unshift(matchRecord); 
@@ -1407,7 +931,6 @@
             localStorage.setItem('domino_g', JSON.stringify(players)); 
         }
 
-        // کردنەوەی پەنجەرەی وردەکارییەکانی یارییەکی کۆن بە کلیک
         window.openHistoryDetail = function(matchId) {
             let match = allMatchesHistory.find(m => m.id === matchId);
             if(!match) return;
@@ -1423,11 +946,9 @@
             let sigBox = document.getElementById('sig-img-box');
             let sigImg = document.getElementById('detail-sig-img');
 
-            sigBox.style.display = 'none'; // سەرەتا ئیمزاکە بیشارەوە
+            sigBox.style.display = 'none';
 
-            // ئەگەر یارییەکە ئیمزای تێدا بوو، دوگمەی نیشاندان دەربهێنە
             if(match.signature) {
-                sigBtn.style.display = 'block';
                 sigBtn.style.display = 'inline-block'; 
                 sigImg.src = match.signature;
             } else {
@@ -1469,6 +990,7 @@
             let lastMode = Object.keys(players).length; 
             localStorage.removeItem('domino_g'); 
             localStorage.removeItem('domino_s'); 
+            localStorage.removeItem('domino_streak'); 
             seconds = 0; 
             setMode(lastMode, true); 
             closeModal('win-modal'); 
@@ -1495,7 +1017,8 @@
         function executeClearHistory() {
             localStorage.removeItem('domino_match_history_v2'); 
             allMatchesHistory = []; 
-            loadHist();
+            loadHist(); 
+            updateAIandP2P();
             closeModal('clear-history-modal');
         }
 
@@ -1509,6 +1032,7 @@
                     }); 
                 }, 100); 
             }
+            updateDatalist();
             setMode(localStorage.getItem('domino_g') ? Object.keys(JSON.parse(localStorage.getItem('domino_g'))).length : 2); 
             document.getElementById('timer-container').parentElement.classList.add('paused');
         };
